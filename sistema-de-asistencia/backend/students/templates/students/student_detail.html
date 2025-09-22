@@ -1,0 +1,8 @@
+{% extends "students/base.html" %}
+{% block title %}Ficha del estudiante{% endblock %}
+{% block content %}
+<h1>{{ student.last_name }}, {{ student.first_name }}</h1>
+<p><b>Carnet:</b> {{ student.id_mep }} | <b>Sección:</b> {{ student.section }}</p>
+<p><a href="{% url 'students:student_edit' student.id %}">Editar</a></p>
+<p><a href="{% url 'students:history_list' student.id %}">Ver historial</a></p>
+{% endblock %}

@@ -112,6 +112,7 @@ fabric.properties
 /sistema-de-asistencia/backend/venv/*
 
 .env
+.venv
 **/.env
 backend/.env
 backend/.venv/
