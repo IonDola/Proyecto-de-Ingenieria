@@ -1,0 +1,8 @@
+asgiref==3.9.1
+cffi==2.0.0
+cryptography==46.0.1
+Django==5.2.6
+psycopg2-binary==2.9.10
+pycparser==2.23
+python-decouple==3.8
+sqlparse==0.5.3
