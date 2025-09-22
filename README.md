@@ -8,7 +8,13 @@ Este repositorio contiene el desarrollo del Proyecto de Ingenieria del Curso 202
 4) Añadir informacion requerida al .env
 5) source venv/bin/activate
 6) pip install -r requirements.txt
-7) python3 manage.py makemigrations
-8) python3 manage.py migrate
-9) python3 manage.py runserver
-10) Darle clic a la url
+7) Abrir el puerto al servidor
+8) python3 manage.py makemigrations
+9) python3 manage.py migrate
+10) python3 manage.py runserver
+11) Darle clic a la url
+
+# Montar Frontend
+1) cd frontend
+2) npm install
+3) npm start

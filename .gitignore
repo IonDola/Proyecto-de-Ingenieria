@@ -108,8 +108,5 @@ fabric.properties
 .history
 .ionide
 
-#Other
-__pycache__/
-*.pyc
-.env
-node_modules/
+/sistema-de-asistencia/backend/.env
+/sistema-de-asistencia/backend/venv/*
