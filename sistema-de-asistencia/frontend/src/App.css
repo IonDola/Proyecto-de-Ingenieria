@@ -1,0 +1,6 @@
+html, body, #root {
+  width: 1280px;    /* ancho fijo */
+  height: 720px;    /* alto fijo */
+  margin: 0;
+  padding: 0;
+}
