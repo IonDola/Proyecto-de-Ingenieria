@@ -1,0 +1,30 @@
+{% extends "students/base.html" %}
+{% block title %}Estudiantes{% endblock %}
+{% block content %}
+<h1>Estudiantes</h1>
+<form method="get">
+  <input type="text" name="q" value="{{ q }}" placeholder="Buscar por carnet o nombre" />
+  <button type="submit">Buscar</button>
+  <a href="{% url 'students:student_create' %}">+ Nuevo</a>
+</form>
+<table>
+  <thead><tr><th>Carnet</th><th>Nombre</th><th>Sección</th><th></th></tr></thead>
+  <tbody>
+    {% for s in students %}
+    <tr>
+      <td>{{ s.id_mep }}</td>
+      <td>{{ s.last_name }}, {{ s.first_name }}</td>
+      <td>{{ s.section }}</td>
+      <td><a href="{% url 'students:student_detail' s.id %}">Ver</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">Sin datos</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div>
+  {% if students.has_previous %}<a href="?q={{ q }}&page={{ students.previous_page_number }}">Anterior</a>{% endif %}
+  <span>Página {{ students.number }} de {{ students.paginator.num_pages }}</span>
+  {% if students.has_next %}<a href="?q={{ q }}&page={{ students.next_page_number }}">Siguiente</a>{% endif %}
+</div>
+{% endblock %}
