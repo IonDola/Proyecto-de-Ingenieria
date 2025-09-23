@@ -110,4 +110,13 @@ fabric.properties
 
 /sistema-de-asistencia/backend/.env
 /sistema-de-asistencia/backend/venv/*
+
+.env
+.venv
+**/.env
+backend/.env
+backend/.venv/
+backend/venv/
+frontend/node_modules/
+
 *.pyc
