@@ -1,0 +1,4 @@
+Los iconos profile_admins.jpg y profile_visitors.jpg son derivados
+de la imagen Circulo de usuario basico Estilos multiples del artista
+juicy_fish, con url de la imagen original
+https://www.freepik.es/vector-gratis/circulo-usuario-basico-estilos-multiples_168221779.htm#fromView=keyword&page=1&position=9&uuid=c8caa481-cd5a-47df-b489-842aa1f25f77&query=User+icon
