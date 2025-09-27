@@ -54,7 +54,7 @@ export default function StudentForm() {
       .then(async (r) => (r.ok ? r.json() : Promise.reject(await r.json())))
       .then((data) => {
         if (isEdit) {
-          setMsg("Cambios guardados ✅");
+          setMsg("Cambios guardados :)");
         } else {
           navigate(`/students/${data.id}`);
         }
@@ -98,7 +98,7 @@ export default function StudentForm() {
 
           <div className="actions-inline">
             <button className="btn" type="submit"> Guardar</button>
-            <button className="btn ghost" type="button" onClick={() => navigate(-1)}>✖ Cancelar</button>
+            <button className="btn ghost" type="button" onClick={() => navigate(-1)}>X Cancelar</button>
           </div>
         </form>
       </div>
