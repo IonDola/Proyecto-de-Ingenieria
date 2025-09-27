@@ -1,10 +1,16 @@
 {% extends "students/base.html" %}
-{% block title %}{{ mode == "create" and "Nuevo" or "Editar" }} estudiante{% endblock %}
+
+{% block title %}
+  {% if mode == "create" %}Nuevo{% else %}Editar{% endif %} estudiante
+{% endblock %}
+
 {% block content %}
-<h1>{{ mode == "create" and "Nuevo" or "Editar" }} estudiante</h1>
-<form method="post">{% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Guardar</button>
-  <a href="{% url 'students:student_list' %}">Cancelar</a>
-</form>
+  <h1>{% if mode == "create" %}Nuevo{% else %}Editar{% endif %} estudiante</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar</button>
+    <a href="{% url 'students:student_list' %}">Cancelar</a>
+  </form>
 {% endblock %}

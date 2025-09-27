@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from students import api as students_api
 
 app_name = "students"
 
@@ -13,4 +14,11 @@ urlpatterns = [
 
     path("students/<uuid:student_id>/history/", views.history_list, name="history_list"),
     path("students/<uuid:student_id>/history/<uuid:action_id>/", views.history_detail, name="history_detail"),
+    #path("admin/", admin.site.urls),
+    path("api/students/", students_api.students_list),
+    path("api/students/new/", students_api.students_create),
+    path("api/students/<uuid:student_id>/", students_api.students_detail),
+    path("api/students/<uuid:student_id>/update/", students_api.students_update),
+    path("api/students/<uuid:student_id>/history/", students_api.student_history),
+    path("api/actions/<uuid:action_id>/", students_api.action_detail),
 ]
