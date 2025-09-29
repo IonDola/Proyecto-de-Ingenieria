@@ -120,3 +120,4 @@ backend/venv/
 frontend/node_modules/
 
 *.pyc
+backend/core/__pycache__/*
