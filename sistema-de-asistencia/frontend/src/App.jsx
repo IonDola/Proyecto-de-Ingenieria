@@ -1,6 +1,6 @@
 import React from 'react';
-import AdminLogin from './pages/auth/AdminLogin';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import LoginPage from './pages/auth/Login';
 import StudentsList   from "./pages/students/StudentsList";
 import StudentForm    from "./pages/students/StudentForm";
 import StudentDetail  from "./pages/students/StudentDetail";
@@ -13,7 +13,7 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<AdminLogin />} />
+        <Route path="/login" element={<LoginPage />} />
 
         <Route path="/students" element={isAuth ? <StudentsList /> : <Navigate to="/login" />} />
         <Route path="/students/new" element={isAuth ? <StudentForm /> : <Navigate to="/login" />} />
