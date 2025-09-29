@@ -5,4 +5,8 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ["id_mep", "first_name", "last_name", "section", "active"]
-        widgets = {"id_mep": forms.TextInput(attrs={"autofocus": True})}
+        error_messages = {
+            "id_mep": {
+                "unique": "Carnet/ID duplicado. Ya existe un estudiante con ese identificador.",
+            }
+        }
