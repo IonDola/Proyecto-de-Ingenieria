@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./../styles/student-ui.css";
 
 /* IMÁGENES (dentro de src): */
-import Background from "../assets/images/Background.png";
 import SchoolShield from "../assets/images/school_shield.png";
-import ProfileAdmin from "../assets/images/profile_admins.jpg";
 
 /* ÍCONOS (en public/icons): */
 
@@ -18,7 +16,6 @@ export default function Layout({ children, rightHeader = null }) {
   return (
     <div
       className="ui-root"
-      style={{ backgroundImage: `url(${Background})` }}
       role="application"
     >
       {/* Barra lateral izquierda */}
@@ -82,7 +79,6 @@ export default function Layout({ children, rightHeader = null }) {
           </div>
 
           <div className="ui-user">
-            <img src={ProfileAdmin} alt="Usuario" className="avatar" />
             <div className="user-label">
               <strong>Menú de Usuario</strong>
               <small>Admin</small>

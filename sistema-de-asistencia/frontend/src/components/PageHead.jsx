@@ -2,6 +2,7 @@ import { useEffect, useState, Fragment } from "react";
 import { Navigate } from "react-router-dom";
 import adminImage from "../assets/images/profile_admins.jpg";
 import closeSesion from "../assets/icons/logout.svg";
+import subSectionIcon from "../assets/icons/subsection.png"
 
 export const CredentialLevel = {
     DEV: "Dev",
@@ -9,7 +10,7 @@ export const CredentialLevel = {
     GUEST: "Guest",
 };
 
-const PageHead = ( { name, credential } ) => {
+const PageHead = ( { name, credential, icons } ) => {
     const credentialLevel = credential
     const [displayedName, setName] = useState(name);
 
@@ -31,8 +32,40 @@ const PageHead = ( { name, credential } ) => {
         );
     };
 
-    const HeadName = () => {
-        
+    const HeadName = ( { name, icons } ) => {
+        if (name) {
+            return (
+                <>
+                    <div> Bienvenid@  </div>
+                    <div className="name"> {name} </div>
+                </>
+            );
+        }
+
+        if (!Array.isArray(icons)) {
+            alert("Icons must be a list of at least one image.")
+            return;
+        }
+        return (
+            <div className="head-icons">
+                <img
+                    key={icons[0].id + "-main"}
+                    src={icons[0].image}
+                    alt={icons[0].description}
+                    title={icons[0].description}
+                />
+                {icons.slice(1).map((icon) => (
+                    <Fragment key={icon.id}>
+                    <img src={subSectionIcon} alt="Separador" />
+                    <img
+                        src={icon.image}
+                        alt={icon.description}
+                        title={icon.description}
+                    />
+                    </Fragment>
+                ))}
+            </div>
+        );
     };
 
     const HeadMenu = () => {
@@ -85,7 +118,7 @@ const PageHead = ( { name, credential } ) => {
                 <HeadClock />
             </div>
             <div className="central">
-                Bienvenid@ {displayedName}
+                <HeadName name={name} icons={icons}/>
             </div>
             <HeadMenu />
         </div>
