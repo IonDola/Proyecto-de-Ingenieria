@@ -25,7 +25,7 @@ export default function App() {
         <Route path="/students/:id/history" element={isAuth ? <HistoryList /> : <Navigate to="/login" />} />
         <Route path="/actions/:actionId" element={isAuth ? <HistoryDetail /> : <Navigate to="/login" />} />
 
-        <Route path="*" element={<Navigate to="/students" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </Router>
   );

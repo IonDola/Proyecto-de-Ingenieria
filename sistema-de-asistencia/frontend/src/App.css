@@ -85,6 +85,7 @@ html, body, #root {
 
 .page-head {
   position: absolute;
+  z-index: 5;
   height: 100px;
   width: 100%;
   border-radius: 0 0 40px 40px;
@@ -116,13 +117,16 @@ html, body, #root {
   margin-top: 10px;
 }
 
+.central .head-icons {
+  margin-top: 0px;
+}
+
 
 .head-icons img{
   margin-top: 20px;
   margin-right: 10px;
   width: 50px;
   height: 50px;
-  filter: invert(100%) sepia(3%) saturate(320%) hue-rotate(334deg) brightness(119%) contrast(100%);
 }
 
 .head-menu {
@@ -197,7 +201,6 @@ html, body, #root {
 }
 
 .content button img {
-  filter: invert(100%) sepia(3%) saturate(320%) hue-rotate(334deg) brightness(119%) contrast(100%);
   border-radius: 0px;
 }
 
@@ -212,4 +215,8 @@ html, body, #root {
   grid-template-rows: 2fr 2fr 1fr;
   align-items: start;
   justify-content: left;  
+}
+
+.w-icon {
+  filter: invert(100%) sepia(3%) saturate(320%) hue-rotate(334deg) brightness(119%) contrast(100%);
 }

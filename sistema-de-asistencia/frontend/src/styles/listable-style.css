@@ -1,0 +1,41 @@
+.listable .filters {
+    height: 100px;
+    background-color: brown; 
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 7fr 1fr 1fr 1fr;
+    column-gap: 20px;
+}
+
+.listable .filters .search-bar {
+    background-color: var(--brown-color);
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+}
+
+.search-bar img {
+    margin: 10px;
+    width: 50px;
+    height: 50px;
+}
+
+.search-bar input {
+    margin-right: 10px;
+    height: 60px;
+    border-radius: 40px;
+    padding-left: 10px;
+    font-size: 20px;
+}
+
+.elements-title {
+    background-color: var(--brown-color);
+    display: grid;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+}
+.elements-title > div {
+    padding: 0.25rem 0.5rem;
+    text-align: left;
+}

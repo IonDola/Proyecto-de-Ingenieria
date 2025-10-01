@@ -43,7 +43,7 @@ const PageHead = ( { name, credential, icons } ) => {
         }
 
         if (!Array.isArray(icons)) {
-            alert("Icons must be a list of at least one image.")
+            console.log("Los iconos deben ser una lista de almenos un");
             return;
         }
         return (
@@ -53,14 +53,16 @@ const PageHead = ( { name, credential, icons } ) => {
                     src={icons[0].image}
                     alt={icons[0].description}
                     title={icons[0].description}
+                    className="w-icon"
                 />
                 {icons.slice(1).map((icon) => (
                     <Fragment key={icon.id}>
-                    <img src={subSectionIcon} alt="Separador" />
+                    <img src={subSectionIcon} alt="Separador" className="w-icon"/>
                     <img
                         src={icon.image}
                         alt={icon.description}
                         title={icon.description}
+                        className="w-icon"
                     />
                     </Fragment>
                 ))}
@@ -84,7 +86,7 @@ const PageHead = ( { name, credential, icons } ) => {
             <Fragment>
             <div className="head-menu">
                 <div className="menu-title">
-                    <img src={adminImage} alt="" />
+                    <img src={adminImage} alt=""/>
                     <div className="menu-text">
                         <br />Menú de Usuario
                     </div>
@@ -97,8 +99,8 @@ const PageHead = ( { name, credential, icons } ) => {
                         <br />
                         <a href="#">Bitácora Personal</a>
                     </div>
-                    <button className="close-sesion" onClick={logOut}>
-                        <img src={closeSesion} className="icon"/>
+                    <button className="close-sesion w-" onClick={logOut}>
+                        <img src={closeSesion} className="icon w-icon" />
                         <p>Cerrar Sesión</p>
                     </button>
                 </div>
@@ -113,7 +115,7 @@ const PageHead = ( { name, credential, icons } ) => {
     }
 
     return (
-        <div className="page-head" style={mainColorStyle}>
+        <header className="page-head" style={mainColorStyle}>
             <div className="date-time">
                 <HeadClock />
             </div>
@@ -121,7 +123,7 @@ const PageHead = ( { name, credential, icons } ) => {
                 <HeadName name={name} icons={icons}/>
             </div>
             <HeadMenu />
-        </div>
+        </header>
     )
 };
 
