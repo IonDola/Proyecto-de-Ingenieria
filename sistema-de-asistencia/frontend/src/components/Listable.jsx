@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, Children, cloneElement } from "react";
 import Tool from "./PageTool";
 import "../styles/listable-style.css";
 
@@ -46,17 +46,26 @@ const Listable = ( { columns, children } ) => {
                 <FilterTools doAlphabetical={"true"} doNumerical={"true"}/>
             </div>
 
-            <div className="elements-title" style={{gridTemplateColumns: columnTemplate}}>
-                {columns.map((col, index) => (
-                    <div key={"column" + index}>
-                        {col.name}
+            <div className="elements-table">
+                <div>
+                    <div className="elements-title" style={{gridTemplateColumns: columnTemplate}}>
+                        {columns.map((col, index) => (
+                            <div key={"column" + index}>
+                                {col.name}
+                            </div>
+                        ))}
                     </div>
-                ))}
+
+                    <div className="elements" style={{gridTemplateColumns: columnTemplate}}>
+                        {Children.map(children, child =>
+                        cloneElement(child, {
+                            style: { display: "grid", gridTemplateColumns: columnTemplate, alignItems: "center" }
+                        })
+                        )}
+                    </div>
+                </div>
             </div>
 
-            <div className="elements" style={{gridTemplateColumns: columnTemplate}}>
-                {children}
-            </div>
         </div>
     );
 };

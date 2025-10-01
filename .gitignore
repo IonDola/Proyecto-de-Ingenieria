@@ -120,4 +120,7 @@ backend/venv/
 frontend/node_modules/
 
 *.pyc
-backend/core/__pycache__/*
+backend/core/__pycache__/
+backend/students/__pycache__/
+.pyc
+sistema-de-asistencia/backend/core/__pycache__/__init__.cpython-312.pyc

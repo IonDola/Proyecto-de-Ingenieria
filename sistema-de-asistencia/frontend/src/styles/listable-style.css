@@ -1,17 +1,22 @@
+.listable {
+    margin-right: 25px
+}
+
 .listable .filters {
     height: 100px;
-    background-color: brown; 
     margin-bottom: 20px;
     display: grid;
-    grid-template-columns: 7fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 100px 100px 100px;
     column-gap: 20px;
 }
 
 .listable .filters .search-bar {
-    background-color: var(--brown-color);
+    background-color: var(--main-color);
     display: grid;
     grid-template-columns: 70px 1fr;
     align-items: center;
+    border-radius: 25px;
+    border: 2px solid black;
 }
 
 .search-bar img {
@@ -20,7 +25,7 @@
     height: 50px;
 }
 
-.search-bar input {
+.search-bar input[type="search"] {
     margin-right: 10px;
     height: 60px;
     border-radius: 40px;
@@ -28,14 +33,68 @@
     font-size: 20px;
 }
 
+.elements-table {
+    background-color: var(--main-color);
+    border-radius: 10px;
+    border: 2px solid black;
+    font-size: 20px;
+    color: white;
+}
+
+.elements-table > div {
+    padding: 25px;
+}
+
 .elements-title {
-    background-color: var(--brown-color);
+    background-color: var(--white-transparent);
     display: grid;
     font-weight: 600;
     font-size: 0.875rem;
     padding: 0.5rem;
+    color: black;
 }
-.elements-title > div {
-    padding: 0.25rem 0.5rem;
-    text-align: left;
+
+.listable-row {
+    background-color: var(--white-very-transparent);
+    height: 100px;
+    border: 1px solid white;
+}
+
+.elements .cb {
+    text-align: center;
+}
+
+.elements .cb input[type="checkbox"] {
+  appearance: none;       /* quita estilo nativo */
+  -webkit-appearance: none;
+  width: 50px;
+  height: 50px;
+  border: 2px solid white;
+  border-radius: 25%;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.elements .cb input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 25%;  
+}
+
+.elements button {
+    background-color: transparent;
+    width: 75px;
+    height: 75px;
+    border: transparent;
+    padding-right: 5px;
+}
+
+.elements button:hover {
+    cursor: pointer;
 }

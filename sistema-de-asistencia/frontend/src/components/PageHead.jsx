@@ -26,8 +26,8 @@ const PageHead = ( { name, credential, icons } ) => {
         
         return (
             <>
+                <p>{date.toLocaleTimeString('en-US', {hour12: true})}</p>
                 <p>{date.toLocaleDateString()}</p>
-                <p>{date.toLocaleTimeString()}</p>
             </>
         );
     };
@@ -109,13 +109,8 @@ const PageHead = ( { name, credential, icons } ) => {
         );
     };
 
-    const mainColorStyle = {
-        backgroundColor : credentialLevel == "DEV" ? 'var(--brown-color)' :
-        'var(--blue-color)',
-    }
-
     return (
-        <header className="page-head" style={mainColorStyle}>
+        <header className="page-head">
             <div className="date-time">
                 <HeadClock />
             </div>
