@@ -7,21 +7,21 @@ import numberIcon from "../assets/icons/numb1.svg";
 import advancedIcon from "../assets/icons/filter.svg";
 import searchIcon from "../assets/icons/search.svg";
 
-const Listable = ( { columns, children } ) => {
+const Listable = ( { columns, children, searchBox } ) => {
     if (!Array.isArray(columns)) {
         return;
     }
 
     const columnTemplate = columns.map(col => col.width).join(" ");
 
-    const FilterTools = ( { doAlphabetical, doNumerical, complex } ) => {
+    const FilterTools = ( { doAlphabetical, doNumerical, complex, searchBox } ) => {
         // TODO complex
 
         return (
             <>
                 <div className="search-bar">
                     <img src={searchIcon} alt="Buscar" title="Buscar" className="w-icon"/>
-                    <input type="search" />
+                    {searchBox}
                 </div>
                 {doAlphabetical &&
                     <Tool>
@@ -43,7 +43,7 @@ const Listable = ( { columns, children } ) => {
     return (
         <div className="listable">
             <div className="filters">
-                <FilterTools doAlphabetical={"true"} doNumerical={"true"}/>
+                <FilterTools doAlphabetical={"true"} doNumerical={"true"} searchBox={searchBox}/>
             </div>
 
             <div className="elements-table">

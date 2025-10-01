@@ -46,6 +46,21 @@ const Home = () => {
 
   useEffect(() => { load(); }, [q]);
 
+  const onSearch = (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    setSp({ q: e.target.value || "" });
+  };
+
+  const searchBox = <input
+                      className="search-box"
+                      type="search"
+                      name="q"
+                      placeholder="Buscar por carnet o nombre"
+                      defaultValue={q}
+                      onKeyDown={onSearch}
+                    />
+
   return (
     <>
         <PageHead icons={iconList}/>
@@ -55,7 +70,7 @@ const Home = () => {
               <Tool key={"Tool" + 2}> <img src={Add} alt="Añadir estudiante" title="Añadir estudiante"/> </Tool>
               <Tool key={"Tool" + 3}> <img src={MassRemove} alt="Remover multipels registros" title="Remover multiples registros"/> </Tool>
             </div>
-            <Listable columns={columns}>
+            <Listable columns={columns} searchBox={searchBox}>
               {rows.map((st) => (
                 <div className="listable-row" key={st.id}>
                   <div className="cb">
