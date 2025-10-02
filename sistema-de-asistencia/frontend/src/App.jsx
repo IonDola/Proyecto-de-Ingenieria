@@ -1,13 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from './pages/auth/Login';
-import StudentsHome   from "./pages/students/StudentsHome";
-import StudentsList   from "./pages/students/StudentsList";
-import StudentForm    from "./pages/students/StudentForm";
-import StudentDetail  from "./pages/students/StudentDetail";
-import HistoryList    from "./pages/students/HistoryList";
-import HistoryDetail  from "./pages/students/HistoryDetail";
-import Home from "./pages/home/Home"
+import StudentsHome from "./pages/students/StudentsHome";
+import StudentsList from "./pages/students/StudentsList";
+import StudentForm from "./pages/students/StudentForm";
+import StudentDetail from "./pages/students/StudentDetail";
+import HistoryList from "./pages/students/HistoryList";
+import HistoryDetail from "./pages/students/HistoryDetail";
+import Home from "./pages/home/Home";
+import InTest from "./pages/registers/enter";
 
 export default function App() {
   const isAuth = true; // por ahora, cuando Ion cierre login, reemplazar por estado real
@@ -31,7 +32,7 @@ export default function App() {
 
         </Routes>
       </Router>
-      </div>
+    </div>
 
   );
 }
