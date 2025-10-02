@@ -1,93 +1,50 @@
-import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import "../../styles/main.css"
+import { Link } from "react-router-dom";
+
 import PageHead from "../../components/PageHead"
-import Listable from "../../components/Listable"
 import Tool  from "../../components/PageTool" 
 
 import StudentIcon from "../../assets/icons/student.svg"
-import StudentProfile from "../../assets/icons/student_profiles.svg"
-import ViewProfile from "../../assets/icons/descripcion-general.svg"
-import Home1 from "../../assets/icons/home.svg"
-import Add from "../../assets/icons/new_person.svg"
-import MassRemove from "../../assets/icons/massive_delete.svg"
+import UserIcon from "../../assets/icons/user.svg"
+import DataBaseIcon from "../../assets/icons/data-base.svg"
+import LogsIcon from "../../assets/icons/log.svg"
+
 const Home = () => {
-
-    const iconList = [
-      {
-        id: 1,
-        image: StudentIcon,
-        description: "Estudiantes"
-      },
-      {
-        id: 2,
-        image: StudentProfile,
-        description: "Perfiles"
-      },
-    ];
-
-    const columns = [
-      {name : "", width: "100px"}, // Seleccionado
-      {name : "Carnet", width: "1fr"},
-      {name : "Nombre", width: "1fr"},
-      {name : "", width: "100px"}, // Revisar perfil
-    ];
-    
-  const [rows, setRows] = useState([]);
-  const [sp, setSp] = useSearchParams();
-  const q = sp.get("q") || "";
-
-  const load = () => {
-    fetch(`/api/students/?q=${encodeURIComponent(q)}`)
-      .then((r) => r.json())
-      .then((d) => setRows(d.results || []))
-      .catch(() => setRows([]));
-  };
-
-  useEffect(() => { load(); }, [q]);
-
-  const onSearch = (e) => {
-    if (e.key !== "Enter") return;
-    e.preventDefault();
-    setSp({ q: e.target.value || "" });
-  };
-
-  const searchBox = <input
-                      className="search-box"
-                      type="search"
-                      name="q"
-                      placeholder="Buscar por carnet o nombre"
-                      defaultValue={q}
-                      onKeyDown={onSearch}
-                    />
-
   return (
     <>
-        <PageHead icons={iconList}/>
-        <main>
-            <div className="tools">
-              <Tool key={"Tool" + 1}> <img src={Home1} alt="Volver a menu Home" title="Volver a menu Home"/> </Tool>
-              <Tool key={"Tool" + 2}> <img src={Add} alt="Añadir estudiante" title="Añadir estudiante"/> </Tool>
-              <Tool key={"Tool" + 3}> <img src={MassRemove} alt="Remover multipels registros" title="Remover multiples registros"/> </Tool>
+      <PageHead name={"Developer"}/>
+      <main style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+        <div id="home-tools" className="big-tools">
+          <div>
+            <Tool>
+              <Link to={"/students"}>
+                <img src={StudentIcon} alt=""  className="w-icon"/>
+                <p>Estudiantes</p>    
+              </Link>
+            </Tool>
+          </div>
+          <div>
+            <Tool>
+              <img src={UserIcon} alt=""  className="w-icon"/>
+              <p>Usuarios</p>
+            </Tool>
+          </div>
+          <div id="halved">
+            <div style={{gridRow:"1"}}>
+              <Tool>
+                <img src={DataBaseIcon} alt=""  className="w-icon"/>
+                <p>Seguridad y Respaldo</p>
+              </Tool>
             </div>
-            <Listable columns={columns} searchBox={searchBox}>
-              {rows.map((st) => (
-                <div className="listable-row" key={st.id}>
-                  <div className="cb">
-                    <input type="checkbox" />
-                  </div>
-                  <div>
-                    {st.id_mep}
-                  </div>
-                  <div>
-                    {st.first_name + " " + st.last_name}
-                  </div>
-                    <button><img src={ViewProfile} alt="" className="w-icon"/></button>
-                </div>
-              ))}
-            </Listable>
-        </main>
+            <div style={{gridRow:"2"}}>
+                <Tool>
+                  <img src={LogsIcon} alt=""  className="w-icon"/>
+                <p>Bitacora</p>
+              </Tool>
+            </div>
+          </div>
 
+        </div>
+      </main>
     </>
   );
 };

@@ -1,8 +1,38 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../../components/Layout";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import "../../styles/main.css"
+import PageHead from "../../components/PageHead"
+import Listable from "../../components/Listable"
+import Tool  from "../../components/PageTool" 
+
+import StudentIcon from "../../assets/icons/student.svg"
+import StudentProfile from "../../assets/icons/student_profiles.svg"
+import ViewProfile from "../../assets/icons/descripcion-general.svg"
+import Home from "../../assets/icons/home.svg"
+import Add from "../../assets/icons/new_person.svg"
+import MassRemove from "../../assets/icons/massive_delete.svg"
 
 export default function StudentsList() {
+    const iconList = [
+      {
+        id: 1,
+        image: StudentIcon,
+        description: "Estudiantes"
+      },
+      {
+        id: 2,
+        image: StudentProfile,
+        description: "Perfiles"
+      },
+    ];
+
+    const columns = [
+      {name : "", width: "100px"}, // Seleccionado
+      {name : "Carnet", width: "1fr"},
+      {name : "Nombre", width: "1fr"},
+      {name : "", width: "100px"}, // Revisar perfil
+    ];
+    
   const [rows, setRows] = useState([]);
   const [sp, setSp] = useSearchParams();
   const q = sp.get("q") || "";
@@ -17,55 +47,59 @@ export default function StudentsList() {
   useEffect(() => { load(); }, [q]);
 
   const onSearch = (e) => {
+    if (e.key !== "Enter") return;
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    setSp({ q: fd.get("q") || "" });
+    setSp({ q: e.target.value || "" });
   };
 
+  const searchBox = <input
+                      className="search-box"
+                      type="search"
+                      name="q"
+                      placeholder="Buscar por carnet o nombre"
+                      defaultValue={q}
+                      onKeyDown={onSearch}
+                    />
+
   return (
-    <Layout>
-      <div className="card">
-        <form className="searchbar" onSubmit={onSearch}>
-          <img className="big-ico" src="/icons/search.svg" alt="Buscar" />
-          <input
-            className="search-input"
-            name="q"
-            placeholder="Buscar por carnet o nombre"
-            defaultValue={q}
-          />
-          <button className="btn" type="submit">Buscar</button>
-          <Link className="btn ghost" to="/students/new">+ Nuevo</Link>
-        </form>
-
-        <div className="table">
-          <div className="thead">
-            <div className="th chk"></div>
-            <div className="th">Carnet</div>
-            <div className="th">Nombre</div>
-            <div className="th act"></div>
-          </div>
-
-          {rows.length === 0 && <div className="row empty">Sin datos</div>}
-
-          {rows.map((s) => (
-            <div className="row" key={s.id}>
-              <div className="td chk">
-                <input type="checkbox" aria-label={`Seleccionar ${s.id_mep}`} />
-              </div>
-              <div className="td mono">{s.id_mep}</div>
-              <div className="td">{s.last_name}, {s.first_name}</div>
-              <div className="td act">
-                <Link className="icon-btn" to={`/students/${s.id}`} title="Ver">
-                  <img className="icon" src="/icons/student_profiles.svg" alt="Ver" />
+    <>
+        <PageHead icons={iconList}/>
+        <main>
+            <div className="tools">
+              <Tool key={"Tool" + 1}> 
+                <Link to={"/home"}>
+                  <img src={Home} alt="Volver a menu Home" title="Volver a menu Home" className="w-icon"/> 
                 </Link>
-                <Link className="icon-btn" to={`/students/${s.id}/edit`} title="Editar">
-                  <img className="icon" src="/icons/edit.svg" alt="Editar" />
-                </Link>
-              </div>
+              </Tool>
+              <Tool key={"Tool" + 2}> 
+                <Link to="/students/new" target="_blank"> 
+                  <img src={Add} alt="Añadir estudiante" title="Añadir estudiante" className="w-icon"/> 
+                </Link> 
+              </Tool>
+              {/* TODO */}
+              <Tool key={"Tool" + 3}> 
+                <img src={MassRemove} alt="Remover multipels registros" title="Remover multiples registros" className="w-icon"/> 
+              </Tool>
             </div>
-          ))}
-        </div>
-      </div>
-    </Layout>
+            <Listable columns={columns} searchBox={searchBox}>
+              {rows.map((st) => (
+                <div className="listable-row" key={st.id}>
+                  <div className="cb">
+                    <input type="checkbox" />
+                  </div>
+                  <div>
+                    {st.id_mep}
+                  </div>
+                  <div>
+                    {st.first_name + " " + st.last_name}
+                  </div>
+                  {/* Pendiente: ver el perfil */}
+                    <button><img src={ViewProfile} alt="" className="w-icon"/></button>
+                </div>
+              ))}
+            </Listable>
+        </main>
+
+    </>
   );
 }

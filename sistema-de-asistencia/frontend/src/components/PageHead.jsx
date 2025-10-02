@@ -33,6 +33,17 @@ const PageHead = ( { name, credential, icons } ) => {
     };
 
     const HeadName = ( { name, icons } ) => {
+        if (!Array.isArray(icons)) {
+            console.log("Los iconos deben ser una lista almenos vacia");
+            return;
+        }
+
+        if (name && icons.length == 1){
+            // TODO
+            console.log("Not implemented")
+            return;
+        }
+
         if (name) {
             return (
                 <>
@@ -42,10 +53,6 @@ const PageHead = ( { name, credential, icons } ) => {
             );
         }
 
-        if (!Array.isArray(icons)) {
-            console.log("Los iconos deben ser una lista de almenos un");
-            return;
-        }
         return (
             <div className="head-icons">
                 <img
