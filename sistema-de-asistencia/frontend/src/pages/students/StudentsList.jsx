@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import "../../styles/main.css"
 import PageHead from "../../components/PageHead"
 import Listable from "../../components/Listable"
-import Tool  from "../../components/PageTool" 
+import Tool from "../../components/PageTool"
 
 import StudentIcon from "../../assets/icons/student.svg"
 import StudentProfile from "../../assets/icons/student_profiles.svg"
@@ -13,26 +13,26 @@ import Add from "../../assets/icons/new_person.svg"
 import MassRemove from "../../assets/icons/massive_delete.svg"
 
 export default function StudentsList() {
-    const iconList = [
-      {
-        id: 1,
-        image: StudentIcon,
-        description: "Estudiantes"
-      },
-      {
-        id: 2,
-        image: StudentProfile,
-        description: "Perfiles"
-      },
-    ];
+  const iconList = [
+    {
+      id: 1,
+      image: StudentIcon,
+      description: "Estudiantes"
+    },
+    {
+      id: 2,
+      image: StudentProfile,
+      description: "Perfiles"
+    },
+  ];
 
-    const columns = [
-      {name : "", width: "100px"}, // Seleccionado
-      {name : "Carnet", width: "1fr"},
-      {name : "Nombre", width: "1fr"},
-      {name : "", width: "100px"}, // Revisar perfil
-    ];
-    
+  const columns = [
+    { name: "", width: "100px" }, // Seleccionado
+    { name: "Carnet", width: "1fr" },
+    { name: "Nombre", width: "1fr" },
+    { name: "", width: "100px" }, // Revisar perfil
+  ];
+
   const [rows, setRows] = useState([]);
   const [sp, setSp] = useSearchParams();
   const q = sp.get("q") || "";
@@ -53,13 +53,13 @@ export default function StudentsList() {
   };
 
   const searchBox = <input
-                      className="search-box"
-                      type="search"
-                      name="q"
-                      placeholder="Buscar por carnet o nombre"
-                      defaultValue={q}
-                      onKeyDown={onSearch}
-                    />
+    className="search-box"
+    type="search"
+    name="q"
+    placeholder="Buscar por carnet o nombre"
+    defaultValue={q}
+    onKeyDown={onSearch}
+  />
 
   return (
     <>
@@ -93,7 +93,6 @@ export default function StudentsList() {
                   <div>
                     {st.first_name + " " + st.last_name}
                   </div>
-                  {/* Pendiente: ver el perfil */}
                   <Link to={`/students/profiles/${st.id}`} target="_blank">
                     <button><img src={ViewProfile} alt="Ver perfil" className="w-icon"/></button>
                   </Link>
@@ -101,7 +100,6 @@ export default function StudentsList() {
               ))}
             </Listable>
         </main>
-
     </>
   );
 }
