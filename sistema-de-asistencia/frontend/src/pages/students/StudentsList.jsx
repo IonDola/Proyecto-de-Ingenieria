@@ -72,7 +72,7 @@ export default function StudentsList() {
                 </Link>
               </Tool>
               <Tool key={"Tool" + 2}> 
-                <Link to="/students/new" target="_blank"> 
+                <Link to="/students/profiles/new" target="_blank"> 
                   <img src={Add} alt="Añadir estudiante" title="Añadir estudiante" className="w-icon"/> 
                 </Link> 
               </Tool>
