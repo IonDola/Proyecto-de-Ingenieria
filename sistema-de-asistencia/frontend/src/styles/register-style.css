@@ -1,0 +1,92 @@
+#register {
+    margin-right: 25px;
+    background-color: var(--main-color);
+    font-weight: bolder;
+    font-family: inherit;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+#carnet {
+    margin: 30px;
+    display: grid;
+    grid-template-columns: 1fr 150px 150px;
+    column-gap: 20px;
+    height: 40px;
+    font-family: inherit;
+}
+
+#inpt {
+    background-color: var(--white-transparent);
+    display: grid;
+    grid-template-columns: 50px 0.9fr;
+    border: 1px solid black;
+    align-items: center;
+    border-radius: 5px;
+}
+
+#inpt label {
+    margin-left: 5px;
+    font-size: 16pt;
+}
+
+#inpt input[type="text"] {
+    background-color: transparent;
+    border: none;
+    margin-left: 40px;
+    height: 40px;
+    font-size: 16pt;
+}
+
+#inpt input[type="text"]:focus {
+    outline: none;
+}
+
+#carnet div:not(#inpt) {
+    display: flex;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+#carnet button {
+    font-size: 12pt;
+    color: white;
+    background-color: var(--brown-color);
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+#carnet button:hover {
+    cursor: pointer;
+}
+
+.st-h {
+    background-color: var(--brown-color);
+    color: white;
+    font-size: 16pt;
+    height: 30px;
+}
+
+.st-h p {
+    margin: 30px;
+    margin-top: 5px;
+}
+
+#st-table {
+    margin: 30px;
+    font-family: inherit;
+}
+
+.st-data {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: var(--white-transparent);
+    padding: 10px;
+}
+
+.st-data:nth-child(odd) {
+    background-color: var(--white-very-transparent);
+}
