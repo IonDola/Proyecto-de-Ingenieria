@@ -41,7 +41,7 @@ export default function HistoryList() {
           ))}
         </div>
         <div className="actions-inline">
-          <Link className="btn ghost" to={`/students/${student.id}`}> Volver</Link>
+          <Link className="btn ghost" to={`/students/profiles/${student.id}`}> Volver</Link>
         </div>
       </div>
     </Layout>

@@ -9,9 +9,16 @@ export default function StudentDetail() {
 
   useEffect(() => {
     fetch(`/api/students/${id}/`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) {
+          return r.text().then(text => {
+            throw new Error(text || `Error ${r.status}`);
+          });
+        }
+        return r.json();
+      })
       .then(setS)
-      .catch(() => setErr("No se pudo cargar el estudiante"));
+      .catch((e) => setErr(`No se pudo cargar el estudiante: ${e.message}`));
   }, [id]);
 
   const Title = () =>
@@ -55,9 +62,9 @@ export default function StudentDetail() {
 
         <div className="section-header">Acciones</div>
         <div className="actions-inline">
-          <Link className="btn" to={`/students/${s.id}/edit`}> Editar</Link>
-          <Link className="btn ghost" to={`/students/${s.id}/history`}> Ver historial</Link>
-          <Link className="btn ghost" to="/students">↩ Volver</Link>
+          <Link className="btn" to={`/students/profiles/${id}/edit`}> Editar</Link>
+          <Link className="btn ghost" to={`/students/profiles/${id}/history`}> Ver historial</Link>
+          <Link className="btn ghost" to="/students/profiles"> Volver</Link>
         </div>
       </div>
     </Layout>

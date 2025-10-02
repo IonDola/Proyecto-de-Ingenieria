@@ -72,7 +72,7 @@ export default function StudentsList() {
                 </Link>
               </Tool>
               <Tool key={"Tool" + 2}> 
-                <Link to="/students/new" target="_blank"> 
+                <Link to="/students/profiles/new" target="_blank"> 
                   <img src={Add} alt="Añadir estudiante" title="Añadir estudiante" className="w-icon"/> 
                 </Link> 
               </Tool>
@@ -94,7 +94,9 @@ export default function StudentsList() {
                     {st.first_name + " " + st.last_name}
                   </div>
                   {/* Pendiente: ver el perfil */}
-                    <button><img src={ViewProfile} alt="" className="w-icon"/></button>
+                  <Link to={`/students/profiles/${st.id}`} target="_blank">
+                    <button><img src={ViewProfile} alt="Ver perfil" className="w-icon"/></button>
+                  </Link>
                 </div>
               ))}
             </Listable>
