@@ -8,6 +8,7 @@ import StudentDetail  from "./pages/students/StudentDetail";
 import HistoryList    from "./pages/students/HistoryList";
 import HistoryDetail  from "./pages/students/HistoryDetail";
 import Home from "./pages/home/Home"
+import InTest from "./pages/registers/enter"
 
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/test" element={<InTest />} />
 
           <Route path="/students" element={isAuth ? <StudentsHome /> : <Navigate to="/login" />} />
           <Route path="/students/profiles" element={isAuth ? <StudentsList /> : <Navigate to="/login" />} />
@@ -29,7 +31,7 @@ export default function App() {
           <Route path="/students/profiles/:id/history" element={isAuth ? <HistoryList /> : <Navigate to="/login" />} />
           <Route path="/actions/:actionId" element={isAuth ? <HistoryDetail /> : <Navigate to="/login" />} />
 
-          <Route path="*" element={<Navigate to="/home" replace />} />
+          <Route path="*" element={<Navigate to="/test" replace />} />
         </Routes>
       </Router>
       </div>
