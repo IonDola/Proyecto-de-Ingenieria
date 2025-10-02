@@ -26,13 +26,24 @@ const PageHead = ( { name, credential, icons } ) => {
         
         return (
             <>
+                <p>{date.toLocaleTimeString('en-US', {hour12: true})}</p>
                 <p>{date.toLocaleDateString()}</p>
-                <p>{date.toLocaleTimeString()}</p>
             </>
         );
     };
 
     const HeadName = ( { name, icons } ) => {
+        if (!Array.isArray(icons)) {
+            console.log("Los iconos deben ser una lista almenos vacia");
+            return;
+        }
+
+        if (name && icons.length == 1){
+            // TODO
+            console.log("Not implemented")
+            return;
+        }
+
         if (name) {
             return (
                 <>
@@ -42,10 +53,6 @@ const PageHead = ( { name, credential, icons } ) => {
             );
         }
 
-        if (!Array.isArray(icons)) {
-            console.log("Los iconos deben ser una lista de almenos un");
-            return;
-        }
         return (
             <div className="head-icons">
                 <img
@@ -109,13 +116,8 @@ const PageHead = ( { name, credential, icons } ) => {
         );
     };
 
-    const mainColorStyle = {
-        backgroundColor : credentialLevel == "DEV" ? 'var(--brown-color)' :
-        'var(--blue-color)',
-    }
-
     return (
-        <header className="page-head" style={mainColorStyle}>
+        <header className="page-head">
             <div className="date-time">
                 <HeadClock />
             </div>

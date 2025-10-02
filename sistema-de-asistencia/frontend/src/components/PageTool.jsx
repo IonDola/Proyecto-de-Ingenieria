@@ -1,7 +1,7 @@
 const PageTool = ( { children } ) => {
     // TODO
     return (
-        <button className="pageTool">
+        <button className="page-tool">
             {children}
         </button>
     );

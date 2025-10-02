@@ -1,72 +1,52 @@
-import "../../styles/main.css"
-import PageHead from "../../components/PageHead"
-import Listable from "../../components/Listable"
-import Tool  from "../../components/PageTool" 
 import { Link } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+
+import PageHead from "../../components/PageHead"
+import Tool  from "../../components/PageTool" 
 
 import StudentIcon from "../../assets/icons/student.svg"
-import StudentProfile from "../../assets/icons/student_profiles.svg"
+import UserIcon from "../../assets/icons/user.svg"
+import DataBaseIcon from "../../assets/icons/data-base.svg"
+import LogsIcon from "../../assets/icons/log.svg"
+
 const Home = () => {
-    const [rows, setRows] = useState([]);
-
-    const iconList = [
-      {
-        id: 1,
-        image: StudentIcon,
-        description: "Estudiantes"
-      },
-      {
-        id: 2,
-        image: StudentProfile,
-        description: "Perfiles"
-      },
-    ];
-
-    const columns = [
-      {name : "", width: "50px"}, // Seleccionado
-      {name : "Carnet", width: "1fr"},
-      {name : "Nombre", width: "1fr"},
-      {name : "", width: "50px"}, // Revisar perfil
-    ];
-
-    useEffect(() => {
-      fetch("/api/students/")
-        .then(res => res.json())
-        .then(data => setRows(data.results || []))
-        .catch(() => setRows([]));
-    }, []);
-
-    return (
+  return (
     <>
-        <PageHead icons={iconList}/>
-        <main>
-            <div className="tools">
-              <Tool key={"Tool" + 1}> Home </Tool>
-              <Link to="/students/new" className="tool-link" style={{ display: "contents" }}>
-                <Tool key={"Tool" + 2}> Añadir </Tool>
+      <PageHead name={"Developer"}/>
+      <main style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+        <div id="home-tools" className="big-tools">
+          <div>
+            <Tool>
+              <Link to={"/students"}>
+                <img src={StudentIcon} alt=""  className="w-icon"/>
+                <p>Estudiantes</p>    
               </Link>
-              <Tool key={"Tool" + 3}> Eliminar </Tool>
+            </Tool>
+          </div>
+          <div>
+            <Tool>
+              <img src={UserIcon} alt=""  className="w-icon"/>
+              <p>Usuarios</p>
+            </Tool>
+          </div>
+          <div id="halved">
+            <div style={{gridRow:"1"}}>
+              <Tool>
+                <img src={DataBaseIcon} alt=""  className="w-icon"/>
+                <p>Seguridad y Respaldo</p>
+              </Tool>
             </div>
-            <Listable columns={columns}>
-              {rows.length === 0 ? (
-                <div className="empty" style={{gridColumn: '1 / -1'}}>Sin datos</div>
-              ) : (
-                rows.map(s => (
-                  <React.Fragment key={s.id}>
-                    <div><input type="checkbox" /></div>
-                    <div>{s.id_mep}</div>
-                    <div>{`${s.last_name}, ${s.first_name}`}</div>
-                    <div>
-                      {/* ícono de perfil eliminado */}
-                    </div>
-                  </React.Fragment>
-                ))
-              )}
-            </Listable>
-        </main>
+            <div style={{gridRow:"2"}}>
+                <Tool>
+                  <img src={LogsIcon} alt=""  className="w-icon"/>
+                <p>Bitacora</p>
+              </Tool>
+            </div>
+          </div>
+
+        </div>
+      </main>
     </>
-    );
+  );
 };
 
 export default Home;
