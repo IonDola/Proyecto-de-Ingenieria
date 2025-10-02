@@ -8,8 +8,6 @@ import StudentDetail  from "./pages/students/StudentDetail";
 import HistoryList    from "./pages/students/HistoryList";
 import HistoryDetail  from "./pages/students/HistoryDetail";
 import Home from "./pages/home/Home"
-import InTest from "./pages/registers/enter"
-
 
 export default function App() {
   const isAuth = true; // por ahora, cuando Ion cierre login, reemplazar por estado real
@@ -31,7 +29,6 @@ export default function App() {
           <Route path="/students/profiles/:id/history" element={isAuth ? <HistoryList /> : <Navigate to="/login" />} />
           <Route path="/actions/:actionId" element={isAuth ? <HistoryDetail /> : <Navigate to="/login" />} />
 
-          <Route path="*" element={<Navigate to="/test" replace />} />
         </Routes>
       </Router>
       </div>

@@ -63,44 +63,43 @@ export default function StudentsList() {
 
   return (
     <>
-      <PageHead icons={iconList} />
-      <main>
-        <div className="tools">
-          <Tool key={"Tool" + 1}>
-            <Link to={"/home"}>
-              <img src={Home} alt="Volver a menu Home" title="Volver a menu Home" className="w-icon" />
-            </Link>
-          </Tool>
-          <Tool key={"Tool" + 2}>
-            <Link to="/students/profiles/new" target="_blank">
-              <img src={Add} alt="Añadir estudiante" title="Añadir estudiante" className="w-icon" />
-            </Link>
-          </Tool>
-          {/* TODO */}
-          <Tool key={"Tool" + 3}>
-            <img src={MassRemove} alt="Remover multipels registros" title="Remover multiples registros" className="w-icon" />
-          </Tool>
-        </div>
-        <Listable columns={columns} searchBox={searchBox}>
-          {rows.map((st) => (
-            <div className="listable-row" key={st.id}>
-              <div className="cb">
-                <input type="checkbox" />
-              </div>
-              <div>
-                {st.id_mep}
-              </div>
-              <div>
-                {st.first_name + " " + st.last_name}
-              </div>
-              <Link to={`/students/profiles/${st.id}`} target="_blank">
-                <button><img src={ViewProfile} alt="" className="w-icon" /></button>
-              </Link>
+        <PageHead icons={iconList}/>
+        <main>
+            <div className="tools">
+              <Tool key={"Tool" + 1}> 
+                <Link to={"/home"}>
+                  <img src={Home} alt="Volver a menu Home" title="Volver a menu Home" className="w-icon"/> 
+                </Link>
+              </Tool>
+              <Tool key={"Tool" + 2}> 
+                <Link to="/students/profiles/new" target="_blank"> 
+                  <img src={Add} alt="Añadir estudiante" title="Añadir estudiante" className="w-icon"/> 
+                </Link> 
+              </Tool>
+              {/* TODO */}
+              <Tool key={"Tool" + 3}> 
+                <img src={MassRemove} alt="Remover multipels registros" title="Remover multiples registros" className="w-icon"/> 
+              </Tool>
             </div>
-          ))}
-        </Listable>
-      </main>
-
+            <Listable columns={columns} searchBox={searchBox}>
+              {rows.map((st) => (
+                <div className="listable-row" key={st.id}>
+                  <div className="cb">
+                    <input type="checkbox" />
+                  </div>
+                  <div>
+                    {st.id_mep}
+                  </div>
+                  <div>
+                    {st.first_name + " " + st.last_name}
+                  </div>
+                  <Link to={`/students/profiles/${st.id}`} target="_blank">
+                    <button><img src={ViewProfile} alt="Ver perfil" className="w-icon"/></button>
+                  </Link>
+                </div>
+              ))}
+            </Listable>
+        </main>
     </>
   );
 }

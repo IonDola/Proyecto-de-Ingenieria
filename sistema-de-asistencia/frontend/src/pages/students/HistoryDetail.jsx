@@ -30,7 +30,7 @@ export default function HistoryDetail() {
           <div className="cell value">{a.actor || "—"}</div>
         </div>
         <div className="actions-inline">
-          <Link className="btn ghost" to={`/students/${a.student_id}/history`}>↩ Volver</Link>
+          <Link className="btn ghost" to={`/students/${a.student_id}/history`}> Volver</Link>
         </div>
       </div>
     </Layout>
