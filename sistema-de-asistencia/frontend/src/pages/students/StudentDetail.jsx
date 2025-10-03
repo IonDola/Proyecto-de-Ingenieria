@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../components/Layout";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import ActionModal from "../../components/ActionModal";
 
 export default function StudentDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [s, setS] = useState(null);
   const [err, setErr] = useState("");
+  const [showActionModal, setShowActionModal] = useState(false);
 
   useEffect(() => {
     fetch(`/api/students/${id}/`)
       .then((r) => {
         if (!r.ok) {
-          return r.text().then(text => {
-            throw new Error(text || `Error ${r.status}`);
-          });
+          return r.text().then(text => { throw new Error(text || `Error ${r.status}`); });
         }
         return r.json();
       })
@@ -39,6 +40,11 @@ export default function StudentDetail() {
     );
   }
 
+  const onCreated = () => {
+    // después de crear, vamos al historial
+    navigate(`/students/profiles/${id}/history`);
+  };
+
   return (
     <Layout rightHeader={<Title />}>
       <div className="card">
@@ -62,11 +68,20 @@ export default function StudentDetail() {
 
         <div className="section-header">Acciones</div>
         <div className="actions-inline">
-          <Link className="btn" to={`/students/profiles/${id}/edit`}> Editar</Link>
+          <button className="btn" onClick={() => setShowActionModal(true)}>Nueva acción</button>
+          <Link className="btn ghost" to={`/students/profiles/${id}/edit`}> Editar perfil</Link>
           <Link className="btn ghost" to={`/students/profiles/${id}/history`}> Ver historial</Link>
           <Link className="btn ghost" to="/students/profiles"> Volver</Link>
         </div>
       </div>
+
+      {showActionModal && (
+        <ActionModal
+          studentId={id}
+          onClose={() => setShowActionModal(false)}
+          onSuccess={onCreated}
+        />
+      )}
     </Layout>
   );
 }

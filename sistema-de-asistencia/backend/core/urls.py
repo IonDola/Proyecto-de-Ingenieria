@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.http import JsonResponse 
+from django.http import JsonResponse
 
-def api_ping(_request):              
+def api_ping(_request):
     return JsonResponse({"ok": True, "src": "django"})
 
 urlpatterns = [

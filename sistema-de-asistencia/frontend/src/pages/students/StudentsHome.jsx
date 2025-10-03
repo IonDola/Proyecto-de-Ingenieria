@@ -38,7 +38,7 @@ const StudentsHome = () => {
                 </div>
                 <div>
                     <Tool>
-                    <Link to={"/students/profiles"}>
+                    <Link to={"/students/actions"}>
                         <img src={StudentActions} alt=""  className="w-icon"/>
                         <p>Acciones</p>    
                     </Link>

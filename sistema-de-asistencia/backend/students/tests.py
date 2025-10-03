@@ -1,6 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
-from students.models import Student
+from students.models import Student, Action
+from django.utils import timezone
+import json
+from uuid import uuid4
 
 class StudentCreateTests(TestCase):
     def test_create_student_success(self):
@@ -47,3 +50,28 @@ class StudentEditTests(TestCase):
         self.assertEqual(r.status_code, 200)
         self.st.refresh_from_db()
         self.assertEqual(self.st.last_name, "L.")
+
+class ActionsApiTests(TestCase):
+    def setUp(self):
+        self.st = Student.objects.create(id_mep="999", first_name="Test", last_name="Alumno", section="1-1")
+
+    def test_create_transferencia(self):
+        url = f"/api/students/{self.st.pk}/actions/new/"
+        r = self.client.post(url, data=json.dumps({"type":"transferencia","notes":"cambio centro"}), content_type="application/json")
+        self.assertEqual(r.status_code, 201)
+        self.assertTrue(Action.objects.filter(student=self.st, type="transferencia").exists())
+
+    def test_update_action(self):
+        a = Action.objects.create(student=self.st, type="ingreso", notes="")
+        url = f"/api/actions/{a.pk}/update/"
+        r = self.client.patch(url, data=json.dumps({"notes":"ajuste"}), content_type="application/json")
+        self.assertEqual(r.status_code, 200)
+        a.refresh_from_db()
+        self.assertEqual(a.notes, "ajuste")
+
+    def test_delete_action(self):
+        a = Action.objects.create(student=self.st, type="egreso", notes="")
+        url = f"/api/actions/{a.pk}/delete/"
+        r = self.client.delete(url)
+        self.assertEqual(r.status_code, 200)
+        self.assertFalse(Action.objects.filter(pk=a.pk).exists())
