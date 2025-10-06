@@ -3,7 +3,7 @@
   --blue-color: #486589;
   --brown-color: #BA9161;
   --white-transparent: #ffffffcc;
-  --white-kinda-transparent: #ffffff77;
+  --white-kinda-transparent: #ffffff99;
   --white-very-transparent: #ffffff22;
 }
 
@@ -95,4 +95,22 @@ body,
   border-radius: 10px;
   background-color: var(--light-blue-color);
   color: black;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--white-very-transparent);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--brown-color);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--light-blue-color);
 }

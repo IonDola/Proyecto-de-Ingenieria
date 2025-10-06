@@ -1,3 +1,8 @@
+:root {
+    --rev-yellow: #FFDE59;
+    --rev-green: #31FF5F;
+}
+
 #register {
     margin-right: 25px;
     background-color: var(--main-color);
@@ -5,6 +10,10 @@
     font-family: inherit;
     border-radius: 5px;
     border: 1px solid black;
+
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #carnet {
@@ -66,7 +75,8 @@
     background-color: var(--brown-color);
     color: white;
     font-size: 16pt;
-    height: 30px;
+    height: 40px;
+    align-content: center;
 }
 
 .st-h p {
@@ -88,5 +98,24 @@
 }
 
 .st-data:nth-child(odd) {
-    background-color: var(--white-very-transparent);
+    background-color: var(--white-kinda-transparent);
+}
+
+.st-data input {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bolder;
+    color: black;
+    border: none;
+    background-color: var(--white-kinda-transparent);
+}
+
+.st-data input:read-only {
+    color: var(--blue-color);
+    background-color: transparent;
+}
+
+.action-icon {
+    width: 60px;
+    height: 60px;
 }

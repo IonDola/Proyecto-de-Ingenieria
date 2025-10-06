@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import PageHead from "../../components/PageHead"
 import StForm from "../../components/RegisterForm"
+import { formatRegister } from "../../components/RegisterFormat"
 
 import StudentIcon from "../../assets/icons/student.svg"
 import StudentActions from "../../assets/icons/student_registers.svg"
@@ -25,17 +26,72 @@ const Enter = ({ }) => {
             description: "Ingreso"
         },
     ];
-    const [register, setRegister] = useState({});
+    //const { actionId } = useParams();
+    const actionId = "90c25d99-9f8a-4360-90f0-ce7596fb87e9";
+    const [action, setAction] = useState({});
+    const [student, setStudent] = useState({});
+
+    function fetchError(err) {
+        console.error(err);
+        return;
+    };
+
     useEffect(() => {
-        fetch("/api/student/model") // <- devuelve estructura del modelo
-            .then((r) => r.json())
-            .then((data) => setRegister(data));
-    }, []);
+        if (!actionId) return;
+        const controller = new AbortController();
+
+        const fetchAction = async () => {
+            try {
+                const res = await fetch(`/api/actions/${actionId}/`, {
+                    signal: controller.signal,
+                });
+
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || `Error ${res.status}`);
+                }
+
+                const data = await res.json();
+                setAction(data);
+            } catch (err) {
+                fetchError(err);
+            }
+        };
+
+        fetchAction();
+    }, [actionId]);
+
+    useEffect(() => {
+        if (!action?.student_id) return;
+        const controller = new AbortController();
+
+        const fetchStudent = async () => {
+            try {
+                const res = await fetch(`/api/students/${action.student_id}/`, {
+                    signal: controller.signal,
+                });
+
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || `Error ${res.status}`);
+                }
+
+                const data = await res.json();
+                setStudent(data);
+            } catch (err) {
+                if (err.name !== "AbortError") fetchError(err);
+            }
+        };
+
+        fetchStudent();
+    }, [action?.student_id]);
+
+    const [register, legalGuardians, id] = formatRegister();
     return (
         <>
             <PageHead icons={iconList} />
             <main>
-                <StForm register={register}>
+                <StForm isOnRevision={true} register={register} carnet={id} legalGuardians={legalGuardians}>
 
                 </StForm>
             </main>

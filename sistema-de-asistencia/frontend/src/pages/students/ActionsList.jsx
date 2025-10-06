@@ -5,13 +5,14 @@ import PageHead from "../../components/PageHead";
 import Listable from "../../components/Listable";
 import Tool from "../../components/PageTool";
 import ActionModal from "../../components/ActionModal";
+import Home from "../../components/HomeLink";
 
-import Home from "../../assets/icons/home.svg";
 import Add from "../../assets/icons/new_doc.svg";
 import MassRemove from "../../assets/icons/massive_delete.svg";
 import ViewProfile from "../../assets/icons/descripcion-general.svg";
 import StudentActions from "../../assets/icons/student_registers.svg";
 import StudentIcon from "../../assets/icons/student.svg";
+import StateIcon from "../../assets/icons/on_revision.svg";
 
 export default function ActionsList() {
   const iconList = [
@@ -21,6 +22,7 @@ export default function ActionsList() {
 
   const columns = [
     { name: "", width: "100px" },         // checkbox
+    { name: "Estado", width: "100px" },
     { name: "Tipo", width: "140px" },
     { name: "Fecha", width: "220px" },
     { name: "Carnet", width: "1fr" },
@@ -110,21 +112,15 @@ export default function ActionsList() {
 
   return (
     <>
-      <PageHead icons={iconList}/>
+      <PageHead icons={iconList} />
       <main>
-        <div className="tools" id="lateral-fixed">
-          <Tool>
-            <Link to={"/home"}><img src={Home} alt="Volver a Home" className="w-icon" /></Link>
+        <div className="tools">
+          <Home />
+          <Tool action={() => setShowCreate(true)}>
+            <img src={Add} alt="Nueva acción" title="Nueva acción" className="w-icon" />
           </Tool>
-          <Tool>
-            <button className="page-tool" onClick={() => setShowCreate(true)}>
-              <img src={Add} alt="Nueva acción" title="Nueva acción" className="w-icon"/>
-            </button>
-          </Tool>
-          <Tool>
-            <button className="page-tool" onClick={bulkDelete} disabled={!anySelected} title="Eliminar seleccionadas">
-              <img src={MassRemove} alt="Eliminar seleccionadas" className="w-icon"/>
-            </button>
+          <Tool action={bulkDelete}>
+            <img src={MassRemove} alt="Eliminar seleccionadas" className="w-icon" />
           </Tool>
         </div>
 
@@ -132,15 +128,16 @@ export default function ActionsList() {
           {rows.map((a) => (
             <div className="listable-row" key={a.id}>
               <div className="cb">
-                <input type="checkbox" checked={!!selected[a.id]} onChange={(e)=>toggleSel(a.id, e.target.checked)} />
+                <input type="checkbox" checked={!!selected[a.id]} onChange={(e) => toggleSel(a.id, e.target.checked)} />
               </div>
+              <div><img src={StateIcon} alt="Estado" title="Estado" className="w-icon action-icon" /></div>
               <div>{a.type}</div>
               <div>{new Date(a.created_at).toLocaleString()}</div>
               <div className="mono">{a.student?.id_mep}</div>
               <div>{a.student ? `${a.student.first_name} ${a.student.last_name}` : "—"}</div>
               <div>
                 <Link to={`/actions/${a.id}`} target="_blank">
-                  <button><img src={ViewProfile} alt="Detalle" className="w-icon"/></button>
+                  <button><img src={ViewProfile} alt="Detalle" className="w-icon action-icon" /></button>
                 </Link>
               </div>
             </div>
