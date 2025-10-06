@@ -1,0 +1,44 @@
+#backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: var(--dark-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+#action-modal {
+    width: 620px;
+    background-color: var(--main-color);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 12px 40px var(--dark-overlay);
+}
+
+#form-grid {
+    background: var(--white-kinda-transparent);
+    border-radius: 8px;
+}
+
+#form-grid .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    text-align: center;
+    column-gap: 10px;
+}
+
+#form-grid .type-button {
+    background-color: var(--main-color);
+    border-radius: 25px;
+}
+
+#form-grid span {
+    font-size: 20pt;
+    font-family: inherit;
+}
+
+#form-grid button {
+    margin: 10px;
+}

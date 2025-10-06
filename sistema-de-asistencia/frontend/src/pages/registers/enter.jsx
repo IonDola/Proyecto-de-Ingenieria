@@ -1,102 +1,38 @@
-import { useEffect, useState } from "react"
-import PageHead from "../../components/PageHead"
-import StForm from "../../components/RegisterForm"
-import { formatRegister } from "../../components/RegisterFormat"
+import React, { useEffect, useState } from "react";
+import Layout from "../../components/Layout";
+import { Link, useParams } from "react-router-dom";
 
-import StudentIcon from "../../assets/icons/student.svg"
-import StudentActions from "../../assets/icons/student_registers.svg"
-import StudentEnter from "../../assets/icons/enter.svg"
-
-
-const Enter = ({ }) => {
-    const iconList = [
-        {
-            id: 1,
-            image: StudentIcon,
-            description: "Estudiantes"
-        },
-        {
-            id: 2,
-            image: StudentActions,
-            description: "Perfiles"
-        },
-        {
-            id: 3,
-            image: StudentEnter,
-            description: "Ingreso"
-        },
-    ];
-    //const { actionId } = useParams();
-    const actionId = "90c25d99-9f8a-4360-90f0-ce7596fb87e9";
-    const [action, setAction] = useState({});
-    const [student, setStudent] = useState({});
-
-    function fetchError(err) {
-        console.error(err);
-        return;
-    };
+export default function HistoryDetail() {
+    const { actionId } = useParams();
+    const [a, setA] = useState(null);
 
     useEffect(() => {
-        if (!actionId) return;
-        const controller = new AbortController();
-
-        const fetchAction = async () => {
-            try {
-                const res = await fetch(`/api/actions/${actionId}/`, {
-                    signal: controller.signal,
-                });
-
-                if (!res.ok) {
-                    const text = await res.text();
-                    throw new Error(text || `Error ${res.status}`);
-                }
-
-                const data = await res.json();
-                setAction(data);
-            } catch (err) {
-                fetchError(err);
-            }
-        };
-
-        fetchAction();
+        fetch(`/api/actions/${actionId}/`)
+            .then((r) => r.json())
+            .then(setA)
+            .catch(() => setA({ error: "No se pudo cargar la acción" }));
     }, [actionId]);
 
-    useEffect(() => {
-        if (!action?.student_id) return;
-        const controller = new AbortController();
+    if (!a) return <Layout><p>Cargando…</p></Layout>;
+    if (a.error) return <Layout><p className="error">{a.error}</p></Layout>;
 
-        const fetchStudent = async () => {
-            try {
-                const res = await fetch(`/api/students/${action.student_id}/`, {
-                    signal: controller.signal,
-                });
-
-                if (!res.ok) {
-                    const text = await res.text();
-                    throw new Error(text || `Error ${res.status}`);
-                }
-
-                const data = await res.json();
-                setStudent(data);
-            } catch (err) {
-                if (err.name !== "AbortError") fetchError(err);
-            }
-        };
-
-        fetchStudent();
-    }, [action?.student_id]);
-
-    const [register, legalGuardians, id] = formatRegister();
     return (
-        <>
-            <PageHead icons={iconList} />
-            <main>
-                <StForm isOnRevision={true} register={register} carnet={id} legalGuardians={legalGuardians}>
-
-                </StForm>
-            </main>
-        </>
+        <Layout rightHeader={<div className="right-title"> Detalle de Acción</div>}>
+            <div className="card">
+                <div className="grid">
+                    <div className="cell label">Tipo</div>
+                    <div className="cell value">{a.type}</div>
+                    <div className="cell label">Fecha</div>
+                    <div className="cell value">{new Date(a.created_at).toLocaleString()}</div>
+                    <div className="cell label">Notas</div>
+                    <div className="cell value">{a.notes || "—"}</div>
+                    <div className="cell label">Actor</div>
+                    <div className="cell value">{a.actor || "—"}</div>
+                </div>
+                <div className="actions-inline">
+                    <Link className="btn ghost" to={`/students/${a.student_id}/history`}> Volver</Link>
+                </div>
+            </div>
+        </Layout>
     );
-};
-
-export default Enter;
+}

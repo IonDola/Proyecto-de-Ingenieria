@@ -6,7 +6,7 @@ import StudentsList from "./pages/students/StudentsList";
 import StudentForm from "./pages/students/StudentForm";
 import StudentDetail from "./pages/students/StudentDetail";
 import HistoryList from "./pages/students/HistoryList";
-import HistoryDetail from "./pages/students/HistoryDetail";
+import EnterForm from "./pages/registers/EnterForm";
 import Home from "./pages/home/Home";
 import InTest from "./pages/registers/enter";
 import ActionsList from "./pages/students/ActionsList";
@@ -31,7 +31,8 @@ export default function App() {
           <Route path="/students/profiles/:id/edit" element={isAuth ? <StudentForm /> : <Navigate to="/login" />} />
 
           <Route path="/students/profiles/:id/history" element={isAuth ? <HistoryList /> : <Navigate to="/login" />} />
-          <Route path="/actions/:actionId" element={isAuth ? <HistoryDetail /> : <Navigate to="/login" />} />
+          <Route path="/actions/enter/:actionId" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
+          <Route path="/actions/enter/new" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
           <Route path="/students/actions" element={isAuth ? <ActionsList /> : <Navigate to="/login" />} />
 
           <Route path="*" element={<Navigate to="/home" replace />} />

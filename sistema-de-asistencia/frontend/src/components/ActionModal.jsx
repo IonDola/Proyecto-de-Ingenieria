@@ -1,4 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+import EnterIcon from "../assets/icons/enter.svg";
+import ExitIcon from "../assets/icons/exit.svg";
+import AbandonIcon from "../assets/icons/abandon.svg";
+
+import "../styles/dialog-style.css"
 
 export default function ActionModal({ studentId, initial = null, onClose, onSuccess }) {
   const isEdit = Boolean(initial?.id);
@@ -11,6 +18,17 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
   const [options, setOptions] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
+  const actionOptions = [
+    {
+      value: "ingreso", label: "Ingreso", content:
+        <Link to={"/actions/enter/new"}>
+          <img src={EnterIcon} alt="Ingreso" title="Ingreso" />
+        </Link>
+    },
+    { value: "egreso", label: "Egreso", content: <img src={ExitIcon} alt="Egreso" title="Egreso" /> },
+    { value: "abandono", label: "Abandono", content: <img src={AbandonIcon} alt="Abandono" title="Abandono" /> },
+  ];
+
   useEffect(() => {
     if (studentId) return;         // no hace falta buscar
     if (!q) { setOptions([]); return; }
@@ -18,7 +36,7 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
     fetch(`/api/students/?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
       .then(r => r.json())
       .then(d => setOptions(d.results || []))
-      .catch(() => {});
+      .catch(() => { });
     return () => ctrl.abort();
   }, [q, studentId]);
 
@@ -65,56 +83,25 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
   };
 
   return (
-    <div style={styles.backdrop} onClick={onClose}>
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3 style={{marginTop:0}}>{isEdit ? "Editar acción" : "Nueva acción"}</h3>
-        {msg && <p style={{ color: "#b60101" }}>{msg}</p>}
-        <form onSubmit={submit} className="form-grid">
+    <div id="backdrop" onClick={onClose}>
+      <div id="action-modal" onClick={(e) => e.stopPropagation()}>
+        <h3 style={{ marginTop: 0 }}>Nueva acción</h3>
+        <form onSubmit={submit} id="form-grid">
+          <span>Tipo</span>
+          <div className="buttons">
+            {actionOptions.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setType(opt.value)}
+                className="type-button"
+              >
+                {opt.content}
+                <span>{opt.label}</span>
+              </button>
+            ))}
+          </div>
 
-          {!studentId && !isEdit && (
-            <div className="label" style={{ gridColumn: "1 / -1" }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>Estudiante</div>
-              <input
-                className="search-input"
-                placeholder="Buscar por carnet o nombre"
-                value={q}
-                onChange={(e)=>setQ(e.target.value)}
-              />
-              <div className="card" style={{ maxHeight: 180, overflow: "auto", marginTop: 6 }}>
-                {options.map(o => (
-                  <div key={o.id}>
-                    <label style={{ display: "flex", gap: 8, alignItems: "center", cursor: "pointer" }}>
-                      <input
-                        type="radio"
-                        name="selstudent"
-                        checked={selectedStudent?.id === o.id}
-                        onChange={() => setSelectedStudent(o)}
-                      />
-                      <span className="mono">{o.id_mep}</span>
-                      <span>{o.first_name} {o.last_name}</span>
-                    </label>
-                  </div>
-                ))}
-                {q && options.length === 0 && <div>Sin resultados…</div>}
-              </div>
-            </div>
-          )}
-
-          <label className="label">Tipo
-            <select value={type} onChange={(e) => setType(e.target.value)}>
-              <option value="ingreso">Ingreso</option>
-              <option value="abandono">Abandono</option>
-              <option value="transferencia">Transferencia</option>
-              <option value="egreso">Egreso</option>
-            </select>
-          </label>
-
-          <label className="label" style={{ gridColumn: "1 / -1" }}>Notas
-            <textarea rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} />
-          </label>
-
-          <div className="actions-inline" style={{ gridColumn: "1 / -1" }}>
-            <button className="btn" type="submit">{isEdit ? "Guardar" : "Crear"}</button>
+          <div>
             <button className="btn ghost" type="button" onClick={onClose}>Cancelar</button>
           </div>
         </form>
@@ -122,8 +109,3 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
     </div>
   );
 }
-
-const styles = {
-  backdrop: { position: "fixed", inset: 0, background: "rgba(0,0,0,.35)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 },
-  modal: { width: 620, background: "#fff", borderRadius: 12, padding: 16, boxShadow: "0 12px 40px rgba(0,0,0,.25)" }
-};

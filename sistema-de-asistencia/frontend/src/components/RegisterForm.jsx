@@ -10,7 +10,8 @@ import markAsIcon from "../assets/icons/registered.svg";
 import saveIcon from "../assets/icons/save_changes.svg";
 import cancelIcon from "../assets/icons/cancel.svg";
 
-const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision, onSave, onMarkReviewed }) => {
+const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
+  guestView = false, onSave, onMarkReviewed, isNew }) => {
   const [formData, setFormData] = useState({
     register: register || {},
     carnet: carnet || {},
@@ -31,6 +32,7 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision, onSave, 
   const revStyle = {
     color: `var(${onRevision ? "--rev-yellow" : "--rev-green"})`,
     gridColumn: "3",
+
   };
 
   // ✅ Maneja cambios en inputs
@@ -46,7 +48,7 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision, onSave, 
 
   // ✅ Alternar edición
   const toggleEdit = () => {
-    if (!onRevision) return;
+    if (!onRevision || guestView) return;
     setOnEdition((prev) => !prev)
   };
 
@@ -142,7 +144,7 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision, onSave, 
   );
 
   let sideTools = baseTools;
-  if (onEdition) {
+  if (onEdition || isNew) {
     sideTools = (
       <>
         {/* Botones de acción */}
@@ -150,8 +152,8 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision, onSave, 
         <Tool key={"Tool5"}>
           <img
             src={saveIcon}
-            alt="Editar"
-            title="Editar"
+            alt="Guardar"
+            title="Guardar"
             className="w-icon"
             onClick={handleSave}
           />
@@ -159,14 +161,17 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision, onSave, 
         <Tool key={"Tool6"}>
           <img
             src={cancelIcon}
-            alt="Editar"
-            title="Editar"
+            alt="Cancelar"
+            title="Cancelar"
             className="w-icon"
             onClick={toggleEdit}
           />
         </Tool>
       </>
     );
+  }
+  if (guestView) {
+    sideTools = (<></>);
   }
 
   return (
@@ -190,10 +195,15 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision, onSave, 
               className={onEdition ? "editing" : ""}
             />
           </div>
-          <button type="button" onClick={handleValidate} style={{ gridColumn: "2" }}>
-            Verificar
-          </button>
-          <div style={revStyle}>{onRevision ? "En Revisión" : "Revisado"}</div>
+          {!guestView &&
+            <>
+              <button type="button" onClick={handleValidate} style={{ gridColumn: "2" }}>
+                Verificar
+              </button>
+              <div style={revStyle}>{onRevision ? "En Revisión" : "Revisado"}</div>
+            </>
+          }
+
         </div>
 
         <div id="st-table">

@@ -91,7 +91,7 @@ export default function ActionsList() {
   };
 
   const searchBox = (
-    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 200px" }}>
       <input
         className="search-box"
         type="search"
@@ -136,7 +136,7 @@ export default function ActionsList() {
               <div className="mono">{a.student?.id_mep}</div>
               <div>{a.student ? `${a.student.first_name} ${a.student.last_name}` : "—"}</div>
               <div>
-                <Link to={`/actions/${a.id}`} target="_blank">
+                <Link to={`/actions/enter/${a.id}`} target="_blank">
                   <button><img src={ViewProfile} alt="Detalle" className="w-icon action-icon" /></button>
                 </Link>
               </div>
