@@ -37,7 +37,9 @@ const Home = () => {
             </div>
             <div style={{gridRow:"2"}}>
                 <Tool>
-                  <img src={LogsIcon} alt=""  className="w-icon"/>
+                  <Link to="/personal">
+                    <img src={LogsIcon} alt=""  className="w-icon"/>
+                  </Link>
                 <p>Bitacora</p>
               </Tool>
             </div>

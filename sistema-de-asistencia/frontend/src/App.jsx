@@ -10,6 +10,8 @@ import EnterForm from "./pages/registers/EnterForm";
 import Home from "./pages/home/Home";
 import InTest from "./pages/registers/enter";
 import ActionsList from "./pages/students/ActionsList";
+import PersonalLog from "./pages/personal/PersonalLog";
+import PersonalLogDetail from "./pages/personal/PersonalLogDetail";
 
 export default function App() {
   const isAuth = true; // por ahora, cuando Ion cierre login, reemplazar por estado real
@@ -34,6 +36,10 @@ export default function App() {
           <Route path="/actions/enter/:actionId" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
           <Route path="/actions/enter/new" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
           <Route path="/students/actions" element={isAuth ? <ActionsList /> : <Navigate to="/login" />} />
+
+
+          <Route path="/personal" element={<PersonalLog />} />
+          <Route path="/personal/:actionId" element={<PersonalLogDetail />} />
 
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>

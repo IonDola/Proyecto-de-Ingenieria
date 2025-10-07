@@ -1,0 +1,12 @@
+.log-card .thead .th { font-weight: 700; }
+.log-card .row { grid-template-columns: 180px 1fr 160px 1fr 130px 90px; align-items: center; }
+.log-card .cell.export { display: flex; justify-content: center; }
+
+.log-searchbar { display: flex; gap: 8px; align-items: center; padding: 10px 16px; }
+.log-searchbar input {
+  flex: 1; height: 40px; border-radius: 12px;
+  border: 1px solid #bfcbe0; padding: 0 14px;
+}
+
+.icon-btn { border: none; background: transparent; cursor: pointer; }
+.icon-btn img { width: 28px; height: 28px; }

@@ -5,6 +5,8 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 import json
 from .models import Student, Action
+from logs.utils import log_event
+
 
 def serialize_student(s):
     return {
@@ -52,7 +54,17 @@ def students_create(request):
         s.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    # log the creation event
+    log_event(
+        request.user,
+        action="Registrar estudiante",
+        type="create",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+       metadata={"student_id": str(s.id)},
+    )
     return JsonResponse(serialize_student(s), status=201)
+
 
 @require_http_methods(["GET"])
 def students_detail(request, student_id):
@@ -77,6 +89,14 @@ def students_update(request, student_id):
         s.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    log_event(
+        request.user,
+        action="Editar estudiante",
+        type="update",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"student_id": str(s.id)},
+    )
     return JsonResponse(serialize_student(s))
 
 @require_http_methods(["GET"])
@@ -86,6 +106,14 @@ def student_history(request, student_id):
     except Student.DoesNotExist:
         return JsonResponse({"error": "not_found"}, status=404)
     actions = s.actions.all().order_by("-created_at")[:200]
+    log_event(
+        request.user,
+        action="Consultar historial",
+        type="read",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"student_id": str(s.id)},
+    )
     return JsonResponse({"student": serialize_student(s), "actions": [serialize_action(a) for a in actions]})
 
 @require_http_methods(["GET"])
@@ -122,6 +150,14 @@ def actions_create(request, student_id):
         a.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    log_event(
+        request.user,
+        action="Registrar acción",
+        type="create",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"action_id": str(a.id), "action_type": a.type, "student_id": str(s.id)},
+    )
     return JsonResponse(serialize_action(a), status=201)
 
 
@@ -130,7 +166,7 @@ def actions_create(request, student_id):
 def actions_update(request, action_id):
     """Actualiza una acción (tipo / notas / actor)."""
     try:
-        a = Action.objects.get(pk=action_id)
+        a = Action.objects.select_related("student").get(pk=action_id)
     except Action.DoesNotExist:
         return JsonResponse({"error": "not_found"}, status=404)
 
@@ -150,6 +186,14 @@ def actions_update(request, action_id):
         a.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    log_event(
+        request.user,
+        action="Editar acción",
+        type="update",
+        entity=f"Acción {a.id} de estudiante {a.student.id_mep}",
+        status="success",
+        metadata={"action_id": str(a.id), "student_id": str(a.student_id)},
+    )
     return JsonResponse(serialize_action(a))
 
 
@@ -158,10 +202,21 @@ def actions_update(request, action_id):
 def actions_delete(request, action_id):
     """Elimina una accion"""
     try:
-        a = Action.objects.get(pk=action_id)
+        a = Action.objects.select_related("student").get(pk=action_id)
     except Action.DoesNotExist:
         return JsonResponse({"error": "not_found"}, status=404)
+    # Datos para el log antes de borrar
+    _student = a.student
+    _aid = str(a.id)
     a.delete()
+    log_event(
+        request.user,
+        action="Eliminar acción",
+        type="delete",
+        entity=f"Acción {_aid} de estudiante {_student.id_mep}",
+        status="success",
+        metadata={"deleted_id": _aid, "student_id": str(_student.id)},
+    )
     return JsonResponse({"ok": True})
 
 
@@ -251,6 +306,14 @@ def actions_create_global(request):
         a.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    log_event(
+        request.user,
+        action="Registrar acción",
+        type="create",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"action_id": str(a.id), "action_type": a.type, "student_id": str(s.id)},
+    )
     return JsonResponse(serialize_action(a), status=201)
 
 
@@ -270,6 +333,14 @@ def actions_bulk_delete(request):
         return JsonResponse({"error": "invalid_json"}, status=400)
 
     deleted, _ = Action.objects.filter(id__in=ids).delete()
+    log_event(
+        request.user,
+        action="Eliminar acciones (masivo)",
+        type="delete",
+        entity=f"{len(ids)} acción(es)",
+        status="success",
+        metadata={"ids": ids, "deleted": deleted},
+    )
     return JsonResponse({"ok": True, "deleted": deleted})
 
 @csrf_exempt
@@ -289,4 +360,13 @@ def students_bulk_delete(request):
         return JsonResponse({"error": "invalid_json"}, status=400)
 
     deleted, _ = Student.objects.filter(id__in=ids).delete()
+
+    log_event(
+        request.user,
+        action="Eliminar estudiantes (masivo)",
+        type="delete",
+        entity=f"{len(ids)} estudiante(s)",
+        status="success",
+        metadata={"ids": ids, "deleted": deleted},
+    )
     return JsonResponse({"ok": True, "deleted": deleted})

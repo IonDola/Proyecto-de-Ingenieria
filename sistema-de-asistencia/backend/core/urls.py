@@ -10,4 +10,5 @@ urlpatterns = [
     path("api/ping/", api_ping),
     path('', include('students.urls')),
     path("api/users/", include("users.urls")),
+    path("api/", include("logs.urls")),
 ]
