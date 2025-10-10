@@ -5,6 +5,7 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 import json
 from .models import Student, Action
+from logs.utils import log_event
 
 def serialize_student(s):
     return {
@@ -101,6 +102,14 @@ def action_detail(request, action_id):
 @require_http_methods(["POST"])
 def actions_create(request, student_id):
     """Crea una acción para un estudiante."""
+    log_event(
+        request.user,
+        action="Registrar acción",
+        type="create",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"action_id": str(a.id), "action_type": a.type, "student_id": str(s.id)},
+    )
     try:
         s = Student.objects.get(pk=student_id)
     except Student.DoesNotExist:
@@ -129,6 +138,16 @@ def actions_create(request, student_id):
 @require_http_methods(["PATCH", "PUT"])
 def actions_update(request, action_id):
     """Actualiza una acción (tipo / notas / actor)."""
+
+    log_event(
+        request.user,
+        action="Editar acción",
+        type="update",
+        entity=f"Acción {a.id} de estudiante {a.student.id_mep}",
+        status="success",
+        metadata={"action_id": str(a.id), "student_id": str(a.student_id)},
+    )
+
     try:
         a = Action.objects.get(pk=action_id)
     except Action.DoesNotExist:
@@ -157,6 +176,16 @@ def actions_update(request, action_id):
 @require_http_methods(["DELETE"])
 def actions_delete(request, action_id):
     """Elimina una accion"""
+
+    log_event(
+        request.user,
+        action="Eliminar acción",
+        type="delete",
+        entity=f"Acción {action_id} de estudiante",
+        status="success",
+        metadata={"deleted_id": action_id},
+    )
+
     try:
         a = Action.objects.get(pk=action_id)
     except Action.DoesNotExist:

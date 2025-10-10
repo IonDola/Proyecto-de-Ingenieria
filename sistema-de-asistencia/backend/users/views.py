@@ -1,25 +1,37 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from django.contrib.auth import logout
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+
+User = get_user_model()
+
+def _issue_access_token_for(user):
+    access = RefreshToken.for_user(user).access_token
+    return str(access)
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def login_view(request):
-    username = request.data.get("username")
-    password = request.data.get("password")
+    username = (request.data.get("username") or "").strip()
+    password = request.data.get("password") or ""
+    if not username or not password:
+        return Response({"error": "missing_credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            "token": str(refresh.access_token),
-            "nombre": user.get_full_name() or user.username,
-            "rol": user.role  # <- viene de tu modelo CustomUser
-        })
-    return Response({"error": "Credenciales inválidas"}, status=401)
+    user = authenticate(request, username=username, password=password)
+    if not user:
+        return Response({"error": "invalid_credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    token = _issue_access_token_for(user)
+    payload = {
+        "token": token,
+        "nombre": user.get_full_name() or user.username,
+        "rol": getattr(user, "role", "user"),
+    }
+    return Response(payload, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def logout_view(request):
-    logout(request)
-    return Response({"message": "Sesión cerrada correctamente"})
+    return Response({"ok": True})
