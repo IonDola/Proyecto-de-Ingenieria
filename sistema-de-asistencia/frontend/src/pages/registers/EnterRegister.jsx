@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import PageHead from "../../components/PageHead"
-import StForm from "../../components/RegisterForm"
+import StForm from "../../components/ActionForm"
 import { formatRegister } from "../../components/RegisterFormat"
 
 import StudentIcon from "../../assets/icons/student.svg"
@@ -9,7 +9,7 @@ import StudentActions from "../../assets/icons/student_registers.svg"
 import StudentEnter from "../../assets/icons/enter.svg"
 
 
-const EnterForm = () => {
+const EnterRegister = () => {
   const iconList = [
     {
       id: 1,
@@ -88,7 +88,7 @@ const EnterForm = () => {
     fetchStudent();
   }, [action?.student_id]);
 
-  const [register, legalGuardians, carnet, revitionState] = formatRegister({ action, student });
+  const [register, legalGuardians, carnet, revitionState] = formatRegister({ action, student, schoolTag: true });
   return (
     <>
       <PageHead icons={iconList} />
@@ -97,14 +97,16 @@ const EnterForm = () => {
           <StForm
             register={register}
             carnet={carnet} legalGuardians={legalGuardians}
+            isOnRevision={revitionState}
+            actionId={actionId}
+            actionTag="ingreso"
           />
         }
         {!actionId &&
           <StForm
             register={register}
             carnet={carnet} legalGuardians={legalGuardians}
-            isNew
-            isOnRevision={revitionState}
+            actionTag="ingreso"
           />
         }
       </main>
@@ -112,4 +114,4 @@ const EnterForm = () => {
   );
 };
 
-export default EnterForm;
+export default EnterRegister;

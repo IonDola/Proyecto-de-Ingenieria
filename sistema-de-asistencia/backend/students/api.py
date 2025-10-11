@@ -14,28 +14,60 @@ def serialize_student(s):
         "first_name": s.first_name,
         "last_name": s.last_name,
         "section": s.section,
+        "address": s.address,
+        "birth_day": s.birth_date,
+        "gender": s.gender,
+        "nationality": s.nationality,
+        "legal_guardian_1": s.guardian_name_1,
+        "legal_guardian_id_1": s.guardian_id_1,
+        "legal_guardian_phone_1": s.guardian_phone_1,
+        "legal_guardian_2": s.guardian_name_2,
+        "legal_guardian_id_2": s.guardian_id_2,
+        "legal_guardian_phone_2": s.guardian_phone_2,
+        "legal_guardian_3": s.guardian_name_3,
+        "legal_guardian_id_3": s.guardian_id_3,
+        "legal_guardian_phone_3": s.guardian_phone_3,
         "active": s.active,
         "created_at": s.created_at.isoformat(),
         "updated_at": s.updated_at.isoformat(),
     }
 
+def serialize_student_resumed(s):
+    return {
+        "id": str(s.id),
+        "id_mep": s.id_mep,
+        "first_name": s.first_name,
+        "last_name": s.last_name,
+    }
 def serialize_action(a):
     return {
         "id": str(a.id),
         "student_id": str(a.student_id),
         "type": a.type,
+        "on_revision": a.on_revision,
+        "origin_school": a.origin_school,
+        "transferred": a.transferred,
         "notes": a.notes,
         "actor": a.actor,
         "created_at": a.created_at.isoformat(),
     }
 
+def serialize_action_resumed(a):
+    return {
+        "id": str(a.id),
+        "student_id": str(a.student_id),
+        "type": a.type,
+        "on_revision": a.on_revision,
+    }
+
+
 @require_http_methods(["GET"])
 def students_list(request):
     q = request.GET.get("q", "").strip()
-    qs = Student.objects.all()
+    qs = Student.objects.exclude(active=False)
     if q:
         qs = qs.filter(Q(id_mep__icontains=q) | Q(first_name__icontains=q) | Q(last_name__icontains=q))
-    return JsonResponse({"results": [serialize_student(s) for s in qs[:200]]})
+    return JsonResponse({"results": [serialize_student_resumed(s) for s in qs[:200]]})
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -138,7 +170,7 @@ def actions_create(request, student_id):
 @require_http_methods(["PATCH", "PUT"])
 def actions_update(request, action_id):
     """Actualiza una acción (tipo / notas / actor)."""
-
+    
     log_event(
         request.user,
         action="Editar acción",

@@ -6,10 +6,10 @@ import StudentsList from "./pages/students/StudentsList";
 import StudentForm from "./pages/students/StudentForm";
 import StudentDetail from "./pages/students/StudentDetail";
 import HistoryList from "./pages/students/HistoryList";
-import EnterForm from "./pages/registers/EnterForm";
+import EnterRegister from "./pages/registers/EnterRegister";
 import Home from "./pages/home/Home";
-import InTest from "./pages/registers/enter";
 import ActionsList from "./pages/students/ActionsList";
+import InTest from "./pages/home/Home";
 
 export default function App() {
   const isAuth = true; // por ahora, cuando Ion cierre login, reemplazar por estado real
@@ -31,8 +31,8 @@ export default function App() {
           <Route path="/students/profiles/:id/edit" element={isAuth ? <StudentForm /> : <Navigate to="/login" />} />
 
           <Route path="/students/profiles/:id/history" element={isAuth ? <HistoryList /> : <Navigate to="/login" />} />
-          <Route path="/actions/enter/:actionId" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
-          <Route path="/actions/enter/new" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
+          <Route path="/actions/enter/:actionId" element={isAuth ? <EnterRegister /> : <Navigate to="/login" />} />
+          <Route path="/actions/enter/new" element={isAuth ? <EnterRegister /> : <Navigate to="/login" />} />
           <Route path="/students/actions" element={isAuth ? <ActionsList /> : <Navigate to="/login" />} />
 
           <Route path="*" element={<Navigate to="/home" replace />} />

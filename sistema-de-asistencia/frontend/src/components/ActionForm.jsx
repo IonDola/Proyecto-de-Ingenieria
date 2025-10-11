@@ -9,9 +9,10 @@ import deleteIcon from "../assets/icons/delete_doc.svg";
 import markAsIcon from "../assets/icons/registered.svg";
 import saveIcon from "../assets/icons/save_changes.svg";
 import cancelIcon from "../assets/icons/cancel.svg";
+import { HelpSave } from "./RegisterSaveHelper";
 
-const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
-  guestView = false, onSave, onMarkReviewed, isNew }) => {
+const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRevision,
+  guestView = false, onMarkReviewed, actionTag = "ingreso" }) => {
   const [formData, setFormData] = useState({
     register: register || {},
     carnet: carnet || {},
@@ -19,7 +20,8 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
   });
 
   const [onEdition, setOnEdition] = useState(false);
-  const [onRevision, setOnRevision] = useState(isOnRevision);
+  const [onRevision, setOnRevision] = useState(isOnRevision || carnet != null);
+  const isNew = !carnet;
 
   useEffect(() => {
     setFormData({
@@ -50,24 +52,31 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
   const toggleEdit = () => {
     if (!onRevision || guestView) return;
     setOnEdition((prev) => !prev)
+    if (onEdition) {
+      // cancelar edición: resetear datos
+      setFormData({
+        register: register || {},
+        carnet: carnet || {},
+        leg_guardians: legalGuardians || {},
+      });
+    }
   };
 
   // ✅ Guardar datos
   const handleSave = async () => {
-    if (onSave) {
-      try {
-        const response = await onSave(formData);
-        if (response.success) {
-          setOnEdition(false);
-          console.log("Guardado correctamente");
-        } else {
-          console.error("Error guardando:", response.message);
-        }
-      } catch (err) {
-        console.error("Error de red:", err);
+    try {
+      const response = await HelpSave(formData, onEdition, carnet, actionId);
+      if (response.success) {
+        setOnEdition(false);
+        console.log("Guardado correctamente");
+      } else {
+        console.error("Error guardando:", response.message);
       }
+    } catch (err) {
+      console.error("Error de red:", err);
     }
   };
+
 
   // ✅ Validar datos (consulta al backend)
   const handleValidate = async () => {
@@ -179,7 +188,6 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
       <div className="tools">
         <Home />
         {sideTools}
-
       </div>
 
       <form id="register">
@@ -200,7 +208,10 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
               <button type="button" onClick={handleValidate} style={{ gridColumn: "2" }}>
                 Verificar
               </button>
-              <div style={revStyle}>{onRevision ? "En Revisión" : "Revisado"}</div>
+              {
+                !isNew &&
+                <div style={revStyle}>{onRevision ? "En Revisión" : "Revisado"}</div>
+              }
             </>
           }
 
@@ -247,13 +258,12 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
           <div>
             {Object.keys(formData.leg_guardians).map((key) => {
               const value = formData.leg_guardians[key] ?? "";
-              const isDateField = key.toLowerCase().includes("fecha");
 
               return (
                 <div className="st-data" key={key}>
                   <label>{key}</label>
                   <input
-                    type={isDateField ? "date" : "text"}
+                    type={"test"}
                     value={value}
                     readOnly={!onEdition}
                     onChange={(e) => handleChange("leg_guardians", key, e.target.value)}
@@ -269,4 +279,4 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
   );
 };
 
-export default RegisterForm;
+export default ActionForm;
