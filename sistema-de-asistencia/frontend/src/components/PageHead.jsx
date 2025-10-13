@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import adminImage from "../assets/images/profile_admins.jpg";
 import closeSesion from "../assets/icons/logout.svg";
 import subSectionIcon from "../assets/icons/subsection.png"
+import { Link } from "react-router-dom";
 
 export const CredentialLevel = {
     DEV: "Dev",
@@ -104,8 +105,9 @@ const PageHead = ( { name, credential, icons } ) => {
                     <div className="menu-link">
                         <a href="#">Ir a Perfil</a>
                         <br />
-                        <a href="#">Bitácora Personal</a>
+                        <Link to="/personal">Bitácora Personal</Link>
                     </div>
+
                     <button className="close-sesion w-" onClick={logOut}>
                         <img src={closeSesion} className="icon w-icon" />
                         <p>Cerrar Sesión</p>

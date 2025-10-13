@@ -10,35 +10,40 @@ import EnterForm from "./pages/registers/EnterForm";
 import Home from "./pages/home/Home";
 import InTest from "./pages/registers/enter";
 import ActionsList from "./pages/students/ActionsList";
+import PersonalLog from "./pages/personal/PersonalLog";
+import RequireAuth from "./auth/RequireAuth";
 
 export default function App() {
-  const isAuth = true; // por ahora, cuando Ion cierre login, reemplazar por estado real
   const devView = false;
+
   return (
     <div className={devView ? "dev-color" : ""}>
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          {/* Al abrir, ir directo al login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
+          {/* publicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/test" element={<InTest />} />
 
-          <Route path="/students" element={isAuth ? <StudentsHome /> : <Navigate to="/login" />} />
-          <Route path="/students/profiles" element={isAuth ? <StudentsList /> : <Navigate to="/login" />} />
-          <Route path="/students/profiles/new" element={isAuth ? <StudentForm /> : <Navigate to="/login" />} />
-          <Route path="/students/profiles/:id" element={isAuth ? <StudentDetail /> : <Navigate to="/login" />} />
-          <Route path="/students/profiles/:id/edit" element={isAuth ? <StudentForm /> : <Navigate to="/login" />} />
+          {/* protegidas */}
+          <Route path="/students" element={<RequireAuth><StudentsHome /></RequireAuth>} />
+          <Route path="/students/profiles" element={<RequireAuth><StudentsList /></RequireAuth>} />
+          <Route path="/students/profiles/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
+          <Route path="/students/profiles/:id" element={<RequireAuth><StudentDetail /></RequireAuth>} />
+          <Route path="/students/profiles/:id/edit" element={<RequireAuth><StudentForm /></RequireAuth>} />
+          <Route path="/students/profiles/:id/history" element={<RequireAuth><HistoryList /></RequireAuth>} />
+          <Route path="/actions/enter/:actionId" element={<RequireAuth><EnterForm /></RequireAuth>} />
+          <Route path="/actions/enter/new" element={<RequireAuth><EnterForm /></RequireAuth>} />
+          <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
+          <Route path="/personal" element={<RequireAuth><PersonalLog /></RequireAuth>} />
 
-          <Route path="/students/profiles/:id/history" element={isAuth ? <HistoryList /> : <Navigate to="/login" />} />
-          <Route path="/actions/enter/:actionId" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
-          <Route path="/actions/enter/new" element={isAuth ? <EnterForm /> : <Navigate to="/login" />} />
-          <Route path="/students/actions" element={isAuth ? <ActionsList /> : <Navigate to="/login" />} />
-
-          <Route path="*" element={<Navigate to="/home" replace />} />
+          {/* desconocidas -> login */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </div>
-
   );
 }

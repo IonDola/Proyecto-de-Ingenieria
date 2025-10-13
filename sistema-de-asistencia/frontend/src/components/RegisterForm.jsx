@@ -35,7 +35,7 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
 
   };
 
-  // ✅ Maneja cambios en inputs
+  // Maneja cambios en inputs
   const handleChange = (section, key, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -46,13 +46,13 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
     }));
   };
 
-  // ✅ Alternar edición
+  // Alternar edición
   const toggleEdit = () => {
     if (!onRevision || guestView) return;
     setOnEdition((prev) => !prev)
   };
 
-  // ✅ Guardar datos
+  // Guardar datos
   const handleSave = async () => {
     if (onSave) {
       try {
@@ -69,7 +69,7 @@ const RegisterForm = ({ register, carnet, legalGuardians, isOnRevision,
     }
   };
 
-  // ✅ Validar datos (consulta al backend)
+  // Validar datos (consulta al backend)
   const handleValidate = async () => {
     console.log("Validando...");
     // TODO: llamar al backend aquí
