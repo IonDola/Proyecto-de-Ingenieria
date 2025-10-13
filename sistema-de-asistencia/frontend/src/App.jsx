@@ -7,6 +7,8 @@ import StudentForm from "./pages/students/StudentForm";
 import StudentDetail from "./pages/students/StudentDetail";
 import HistoryList from "./pages/students/HistoryList";
 import EnterRegister from "./pages/registers/EnterRegister";
+import ExitRegister from "./pages/registers/ExitRegister";
+import AbandonRegister from "./pages/registers/AbandonRegister";
 import Home from "./pages/home/Home";
 import ActionsList from "./pages/students/ActionsList";
 import PersonalLog from "./pages/personal/PersonalLog";
@@ -14,7 +16,7 @@ import RequireAuth from "./auth/RequireAuth";
 import InTest from "./pages/home/Home";
 
 export default function App() {
-  const devView = false;
+  const devView = localStorage.getItem("role") === "Dev";
 
   return (
     <div className={devView ? "dev-color" : ""}>
@@ -35,8 +37,12 @@ export default function App() {
           <Route path="/students/profiles/:id" element={<RequireAuth><StudentDetail /></RequireAuth>} />
           <Route path="/students/profiles/:id/edit" element={<RequireAuth><StudentForm /></RequireAuth>} />
           <Route path="/students/profiles/:id/history" element={<RequireAuth><HistoryList /></RequireAuth>} />
-          <Route path="/actions/enter/:actionId" element={<RequireAuth><EnterForm /></RequireAuth>} />
-          <Route path="/actions/enter/new" element={<RequireAuth><EnterForm /></RequireAuth>} />
+          <Route path="/actions/enter/:actionId" element={<RequireAuth><EnterRegister /></RequireAuth>} />
+          <Route path="/actions/enter/new" element={<RequireAuth><EnterRegister /></RequireAuth>} />
+          <Route path="/actions/exit/:actionId" element={<RequireAuth><ExitRegister /></RequireAuth>} />
+          <Route path="/actions/exit/new" element={<RequireAuth><ExitRegister /></RequireAuth>} />
+          <Route path="/actions/abandon/:actionId" element={<RequireAuth><AbandonRegister /></RequireAuth>} />
+          <Route path="/actions/abandon/new" element={<RequireAuth><AbandonRegister /></RequireAuth>} />
           <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
           <Route path="/personal" element={<RequireAuth><PersonalLog /></RequireAuth>} />
 

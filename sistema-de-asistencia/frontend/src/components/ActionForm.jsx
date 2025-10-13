@@ -11,17 +11,16 @@ import saveIcon from "../assets/icons/save_changes.svg";
 import cancelIcon from "../assets/icons/cancel.svg";
 import { HelpSave, MarkAsReviewed } from "./RegisterSaveHelper";
 
-const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRevision,
+const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, isOnRevision,
   guestView = false, actionTag = "ingreso" }) => {
   const [formData, setFormData] = useState({
     register: register || {},
-    carnet: carnet || {},
+    carnet: carnet || " ",
     leg_guardians: legalGuardians || {},
   });
-
-  const [onEdition, setOnEdition] = useState(false);
+  const isNew = formData.carnet === null || formData.carnet === undefined || formData.carnet === " ";
+  const [onEdition, setOnEdition] = useState(isNew);
   const [onRevision, setOnRevision] = useState(isOnRevision || carnet != null);
-  const isNew = !carnet;
 
   useEffect(() => {
     setFormData({
@@ -39,13 +38,15 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
 
   // Maneja cambios en inputs
   const handleChange = (section, key, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [key]: value,
-      },
-    }));
+    setFormData((prev) => {
+      if (section === "carnet") {
+        return { ...prev, carnet: value }; // <- caso especial
+      }
+      return {
+        ...prev,
+        [section]: { ...prev[section], [key]: value },
+      };
+    });
   };
 
   // Alternar edición
@@ -194,7 +195,7 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
             <input
               type="text"
               name="carnet"
-              value={formData.carnet ?? ""}
+              value={formData.carnet}
               onChange={(e) => handleChange("carnet", "carnet", e.target.value)}
               readOnly={!onEdition}
               className={onEdition ? "editing" : ""}
@@ -216,7 +217,7 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
 
         <div id="st-table">
           <div className="st-h">
-            <p>Información</p>
+            <p>Estudiante</p>
           </div>
 
           <div>

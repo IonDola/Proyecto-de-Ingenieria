@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import PageHead from "../../components/PageHead"
-import Tool  from "../../components/PageTool" 
+import Tool from "../../components/PageTool"
 
 import StudentIcon from "../../assets/icons/student.svg"
 import UserIcon from "../../assets/icons/user.svg"
@@ -11,33 +11,33 @@ import LogsIcon from "../../assets/icons/log.svg"
 const Home = () => {
   return (
     <>
-      <PageHead name={"Developer"}/>
-      <main style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
+      <PageHead name={localStorage.getItem("userName")} />
+      <main style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div id="home-tools" className="big-tools">
           <div>
             <Tool>
               <Link to={"/students"}>
-                <img src={StudentIcon} alt=""  className="w-icon"/>
-                <p>Estudiantes</p>    
+                <img src={StudentIcon} alt="" className="w-icon" />
+                <p>Estudiantes</p>
               </Link>
             </Tool>
           </div>
           <div>
             <Tool>
-              <img src={UserIcon} alt=""  className="w-icon"/>
+              <img src={UserIcon} alt="" className="w-icon" />
               <p>Usuarios</p>
             </Tool>
           </div>
           <div id="halved">
-            <div style={{gridRow:"1"}}>
+            <div style={{ gridRow: "1" }}>
               <Tool>
-                <img src={DataBaseIcon} alt=""  className="w-icon"/>
+                <img src={DataBaseIcon} alt="" className="w-icon" />
                 <p>Seguridad y Respaldo</p>
               </Tool>
             </div>
-            <div style={{gridRow:"2"}}>
-                <Tool>
-                  <img src={LogsIcon} alt=""  className="w-icon"/>
+            <div style={{ gridRow: "2" }}>
+              <Tool>
+                <img src={LogsIcon} alt="" className="w-icon" />
                 <p>Bitacora</p>
               </Tool>
             </div>

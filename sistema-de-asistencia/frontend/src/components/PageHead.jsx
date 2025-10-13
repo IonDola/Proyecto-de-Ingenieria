@@ -11,7 +11,7 @@ export const CredentialLevel = {
     GUEST: "Guest",
 };
 
-const PageHead = ( { name, credential, icons } ) => {
+const PageHead = ({ name, credential, icons }) => {
     const credentialLevel = credential
     const [displayedName, setName] = useState(name);
 
@@ -24,22 +24,17 @@ const PageHead = ( { name, credential, icons } ) => {
                 clearInterval(timer);
             };
         });
-        
+
         return (
             <>
-                <p>{date.toLocaleTimeString('en-US', {hour12: true})}</p>
+                <p>{date.toLocaleTimeString('en-US', { hour12: true })}</p>
                 <p>{date.toLocaleDateString()}</p>
             </>
         );
     };
 
-    const HeadName = ( { name, icons } ) => {
-        if (!Array.isArray(icons)) {
-            console.log("Los iconos deben ser una lista almenos vacia");
-            return;
-        }
-
-        if (name && icons.length == 1){
+    const HeadName = ({ name, icons }) => {
+        if (name && icons) {
             // TODO
             console.log("Not implemented")
             return;
@@ -65,13 +60,13 @@ const PageHead = ( { name, credential, icons } ) => {
                 />
                 {icons.slice(1).map((icon) => (
                     <Fragment key={icon.id}>
-                    <img src={subSectionIcon} alt="Separador" className="w-icon"/>
-                    <img
-                        src={icon.image}
-                        alt={icon.description}
-                        title={icon.description}
-                        className="w-icon"
-                    />
+                        <img src={subSectionIcon} alt="Separador" className="w-icon" />
+                        <img
+                            src={icon.image}
+                            alt={icon.description}
+                            title={icon.description}
+                            className="w-icon"
+                        />
                     </Fragment>
                 ))}
             </div>
@@ -87,33 +82,33 @@ const PageHead = ( { name, credential, icons } ) => {
         }
 
         if (goToLogin) {
-            return <Navigate to="/"/>
+            return <Navigate to="/" />
         }
 
         return (
             <Fragment>
-            <div className="head-menu">
-                <div className="menu-title">
-                    <img src={adminImage} alt=""/>
-                    <div className="menu-text">
-                        <br />Menú de Usuario
-                    </div>
-                </div>
-
-                {/* TODO: Arreglar la alineacion del contenido */}
-                <div className="content">
-                    <div className="menu-link">
-                        <a href="#">Ir a Perfil</a>
-                        <br />
-                        <Link to="/personal">Bitácora Personal</Link>
+                <div className="head-menu">
+                    <div className="menu-title">
+                        <img src={adminImage} alt="" />
+                        <div className="menu-text">
+                            <br />Menú de Usuario
+                        </div>
                     </div>
 
-                    <button className="close-sesion w-" onClick={logOut}>
-                        <img src={closeSesion} className="icon w-icon" />
-                        <p>Cerrar Sesión</p>
-                    </button>
+                    {/* TODO: Arreglar la alineacion del contenido */}
+                    <div className="content">
+                        <div className="menu-link">
+                            <a href="#">Ir a Perfil</a>
+                            <br />
+                            <Link to="/personal">Bitácora Personal</Link>
+                        </div>
+
+                        <button className="close-sesion w-" onClick={logOut}>
+                            <img src={closeSesion} className="icon w-icon" />
+                            <p>Cerrar Sesión</p>
+                        </button>
+                    </div>
                 </div>
-            </div>
             </Fragment>
         );
     };
@@ -124,7 +119,7 @@ const PageHead = ( { name, credential, icons } ) => {
                 <HeadClock />
             </div>
             <div className="central">
-                <HeadName name={name} icons={icons}/>
+                <HeadName name={name} icons={icons} />
             </div>
             <HeadMenu />
         </header>
