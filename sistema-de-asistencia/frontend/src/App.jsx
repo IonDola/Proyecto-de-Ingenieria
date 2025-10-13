@@ -6,12 +6,12 @@ import StudentsList from "./pages/students/StudentsList";
 import StudentForm from "./pages/students/StudentForm";
 import StudentDetail from "./pages/students/StudentDetail";
 import HistoryList from "./pages/students/HistoryList";
-import EnterForm from "./pages/registers/EnterForm";
+import EnterRegister from "./pages/registers/EnterRegister";
 import Home from "./pages/home/Home";
-import InTest from "./pages/registers/enter";
 import ActionsList from "./pages/students/ActionsList";
 import PersonalLog from "./pages/personal/PersonalLog";
 import RequireAuth from "./auth/RequireAuth";
+import InTest from "./pages/home/Home";
 
 export default function App() {
   const devView = false;
