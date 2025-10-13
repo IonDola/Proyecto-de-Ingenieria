@@ -9,10 +9,10 @@ import deleteIcon from "../assets/icons/delete_doc.svg";
 import markAsIcon from "../assets/icons/registered.svg";
 import saveIcon from "../assets/icons/save_changes.svg";
 import cancelIcon from "../assets/icons/cancel.svg";
-import { HelpSave } from "./RegisterSaveHelper";
+import { HelpSave, MarkAsReviewed } from "./RegisterSaveHelper";
 
 const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRevision,
-  guestView = false, onMarkReviewed, actionTag = "ingreso" }) => {
+  guestView = false, actionTag = "ingreso" }) => {
   const [formData, setFormData] = useState({
     register: register || {},
     carnet: carnet || {},
@@ -85,16 +85,14 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
   };
 
   const handleMarkReviewed = async () => {
-    setOnRevision(false);
-    setOnEdition(false);
-    if (onMarkReviewed) {
-      try {
-        const result = await onMarkReviewed();
-        if (result.success) {
-        }
-      } catch (err) {
-        console.error("Error al marcar como revisado:", err);
-      }
+    if (!actionId) return;
+    const response = await MarkAsReviewed(actionId);
+    if (response.success) {
+      setOnRevision(false);
+      setOnEdition(false);
+      console.log("Marcado como revisado");
+    } else {
+      console.error("Error marcando como revisado:", response.message);
     }
   };
 
