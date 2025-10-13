@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Layout from "../../components/Layout";
 import PageHead from "../../components/PageHead";
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
@@ -66,21 +65,21 @@ export default function StudentForm() {
   ];
 
   return (
-    <Layout
-      rightHeader={
-        <div className="right-title">
-          {isEdit ? "Editar Estudiante" : "*Nuevo Estudiante*"}
-        </div>
-      }
-    >
-      <PageHead icons={iconList} />
+    <div className="page--students">
+      <PageHead
+        icons={iconList}
+      />
 
       <main>
         <div className="tools">
           <Home />
 
           <Tool>
-            <button className="page-tool" onClick={() => document.querySelector("form")?.requestSubmit()} title="Guardar">
+            <button
+              className="page-tool"
+              onClick={() => document.querySelector("form")?.requestSubmit()}
+              title="Guardar"
+            >
               <img src={IconSave} alt="Guardar" className="w-icon" />
             </button>
           </Tool>
@@ -129,6 +128,6 @@ export default function StudentForm() {
           </form>
         </div>
       </main>
-    </Layout>
+    </div>
   );
 }

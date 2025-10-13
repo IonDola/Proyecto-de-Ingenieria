@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Layout from "../../components/Layout";
 import PageHead from "../../components/PageHead";
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
 import ActionModal from "../../components/ActionModal";
+import "../../styles/student-ui.css";
 
 import IconStudent from "../../assets/icons/student.svg";
 import IconBack from "../../assets/icons/devolverse.png";
@@ -38,66 +38,64 @@ export default function StudentDetail() {
   ];
 
   return (
-    <Layout rightHeader={s ? <div className="right-title">{s.first_name} {s.last_name}</div> : null}>
-      <div className="page--students">
-        <PageHead icons={iconList} />
+    <div className="page--students">
+      <PageHead icons={iconList} />
 
-        <main>
-          <div className="tools">
-            <Home />
-            <Tool>
-              <button className="page-tool" onClick={() => setShowActionModal(true)} title="Nueva acción">
-                <img src={IconNew} alt="Nueva acción" className="w-icon" />
-              </button>
-            </Tool>
-            <Tool>
-              <Link to={`/students/profiles/${id}/edit`} title="Editar perfil" className="page-tool">
-                <img src={IconEdit} alt="Editar" className="w-icon" />
-              </Link>
-            </Tool>
-            <Tool>
-              <Link to={`/students/profiles/${id}/history`} title="Ver historial" className="page-tool">
-                <img src={IconHistory} alt="Historial" className="w-icon" />
-              </Link>
-            </Tool>
-            <Tool>
-              <Link to="/students/profiles" title="Volver al listado" className="page-tool">
-                <img src={IconBack} alt="Volver" className="w-icon" />
-              </Link>
-            </Tool>
-          </div>
+      <main>
+        <div className="tools">
+          <Home />
+          <Tool>
+            <button className="page-tool" onClick={() => setShowActionModal(true)} title="Nueva acción">
+              <img src={IconNew} alt="Nueva acción" className="w-icon" />
+            </button>
+          </Tool>
+          <Tool>
+            <Link to={`/students/profiles/${id}/edit`} title="Editar perfil" className="page-tool">
+              <img src={IconEdit} alt="Editar" className="w-icon" />
+            </Link>
+          </Tool>
+          <Tool>
+            <Link to={`/students/profiles/${id}/history`} title="Ver historial" className="page-tool">
+              <img src={IconHistory} alt="Historial" className="w-icon" />
+            </Link>
+          </Tool>
+          <Tool>
+            <Link to="/students/profiles" title="Volver al listado" className="page-tool">
+              <img src={IconBack} alt="Volver" className="w-icon" />
+            </Link>
+          </Tool>
+        </div>
 
-          <div className="card">
-            {err && <p className="error">{err}</p>}
-            {!s && !err && <p>Cargando…</p>}
-            {s && (
-              <>
-                <div className="section-header">Información</div>
-                <div className="grid">
-                  <div className="cell label">Carnet</div>
-                  <div className="cell value mono">{s.id_mep}</div>
-                  <div className="cell label">Nombre</div>
-                  <div className="cell value">{s.first_name}</div>
-                  <div className="cell label">Apellidos</div>
-                  <div className="cell value">{s.last_name}</div>
-                  <div className="cell label">Sección</div>
-                  <div className="cell value">{s.section || "—"}</div>
-                  <div className="cell label">Activo</div>
-                  <div className="cell value">{s.active ? "Sí" : "No"}</div>
-                </div>
+        <div className="card">
+          {err && <p className="error">{err}</p>}
+          {!s && !err && <p>Cargando…</p>}
+          {s && (
+            <>
+              <div className="section-header">Información</div>
+              <div className="grid">
+                <div className="cell label">Carnet</div>
+                <div className="cell value mono">{s.id_mep}</div>
+                <div className="cell label">Nombre</div>
+                <div className="cell value">{s.first_name}</div>
+                <div className="cell label">Apellidos</div>
+                <div className="cell value">{s.last_name}</div>
+                <div className="cell label">Sección</div>
+                <div className="cell value">{s.section || "—"}</div>
+                <div className="cell label">Activo</div>
+                <div className="cell value">{s.active ? "Sí" : "No"}</div>
+              </div>
 
-                <div className="section-header">Accesos rápidos</div>
-                <div className="actions-inline">
-                  <button className="btn" onClick={() => setShowActionModal(true)}>Nueva acción</button>
-                  <Link className="btn ghost" to={`/students/profiles/${id}/edit`}>Editar perfil</Link>
-                  <Link className="btn ghost" to={`/students/profiles/${id}/history`}>Ver historial</Link>
-                  <Link className="btn ghost" to="/students/profiles">Volver</Link>
-                </div>
-              </>
-            )}
-          </div>
-        </main>
-      </div>
+              <div className="section-header">Accesos rápidos</div>
+              <div className="actions-inline">
+                <button className="btn" onClick={() => setShowActionModal(true)}>Nueva acción</button>
+                <Link className="btn ghost" to={`/students/profiles/${id}/edit`}>Editar perfil</Link>
+                <Link className="btn ghost" to={`/students/profiles/${id}/history`}>Ver historial</Link>
+                <Link className="btn ghost" to="/students/profiles">Volver</Link>
+              </div>
+            </>
+          )}
+        </div>
+      </main>
 
       {showActionModal && (
         <ActionModal
@@ -106,6 +104,6 @@ export default function StudentDetail() {
           onSuccess={onCreated}
         />
       )}
-    </Layout>
+    </div>
   );
 }
