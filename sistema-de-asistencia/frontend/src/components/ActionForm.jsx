@@ -37,7 +37,7 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
 
   };
 
-  // ✅ Maneja cambios en inputs
+  // Maneja cambios en inputs
   const handleChange = (section, key, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -48,7 +48,7 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
     }));
   };
 
-  // ✅ Alternar edición
+  // Alternar edición
   const toggleEdit = () => {
     if (!onRevision || guestView) return;
     setOnEdition((prev) => !prev)
@@ -62,7 +62,7 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
     }
   };
 
-  // ✅ Guardar datos
+  // Guardar datos
   const handleSave = async () => {
     try {
       const response = await HelpSave(formData, onEdition, carnet, actionId);
@@ -77,8 +77,7 @@ const ActionForm = ({ register, carnet, legalGuardians, actionId = null, isOnRev
     }
   };
 
-
-  // ✅ Validar datos (consulta al backend)
+  // Validar datos (consulta al backend)
   const handleValidate = async () => {
     console.log("Validando...");
     // TODO: llamar al backend aquí

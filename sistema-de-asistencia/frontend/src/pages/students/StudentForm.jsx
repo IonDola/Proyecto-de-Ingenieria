@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Layout from "../../components/Layout";
-import { useNavigate, useParams } from "react-router-dom";
+import PageHead from "../../components/PageHead";
+import Tool from "../../components/PageTool";
+import Home from "../../components/HomeLink";
+
+import IconStudent from "../../assets/icons/student.svg";
+import IconProfiles from "../../assets/icons/student_profiles.svg";
+import IconSave from "../../assets/icons/save_changes.svg";
+import IconBack from "../../assets/icons/devolverse.png";
 
 export default function StudentForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+
   const [msg, setMsg] = useState("");
   const [form, setForm] = useState({
     id_mep: "",
@@ -15,25 +24,13 @@ export default function StudentForm() {
     active: true,
   });
 
-  // Atajos desde los botones del Layout (escuchamos los CustomEvent)
+  // cargar datos en edición
   useEffect(() => {
-    const onSave = () => handleSubmit(new Event("submit"));
-    const onEdit = () => document.querySelector("input")?.focus();
-    window.addEventListener("ui-save", onSave);
-    window.addEventListener("ui-edit", onEdit);
-    return () => {
-      window.removeEventListener("ui-save", onSave);
-      window.removeEventListener("ui-edit", onEdit);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isEdit) {
-      fetch(`/api/students/${id}/`)
-        .then((r) => r.json())
-        .then(setForm)
-        .catch(() => setMsg("No se pudo cargar el estudiante"));
-    }
+    if (!isEdit) return;
+    fetch(`/api/students/${id}/`)
+      .then((r) => r.json())
+      .then(setForm)
+      .catch(() => setMsg("No se pudo cargar el estudiante"));
   }, [id, isEdit]);
 
   const change = (e) => {
@@ -56,52 +53,82 @@ export default function StudentForm() {
         if (isEdit) {
           setMsg("Cambios guardados :)");
         } else {
-          navigate(`/students/${data.id}`);
+          // al crear redirigimos al detalle correcto
+          navigate(`/students/profiles/${data.id}`);
         }
       })
-      .catch((err) => setMsg(err?.error || "Error al guardar X"));
+      .catch((err) => setMsg(err?.error || "Error al guardar"));
   };
+
+  const iconList = [
+    { id: 1, image: IconStudent, description: "Estudiantes" },
+    { id: 2, image: IconProfiles, description: "Perfiles" },
+  ];
 
   return (
     <Layout
       rightHeader={
         <div className="right-title">
-          {isEdit ? " Editar Estudiante" : " *Nuevo Estudiante*"}
+          {isEdit ? "Editar Estudiante" : "*Nuevo Estudiante*"}
         </div>
       }
     >
-      <div className="card">
-        {msg && <p className={msg.includes("X") ? "error" : "ok"}>{msg}</p>}
+      <PageHead icons={iconList} />
 
-        <div className="section-header">Información</div>
-        <form className="form-grid" onSubmit={handleSubmit}>
-          <label className="label">Carnet
-            <input name="id_mep" value={form.id_mep} onChange={change} required />
-          </label>
+      <main>
+        <div className="tools">
+          <Home />
 
-          <label className="label">Nombre
-            <input name="first_name" value={form.first_name} onChange={change} required />
-          </label>
+          <Tool>
+            <button className="page-tool" onClick={() => document.querySelector("form")?.requestSubmit()} title="Guardar">
+              <img src={IconSave} alt="Guardar" className="w-icon" />
+            </button>
+          </Tool>
 
-          <label className="label">Apellidos
-            <input name="last_name" value={form.last_name} onChange={change} required />
-          </label>
+          <Tool>
+            <Link to="/students/profiles" title="Volver al listado" className="page-tool">
+              <img src={IconBack} alt="Volver" className="w-icon" />
+            </Link>
+          </Tool>
+        </div>
 
-          <label className="label">Sección
-            <input name="section" value={form.section} onChange={change} />
-          </label>
+        <div className="card" style={{ marginRight: 25 }}>
+          {msg && <p className={msg.toLowerCase().includes("error") ? "error" : "ok"}>{msg}</p>}
 
-          <label className="label inline">
-            <input type="checkbox" name="active" checked={form.active} onChange={change} />
-            Activo
-          </label>
+          <div className="section-header">Información</div>
+          <form className="form-grid" onSubmit={handleSubmit}>
+            <label className="label">
+              Carnet
+              <input name="id_mep" value={form.id_mep} onChange={change} required />
+            </label>
 
-          <div className="actions-inline">
-            <button className="btn" type="submit"> Guardar</button>
-            <button className="btn ghost" type="button" onClick={() => navigate(-1)}>X Cancelar</button>
-          </div>
-        </form>
-      </div>
+            <label className="label">
+              Nombre
+              <input name="first_name" value={form.first_name} onChange={change} required />
+            </label>
+
+            <label className="label">
+              Apellidos
+              <input name="last_name" value={form.last_name} onChange={change} required />
+            </label>
+
+            <label className="label">
+              Sección
+              <input name="section" value={form.section} onChange={change} />
+            </label>
+
+            <label className="label inline">
+              <input type="checkbox" name="active" checked={form.active} onChange={change} />
+              Activo
+            </label>
+
+            <div className="actions-inline">
+              <button className="btn" type="submit">Guardar</button>
+              <button className="btn ghost" type="button" onClick={() => navigate(-1)}>Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </main>
     </Layout>
   );
 }
