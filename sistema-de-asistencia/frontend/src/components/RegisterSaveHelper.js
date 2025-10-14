@@ -73,3 +73,20 @@ export async function CheckStudentId(id_mep) {
         return [];
     }
 }
+
+export async function MarkAsReviewed(actionId) {
+    try {
+        const response = await fetch(`/api/actions/${actionId}/update/`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ on_revision: false }),
+        });
+        if (!response.ok) throw new Error("Error al marcar como revisado");
+
+        const data = await response.json();
+        return { success: true, data };
+    } catch (err) {
+        console.error("Error en MarkAsReviewed:", err);
+        return { success: false, message: err.message || "Error desconocido" };
+    }
+}

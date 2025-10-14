@@ -72,12 +72,16 @@ def students_list(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def students_create(request):
-    data = json.loads(request.body or "{}")
+    data = json.loads(request.body)
     s = Student(
         id_mep=data.get("id_mep","").strip(),
         first_name=data.get("first_name","").strip(),
         last_name=data.get("last_name","").strip(),
+        nationality=data.get("nationality", "").strip(),
+        birth_date=data.get("birth_date", "").strip(),
+        gender=data.get("gender", "").strip(),
         section=data.get("section","").strip(),
+        address=data.get("address", "").strip(),
         active=bool(data.get("active", True)),
     )
     try:

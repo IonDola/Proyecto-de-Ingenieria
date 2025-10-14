@@ -9,7 +9,6 @@ import "../styles/dialog-style.css"
 
 export default function ActionModal({ studentId, initial = null, onClose, onSuccess }) {
   const isEdit = Boolean(initial?.id);
-  const [type, setType] = useState(initial?.type || "ingreso");
   const [notes, setNotes] = useState(initial?.notes || "");
   const [msg, setMsg] = useState("");
 
@@ -21,12 +20,22 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
   const actionOptions = [
     {
       value: "ingreso", label: "Ingreso", content:
-        <Link to={"/actions/enter/new"}>
+        <Link to={"/actions/enter/new"} target="_blank">
           <img src={EnterIcon} alt="Ingreso" title="Ingreso" />
         </Link>
     },
-    { value: "egreso", label: "Egreso", content: <img src={ExitIcon} alt="Egreso" title="Egreso" /> },
-    { value: "abandono", label: "Abandono", content: <img src={AbandonIcon} alt="Abandono" title="Abandono" /> },
+    {
+      value: "egreso", label: "Egreso", content:
+        <Link to={"/actions/exit/new"} target="_blank">
+          <img src={ExitIcon} alt="Egreso" title="Egreso" />
+        </Link>
+    },
+    {
+      value: "abandono", label: "Abandono", content:
+        <Link to={"/actions/abandon/new"} target="_blank">
+          <img src={AbandonIcon} alt="Abandono" title="Abandono" />
+        </Link>
+    },
   ];
 
   useEffect(() => {
@@ -40,71 +49,25 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
     return () => ctrl.abort();
   }, [q, studentId]);
 
-  const submit = async (e) => {
-    e.preventDefault();
-    setMsg("");
-
-    const making = async () => {
-      const body = { type, notes };
-      let url, method;
-
-      if (isEdit) {
-        url = `/api/actions/${initial.id}/update/`;
-        method = "PATCH";
-      } else if (studentId) {
-        url = `/api/students/${studentId}/actions/new/`;
-        method = "POST";
-      } else {
-        if (!selectedStudent?.id) {
-          throw new Error("Selecciona un estudiante");
-        }
-        url = `/api/actions/new/`;
-        method = "POST";
-        body["student_id"] = selectedStudent.id;
-      }
-
-      const r = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data?.error || "Error al guardar la acción");
-      return data;
-    };
-
-    try {
-      const data = await making();
-      onSuccess?.(data);
-      onClose?.();
-    } catch (err) {
-      setMsg(err.message || "Error al guardar");
-    }
-  };
-
   return (
     <div id="backdrop" onClick={onClose}>
       <div id="action-modal" onClick={(e) => e.stopPropagation()}>
         <h3 style={{ marginTop: 0 }}>Nueva acción</h3>
-        <form onSubmit={submit} id="form-grid">
+        <div id="form-grid">
           <span>Tipo</span>
           <div className="buttons">
             {actionOptions.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setType(opt.value)}
-                className="type-button"
-              >
+              <div className="type-button" key={opt.value}>
                 {opt.content}
                 <span>{opt.label}</span>
-              </button>
+              </div>
             ))}
           </div>
 
           <div>
             <button className="btn ghost" type="button" onClick={onClose}>Cancelar</button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
