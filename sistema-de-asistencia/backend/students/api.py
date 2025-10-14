@@ -85,6 +85,16 @@ def students_create(request):
         s.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+    log_event(
+        request.user,
+        action="STUDENT_CREATED",
+        type="create",
+        entity=f"{s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"student_id": str(s.id)},
+    )
+
     return JsonResponse(serialize_student(s), status=201)
 
 @require_http_methods(["GET"])
@@ -102,6 +112,7 @@ def students_update(request, student_id):
         s = Student.objects.get(pk=student_id)
     except Student.DoesNotExist:
         return JsonResponse({"error": "not_found"}, status=404)
+
     data = json.loads(request.body or "{}")
     for f in ["id_mep","first_name","last_name","section","active"]:
         if f in data: setattr(s, f, data[f])
@@ -110,6 +121,16 @@ def students_update(request, student_id):
         s.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+    log_event(
+        request.user,
+        action="STUDENT_UPDATED",
+        type="update",
+        entity=f"{s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"student_id": str(s.id)},
+    )
+
     return JsonResponse(serialize_student(s))
 
 @require_http_methods(["GET"])
@@ -134,14 +155,6 @@ def action_detail(request, action_id):
 @require_http_methods(["POST"])
 def actions_create(request, student_id):
     """Crea una acción para un estudiante."""
-    log_event(
-        request.user,
-        action="Registrar acción",
-        type="create",
-        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
-        status="success",
-        metadata={"action_id": str(a.id), "action_type": a.type, "student_id": str(s.id)},
-    )
     try:
         s = Student.objects.get(pk=student_id)
     except Student.DoesNotExist:
@@ -163,6 +176,16 @@ def actions_create(request, student_id):
         a.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+    log_event(
+        request.user,
+        action="ACTION_CREATED",
+        type=a.type or "unknown",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"action_id": str(a.id), "student_id": str(s.id)},
+    )
+
     return JsonResponse(serialize_action(a), status=201)
 
 
@@ -170,16 +193,6 @@ def actions_create(request, student_id):
 @require_http_methods(["PATCH", "PUT"])
 def actions_update(request, action_id):
     """Actualiza una acción (tipo / notas / actor)."""
-    
-    log_event(
-        request.user,
-        action="Editar acción",
-        type="update",
-        entity=f"Acción {a.id} de estudiante {a.student.id_mep}",
-        status="success",
-        metadata={"action_id": str(a.id), "student_id": str(a.student_id)},
-    )
-
     try:
         a = Action.objects.get(pk=action_id)
     except Action.DoesNotExist:
@@ -201,6 +214,16 @@ def actions_update(request, action_id):
         a.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+    log_event(
+        request.user,
+        action="ACTION_UPDATED",
+        type=a.type or "unknown",
+        entity=f"Acción {a.id} de estudiante {a.student.id_mep}",
+        status="success",
+        metadata={"action_id": str(a.id), "student_id": str(a.student_id)},
+    )
+
     return JsonResponse(serialize_action(a))
 
 
@@ -208,21 +231,27 @@ def actions_update(request, action_id):
 @require_http_methods(["DELETE"])
 def actions_delete(request, action_id):
     """Elimina una accion"""
-
-    log_event(
-        request.user,
-        action="Eliminar acción",
-        type="delete",
-        entity=f"Acción {action_id} de estudiante",
-        status="success",
-        metadata={"deleted_id": action_id},
-    )
-
     try:
         a = Action.objects.get(pk=action_id)
     except Action.DoesNotExist:
         return JsonResponse({"error": "not_found"}, status=404)
+
+    # datos para el log antes de borrar
+    sid = str(a.student_id)
+    sid_mep = a.student.id_mep
+    atype = a.type or "unknown"
+
     a.delete()
+
+    log_event(
+        request.user,
+        action="ACTION_DELETED",
+        type=atype,
+        entity=f"Acción {action_id} de estudiante {sid_mep}",
+        status="success",
+        metadata={"deleted_id": str(action_id), "student_id": sid},
+    )
+
     return JsonResponse({"ok": True})
 
 
@@ -312,6 +341,16 @@ def actions_create_global(request):
         a.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+    log_event(
+        request.user,
+        action="ACTION_CREATED",
+        type=a.type or "unknown",
+        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        status="success",
+        metadata={"action_id": str(a.id), "student_id": str(s.id)},
+    )
+
     return JsonResponse(serialize_action(a), status=201)
 
 
