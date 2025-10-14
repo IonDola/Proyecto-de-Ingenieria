@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import PageHead from "../../components/PageHead"
 import StForm from "../../components/ActionForm"
-import { formatRegister } from "../../components/RegisterFormat"
+import { FormatRegister } from "../../components/RegisterFormat"
 
 import StudentIcon from "../../assets/icons/student.svg"
 import StudentActions from "../../assets/icons/student_registers.svg"
@@ -88,7 +88,7 @@ const EnterRegister = () => {
     fetchStudent();
   }, [action?.student_id]);
 
-  const [register, legalGuardians, carnet, revitionState] = formatRegister({ action, student, schoolTag: true });
+  const [register, studentRegister, legalGuardians, carnet, revitionState] = FormatRegister({ action, student, schoolTag: true });
   return (
     <>
       <PageHead icons={iconList} />
@@ -100,6 +100,7 @@ const EnterRegister = () => {
             isOnRevision={revitionState}
             actionId={actionId}
             actionTag="ingreso"
+            student={studentRegister}
           />
         }
         {!actionId &&
@@ -107,6 +108,7 @@ const EnterRegister = () => {
             register={register}
             carnet={carnet} legalGuardians={legalGuardians}
             actionTag="ingreso"
+            setStudent={setStudent}
           />
         }
       </main>

@@ -1,16 +1,14 @@
-export function formatRegister({ register, student, schoolTag = false }) {
+export function FormatRegister({ register, student, schoolTag = false }) {
     const keyMap = {
-        first_name: ["Nombre", 1],
-        last_name: ["Apellidos", 2],
-        nationality: ["Nacionalidad", 3],
-        birth_date: ["Fecha de Nacimiento", 4],
-        gender: ["Género", 5],
-        section: ["Sección", 6],
-        address: ["Dirección de Residencia", 7],
-        transferred: ["Transferido", 8],
-        notes: ["Notas", 9],
+        transferred: ["Transferido", 1],
+        notes: ["Notas", 2],
     };
     const keyMapWithSchool = {
+        origin_school: ["Escuela de Origen", 1],
+        transferred: ["Transferido", 2],
+        notes: ["Notas", 3],
+    };
+    const keyMapStudent = {
         first_name: ["Nombre", 1],
         last_name: ["Apellidos", 2],
         nationality: ["Nacionalidad", 3],
@@ -18,9 +16,7 @@ export function formatRegister({ register, student, schoolTag = false }) {
         gender: ["Género", 5],
         section: ["Sección", 6],
         address: ["Dirección de Residencia", 7],
-        origin_school: ["Escuela de Origen", 8],
-        transferred: ["Transferido", 9],
-        notes: ["Notas", 10],
+
     };
     const keyMapGuardians = {
         legal_guardian_1: ["Nombre del Encargado 1", 1],
@@ -34,11 +30,10 @@ export function formatRegister({ register, student, schoolTag = false }) {
         legal_guardian_phone_3: ["Telefono del Encargado 3", 9],
     };
 
-    const combined = { ...(student || {}), ...(register || {}) };
-    const carnet = combined.id_mep || " ";
-    const onRevision = combined.revision_state || true;
+    const carnet = student.id_mep || " ";
+    const onRevision = register.revision_state || true;
 
-    const formatEntries = (obj, map) => {
+    const FormatEntries = (obj, map) => {
         return Object.entries(map)
             .map(([key, [newKey, order]]) => {
                 let value = obj?.[key];
@@ -57,14 +52,15 @@ export function formatRegister({ register, student, schoolTag = false }) {
             .sort((a, b) => a.order - b.order)
             .reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {});
     };
-    const orderedSt = schoolTag ? formatEntries(combined, keyMapWithSchool) : formatEntries(combined, keyMap);
-    const orderedLG = formatEntries(combined, keyMapGuardians);
+    const orderedReport = schoolTag ? FormatEntries(register, keyMapWithSchool) : FormatEntries(register, keyMap);
+    const orderedStudent = FormatEntries(student, keyMapStudent);
+    const orderedLG = FormatEntries(student, keyMapGuardians);
 
-    return [orderedSt, orderedLG, carnet, onRevision];
+    return [orderedReport, orderedStudent, orderedLG, carnet, onRevision];
 }
 
 // Utilidad para normalizar fechas en formato YYYY-MM-DD
-function normalizeDate(value) {
+function NormalizeDate(value) {
     if (!value) return null;
     const date = new Date(value);
     if (isNaN(date.getTime())) return null;
@@ -76,7 +72,7 @@ function normalizeDate(value) {
  * @param {Object} data - Objeto completo que contiene `register`, `leg_guardians` y `carnet`.
  * @returns {Object} Payload listo para POST/PATCH a Django.
  */
-export function prepareStudentForSave(data) {
+export function PrepareStudentForSave(data) {
     const { register = {}, leg_guardians = {}, carnet } = data;
 
     const studentData = {
@@ -84,7 +80,7 @@ export function prepareStudentForSave(data) {
         first_name: register.first_name || "",
         last_name: register.last_name || "",
         nationality: register.nationality || "Costa Rica",
-        birth_date: normalizeDate(register.birth_date) || null,
+        birth_date: NormalizeDate(register.birth_date) || null,
         gender: register.gender || "Indefinido",
         section: register.section || "",
         address: register.address || null,
@@ -110,7 +106,7 @@ export function prepareStudentForSave(data) {
  * @param {Object} data - Objeto que contiene los campos relevantes del registro de acción.
  * @returns {Object} Payload listo para POST/PATCH a Django.
  */
-export function prepareActionForSave(data, actionTag) {
+export function PrepareActionForSave(data, actionTag) {
     const {
         type,
         notes,

@@ -1,10 +1,10 @@
-import { prepareStudentForSave, prepareActionForSave } from "./RegisterFormat";
+import { PrepareStudentForSave, PrepareActionForSave } from "./RegisterFormat";
 
-export async function HelpSave(formData, isEdit = false, carnet, initial = null, actionTag = "ingreso") {
+export async function HelpSave(formData, isEdit = false, carnet, initial = null, actionTag) {
     try {
         // 1️⃣ Preparar payloads para Django
-        const studentPayload = prepareStudentForSave(formData, actionTag);
-        const actionPayload = prepareActionForSave(formData, actionTag);
+        const studentPayload = PrepareStudentForSave(formData);
+        const actionPayload = PrepareActionForSave(formData, actionTag);
 
         // 2️⃣ Buscar si ya existe el estudiante por id_mep
         const checkStudent = await CheckStudentId(carnet);

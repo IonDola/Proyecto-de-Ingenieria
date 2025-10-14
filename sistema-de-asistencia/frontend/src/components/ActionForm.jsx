@@ -9,23 +9,26 @@ import deleteIcon from "../assets/icons/delete_doc.svg";
 import markAsIcon from "../assets/icons/registered.svg";
 import saveIcon from "../assets/icons/save_changes.svg";
 import cancelIcon from "../assets/icons/cancel.svg";
-import { HelpSave, MarkAsReviewed } from "./RegisterSaveHelper";
+import { CheckStudentId, HelpSave, MarkAsReviewed } from "./RegisterSaveHelper";
 
 const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, isOnRevision,
-  guestView = false, actionTag = "ingreso" }) => {
+  guestView = false, actionTag = "ingreso", student, setStudent }) => {
   const [formData, setFormData] = useState({
+    student: student || {},
     register: register || {},
     carnet: carnet || " ",
     leg_guardians: legalGuardians || {},
   });
-  const isNew = formData.carnet === null || formData.carnet === undefined || formData.carnet === " ";
+  const isNew = actionId == null;
   const [onEdition, setOnEdition] = useState(isNew);
   const [onRevision, setOnRevision] = useState(isOnRevision || carnet != null);
+  const [carnetBuble, setCarnetBuble] = useState(false);
 
   useEffect(() => {
     setFormData({
-      register: register || {},
       carnet: carnet || {},
+      student: student || {},
+      register: register || {},
       leg_guardians: legalGuardians || {},
     });
   }, [register, carnet, legalGuardians]);
@@ -36,11 +39,10 @@ const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, 
 
   };
 
-  // Maneja cambios en inputs
   const handleChange = (section, key, value) => {
     setFormData((prev) => {
       if (section === "carnet") {
-        return { ...prev, carnet: value }; // <- caso especial
+        return { ...prev, carnet: value };
       }
       return {
         ...prev,
@@ -66,7 +68,7 @@ const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, 
   // Guardar datos
   const handleSave = async () => {
     try {
-      const response = await HelpSave(formData, onEdition, carnet, actionId);
+      const response = await HelpSave(formData, onEdition, carnet, actionTag);
       if (response.success) {
         setOnEdition(false);
         console.log("Guardado correctamente");
@@ -81,7 +83,15 @@ const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, 
   // Validar datos (consulta al backend)
   const handleValidate = async () => {
     console.log("Validando...");
-    // TODO: llamar al backend aquí
+    CheckStudentId(formData.carnet).then((students) => {
+      if (students.length > 0) {
+        const student = students[0];
+        setStudent(student);
+        const input = document.querySelector('input[name="carnet"]');
+        input.setCustomValidity("Nuevo Estudiante");
+        input.reportValidity();
+      }
+    });
   };
 
   const handleMarkReviewed = async () => {
@@ -151,7 +161,7 @@ const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, 
   );
 
   let sideTools = baseTools;
-  if (onEdition || isNew) {
+  if (onEdition) {
     sideTools = (
       <>
         {/* Botones de acción */}
@@ -199,12 +209,13 @@ const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, 
               onChange={(e) => handleChange("carnet", "carnet", e.target.value)}
               readOnly={!onEdition}
               className={onEdition ? "editing" : ""}
+              required
             />
           </div>
           {!guestView &&
             <>
               <button type="button" onClick={handleValidate} style={{ gridColumn: "2" }}>
-                Verificar
+                Buscar
               </button>
               {
                 !isNew &&
@@ -217,12 +228,44 @@ const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, 
 
         <div id="st-table">
           <div className="st-h">
-            <p>Estudiante</p>
+            <p>Registro de Acción</p>
           </div>
 
           <div>
             {Object.keys(formData.register).map((key) => {
               const rawValue = formData.register[key];
+              const isDateField = key.toLowerCase().includes("fecha") || key.toLowerCase().includes("birth");
+
+              // value seguro para pasar a <input>
+              const displayValue = isDateField
+                ? normalizeForDateInput(rawValue)
+                : (rawValue === undefined || rawValue === null ? "" : rawValue);
+
+              return (
+                <div className="st-data" key={key}>
+                  <label>{key}</label>
+                  <input
+                    type={isDateField ? "date" : "text"}
+                    value={displayValue}
+                    readOnly={!onEdition}
+                    onChange={(e) => {
+                      // para fechas el input devuelve YYYY-MM-DD o "", guardamos tal cual
+                      const newVal = isDateField ? e.target.value : e.target.value;
+                      handleChange("register", key, newVal);
+                    }}
+                    className={onEdition ? "editing" : ""}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className="st-h">
+            <p>Estudiante</p>
+          </div>
+
+          <div>
+            {Object.keys(formData.student).map((key) => {
+              const rawValue = formData.student[key];
               const isDateField = key.toLowerCase().includes("fecha") || key.toLowerCase().includes("birth");
 
               // value seguro para pasar a <input>

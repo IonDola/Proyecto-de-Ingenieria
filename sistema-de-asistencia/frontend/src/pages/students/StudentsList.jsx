@@ -101,10 +101,8 @@ export default function StudentsList() {
               <img src={Add} alt="Añadir estudiante" title="Añadir estudiante" className="w-icon" />
             </Link>
           </Tool>
-          <Tool key={"Tool" + 3}>
-            <button className="page-tool" onClick={bulkDelete} disabled={!anySelected} title="Remover seleccionados">
-              <img src={MassRemove} alt="Remover múltiples registros" className="w-icon" />
-            </button>
+          <Tool key={"Tool" + 3} action={bulkDelete} disabled={!anySelected}>
+            <img src={MassRemove} alt="Remover múltiples registros" className="w-icon" />
           </Tool>
         </div>
 

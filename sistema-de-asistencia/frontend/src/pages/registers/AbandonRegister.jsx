@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom";
 import PageHead from "../../components/PageHead"
 import StForm from "../../components/ActionForm"
-import { formatRegister } from "../../components/RegisterFormat"
+import { FormatRegister } from "../../components/RegisterFormat"
 
 import StudentIcon from "../../assets/icons/student.svg"
 import StudentActions from "../../assets/icons/student_registers.svg"
@@ -88,7 +88,7 @@ const AbandonRegister = () => {
         fetchStudent();
     }, [action?.student_id]);
 
-    const [register, legalGuardians, carnet, revitionState] = formatRegister({ action, student, schoolTag: true });
+    const [register, legalGuardians, carnet, revitionState] = FormatRegister({ action, student, schoolTag: false });
     return (
         <>
             <PageHead icons={iconList} />
