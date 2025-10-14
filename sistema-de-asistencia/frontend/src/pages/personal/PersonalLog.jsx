@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import "../../styles/main.css";
-import "../../styles/personal-log.css";  
+import "../../styles/personal-log.css";
 import PageHead from "../../components/PageHead";
 import Listable from "../../components/Listable";
 import Tool from "../../components/PageTool";
@@ -33,10 +33,24 @@ export default function PersonalLog() {
   const load = async () => {
     try {
       setLoading(true);
+
+      // tomamos el token guardado por el login (acepta "access" o "token" por si acaso)
+      const token = localStorage.getItem("access") || localStorage.getItem("token") || "";
+
       const r = await fetch(`/api/users/me/actions/?q=${encodeURIComponent(q)}`, {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         credentials: "include",
       });
+
+      // si no está autenticado, dejamos vacío 
+      if (!r.ok) {
+        setRows([]);
+        return;
+      }
+
       const ct = (r.headers.get("content-type") || "").toLowerCase();
       const text = await r.text();
       if (!ct.includes("application/json")) throw new Error(`HTTP ${r.status}: respuesta no-JSON`);
