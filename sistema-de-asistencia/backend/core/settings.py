@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -63,6 +64,19 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+}
+'''TODO: Colocar el tiempo real '''
+SIMPLE_JWT = {
+    # 🔧 Token de acceso: durará 1 hora en lugar de 5 minutos
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+
+    # 🔧 Token de refresco: 1 día (puedes subirlo a más si lo necesitas)
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+    # Estas opciones puedes dejarlas por defecto, pero te las muestro por claridad
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": False,
 }
 
 ROOT_URLCONF = 'core.urls'
