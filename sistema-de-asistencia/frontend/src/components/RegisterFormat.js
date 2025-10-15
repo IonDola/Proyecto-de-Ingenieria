@@ -31,7 +31,8 @@ export function FormatRegister({ register, student, schoolTag = false }) {
     };
 
     const carnet = student.id_mep || " ";
-    const onRevision = register.revision_state || true;
+    // TODO: Hacer que evalue el valor de on_revision del registro
+    const onRevision = true;
 
     const FormatEntries = (obj, map) => {
         return Object.entries(map)
