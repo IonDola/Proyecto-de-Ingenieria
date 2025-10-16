@@ -34,7 +34,7 @@ export default function App() {
           <Route path="/students" element={<RequireAuth><StudentsHome /></RequireAuth>} />
           <Route path="/students/profiles" element={<RequireAuth><StudentsList /></RequireAuth>} />
           <Route path="/students/profiles/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
-          <Route path="/students/profiles/:id" element={<RequireAuth><StudentDetail /></RequireAuth>} />
+          <Route path="/students/profiles/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
           <Route path="/students/profiles/:id/edit" element={<RequireAuth><StudentForm /></RequireAuth>} />
           <Route path="/students/profiles/:id/history" element={<RequireAuth><HistoryList /></RequireAuth>} />
           <Route path="/actions/enter/:actionId" element={<RequireAuth><EnterRegister /></RequireAuth>} />

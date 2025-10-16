@@ -21,15 +21,15 @@ export function FormatStudentForDB(formData, withCarnet = false) {
     };
 
     const keyMapGuardians = {
-        "Nombre del Encargado 1": "legal_guardian_1",
-        "Cédula del Encargado 1": "legal_guardian_id_1",
-        "Telefono del Encargado 1": "legal_guardian_phone_1",
-        "Nombre del Encargado 2": "legal_guardian_2",
-        "Cédula del Encargado 2": "legal_guardian_id_2",
-        "Telefono del Encargado 2": "legal_guardian_phone_2",
-        "Nombre del Encargado 3": "legal_guardian_3",
-        "Cédula del Encargado 3": "legal_guardian_id_3",
-        "Telefono del Encargado 3": "legal_guardian_phone_3",
+        "Nombre del Encargado 1": "guardian_name_1",
+        "Cédula del Encargado 1": "guardian_id_1",
+        "Telefono del Encargado 1": "guardian_phone_1",
+        "Nombre del Encargado 2": "guardian_name_2",
+        "Cédula del Encargado 2": "guardian_id_2",
+        "Telefono del Encargado 2": "guardian_phone_2",
+        "Nombre del Encargado 3": "guardian_name_3",
+        "Cédula del Encargado 3": "guardian_id_3",
+        "Telefono del Encargado 3": "guardian_phone_3",
     };
 
     const map = withCarnet ? keyMapStudentWithCarnet : keyMapStudent;
