@@ -38,7 +38,7 @@
 }
 
 
-.head-icons img{
+#head-icons img {
   margin-top: 20px;
   margin-right: 10px;
   width: 50px;
@@ -130,7 +130,7 @@
   display: grid;
   grid-template-rows: 2fr 2fr 1fr;
   align-items: start;
-  justify-content: left;  
+  justify-content: left;
 }
 
 .w-icon {
@@ -149,7 +149,7 @@ main {
 }
 
 a {
-  color: inherit;         
+  color: inherit;
   text-decoration: none;
 }
 
@@ -238,7 +238,7 @@ button.page-tool {
 }
 
 button.page-tool:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 button.page-tool img {
@@ -260,7 +260,7 @@ button.page-tool img {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;        
+  gap: 8px;
 }
 
 .table.history .td.act .icon-btn {
@@ -278,4 +278,3 @@ button.page-tool img {
   width: 24px;
   height: 24px;
 }
-

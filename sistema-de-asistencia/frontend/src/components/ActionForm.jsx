@@ -128,7 +128,7 @@ const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, 
     }
     return "";
   };
-
+  console.log(register.student);
   const baseTools = (
     <>
       {/* Botón editar */}

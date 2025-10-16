@@ -9,7 +9,7 @@ import "../../styles/student-ui.css";
 import IconStudent from "../../assets/icons/student.svg";
 import IconBack from "../../assets/icons/devolverse.png";
 import IconProfile from "../../assets/icons/student_profiles.svg";
-import IconHistory from "../../assets/icons/descripcion-general.svg";
+import IconHistory from "../../assets/icons/report.svg";
 import IconEdit from "../../assets/icons/edit.svg";
 import IconNew from "../../assets/icons/new_doc.svg";
 
@@ -19,7 +19,6 @@ export default function StudentDetail() {
   const [s, setS] = useState(null);
   const [err, setErr] = useState("");
   const [showActionModal, setShowActionModal] = useState(false);
-
   useEffect(() => {
     fetch(`/api/students/${id}/`)
       .then((r) => {

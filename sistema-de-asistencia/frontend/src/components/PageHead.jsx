@@ -34,10 +34,18 @@ const PageHead = ({ name, credential, icons }) => {
     };
 
     const HeadName = ({ name, icons }) => {
-        if (name && icons) {
-            // TODO
-            console.log("Not implemented")
-            return;
+        if (name && icons && icons.length == 1) {
+            return (
+                <div id="head-icons" style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "5px" }}>
+                    <img
+                        src={icons[0].image}
+                        alt={icons[0].description}
+                        title={icons[0].description}
+                        className="w-icon"
+                    />
+                    <div className="name" style={{ marginTop: "15px", fontSize: "15pt" }}> {name} </div>
+                </div>
+            );
         }
 
         if (name) {
@@ -50,7 +58,7 @@ const PageHead = ({ name, credential, icons }) => {
         }
 
         return (
-            <div className="head-icons">
+            <div id="head-icons">
                 <img
                     key={icons[0].id + "-main"}
                     src={icons[0].image}

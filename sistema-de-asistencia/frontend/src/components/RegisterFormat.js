@@ -56,7 +56,6 @@ export function FormatRegister({ register, student, schoolTag = false }) {
     const orderedReport = schoolTag ? FormatEntries(register, keyMapWithSchool) : FormatEntries(register, keyMap);
     const orderedStudent = FormatEntries(student, keyMapStudent);
     const orderedLG = FormatEntries(student, keyMapGuardians);
-
     return [orderedReport, orderedStudent, orderedLG, carnet, onRevision];
 }
 

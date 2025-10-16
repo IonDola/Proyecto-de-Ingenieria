@@ -108,6 +108,7 @@ const EnterRegister = () => {
             register={register}
             carnet={carnet} legalGuardians={legalGuardians}
             actionTag="ingreso"
+            student={studentRegister}
             setStudent={setStudent}
           />
         }

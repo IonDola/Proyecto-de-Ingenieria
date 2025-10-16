@@ -1,7 +1,7 @@
-const PageTool = ({ children, action }) => {
+const PageTool = ({ children, action, type = "button" }) => {
     // TODO
     return (
-        <button className="page-tool" onClick={action}>
+        <button className="page-tool" onClick={action} type={type}>
             {children}
         </button>
     );
