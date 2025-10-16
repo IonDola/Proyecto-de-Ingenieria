@@ -15,18 +15,18 @@ def serialize_student(s):
         "last_name": s.last_name,
         "section": s.section,
         "address": s.address,
-        "birth_day": s.birth_date,
+        "birth_date": s.birth_date,
         "gender": s.gender,
         "nationality": s.nationality,
-        "legal_guardian_1": s.guardian_name_1,
-        "legal_guardian_id_1": s.guardian_id_1,
-        "legal_guardian_phone_1": s.guardian_phone_1,
-        "legal_guardian_2": s.guardian_name_2,
-        "legal_guardian_id_2": s.guardian_id_2,
-        "legal_guardian_phone_2": s.guardian_phone_2,
-        "legal_guardian_3": s.guardian_name_3,
-        "legal_guardian_id_3": s.guardian_id_3,
-        "legal_guardian_phone_3": s.guardian_phone_3,
+        "guardian_name_1": s.guardian_name_1,
+        "guardian_id_1": s.guardian_id_1,
+        "guardian_phone_1": s.guardian_phone_1,
+        "guardian_2": s.guardian_name_2,
+        "guardian_id_2": s.guardian_id_2,
+        "guardian_phone_2": s.guardian_phone_2,
+        "guardian_3": s.guardian_name_3,
+        "guardian_id_3": s.guardian_id_3,
+        "guardian_phone_3": s.guardian_phone_3,
         "active": s.active,
         "created_at": s.created_at.isoformat(),
         "updated_at": s.updated_at.isoformat(),
@@ -73,17 +73,52 @@ def students_list(request):
 @require_http_methods(["POST"])
 def students_create(request):
     data = json.loads(request.body)
-    s = Student(
-        id_mep=data.get("id_mep","").strip(),
-        first_name=data.get("first_name","").strip(),
-        last_name=data.get("last_name","").strip(),
-        nationality=data.get("nationality", "").strip(),
-        birth_date=data.get("birth_date", "").strip(),
-        gender=data.get("gender", "").strip(),
-        section=data.get("section","").strip(),
-        address=data.get("address", "").strip(),
-        active=bool(data.get("active", True)),
-    )
+    expected_fields = [
+        "id_mep",
+        "first_name",
+        "last_name",
+        "section",
+        "address",
+        "birth_date",
+        "gender",
+        "nationality",
+        "guardian_name_1",
+        "guardian_id_1",
+        "guardian_phone_1",
+        "guardian_name_2",
+        "guardian_id_2",
+        "guardian_phone_2",
+        "guardian_name_3",
+        "guardian_id_3",
+        "guardian_phone_3",
+        "active",
+    ]
+
+    # 🔹 Crear el estudiante usando solo los campos esperados
+    s = Student()
+    for f in expected_fields:
+        value = data.get(f, "").strip() if isinstance(data.get(f), str) else data.get(f)
+        setattr(s, f, value)
+
+    # 🔹 Normalizar campos específicos
+    if "active" not in data:
+        s.active = True
+    elif isinstance(data["active"], str):
+        s.active = data["active"].lower() in ["true", "1", "yes", "on"]
+
+    # 🔹 Validar formato de fecha antes de guardar
+    if isinstance(s.birth_date, str) and s.birth_date:
+        from datetime import datetime
+        try:
+            # Acepta formatos "YYYY-MM-DD" o "DD/MM/YYYY"
+            s.birth_date = datetime.strptime(s.birth_date, "%Y-%m-%d").date()
+        except ValueError:
+            try:
+                s.birth_date = datetime.strptime(s.birth_date, "%d/%m/%Y").date()
+            except ValueError:
+                return JsonResponse({"error": "Invalid date format. Use YYYY-MM-DD or DD/MM/YYYY."}, status=400)
+
+    # 🔹 Validación y guardado
     try:
         s.full_clean()
         s.save()
@@ -118,8 +153,31 @@ def students_update(request, student_id):
         return JsonResponse({"error": "not_found"}, status=404)
 
     data = json.loads(request.body or "{}")
-    for f in ["id_mep","first_name","last_name","section","active"]:
-        if f in data: setattr(s, f, data[f])
+    updatable_fields = [
+        "id_mep",
+        "first_name",
+        "last_name",
+        "section",
+        "address",
+        "birth_date",
+        "gender",
+        "nationality",
+        "guardian_name_1",
+        "guardian_id_1",
+        "guardian_phone_1",
+        "guardian_name_2",
+        "guardian_id_2",
+        "guardian_phone_2",
+        "guardian_name_3",
+        "guardian_id_3",
+        "guardian_phone_3",
+        "active",
+    ]
+
+    # 🔹 Intentar actualizar solo los campos presentes en el JSON recibido
+    for f in updatable_fields:
+        if f in data:
+            setattr(s, f, data[f])
     try:
         s.full_clean()
         s.save()
