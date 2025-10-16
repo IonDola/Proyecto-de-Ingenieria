@@ -4,7 +4,6 @@ import Login from './pages/auth/Login';
 import StudentsHome from "./pages/students/StudentsHome";
 import StudentsList from "./pages/students/StudentsList";
 import StudentForm from "./pages/students/StudentForm";
-import StudentDetail from "./pages/students/StudentDetail";
 import HistoryList from "./pages/students/HistoryList";
 import EnterRegister from "./pages/registers/EnterRegister";
 import ExitRegister from "./pages/registers/ExitRegister";
