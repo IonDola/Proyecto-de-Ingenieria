@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_LOGIN = "/api/auth/login/"; 
+const API_LOGIN = "/api/auth/login/";
 
 export default function LoginForm() {
   const nav = useNavigate();
@@ -26,7 +26,7 @@ export default function LoginForm() {
       const ct = (r.headers.get("content-type") || "").toLowerCase();
       const text = await r.text();
       let data = null;
-      if (ct.includes("application/json")) { try { data = JSON.parse(text); } catch {} }
+      if (ct.includes("application/json")) { try { data = JSON.parse(text); } catch { } }
 
       if (!r.ok) {
         alert(data?.error || `Error de autenticación (HTTP ${r.status})`);
@@ -34,7 +34,7 @@ export default function LoginForm() {
       }
 
       // backend devuelve { token, nombre, rol }
-      const token = data?.token;
+      const token = data?.refresh;
       const nombre = data?.nombre || username;
       const rol = data?.rol || "admin";
 

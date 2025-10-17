@@ -7,16 +7,8 @@ import AbandonIcon from "../assets/icons/abandon.svg";
 
 import "../styles/dialog-style.css"
 
-export default function ActionModal({ studentId, initial = null, onClose, onSuccess }) {
-  const isEdit = Boolean(initial?.id);
-  const [notes, setNotes] = useState(initial?.notes || "");
-  const [msg, setMsg] = useState("");
-
+export default function ActionModal({ onClose }) {
   // para picker de estudiante cuando no viene studentId
-  const [q, setQ] = useState("");
-  const [options, setOptions] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-
   const actionOptions = [
     {
       value: "ingreso", label: "Ingreso", content:
@@ -38,17 +30,6 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
     },
   ];
 
-  useEffect(() => {
-    if (studentId) return;         // no hace falta buscar
-    if (!q) { setOptions([]); return; }
-    const ctrl = new AbortController();
-    fetch(`/api/students/?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
-      .then(r => r.json())
-      .then(d => setOptions(d.results || []))
-      .catch(() => { });
-    return () => ctrl.abort();
-  }, [q, studentId]);
-
   return (
     <div id="backdrop" onClick={onClose}>
       <div id="action-modal" onClick={(e) => e.stopPropagation()}>
@@ -64,9 +45,7 @@ export default function ActionModal({ studentId, initial = null, onClose, onSucc
             ))}
           </div>
 
-          <div>
-            <button className="btn ghost" type="button" onClick={onClose}>Cancelar</button>
-          </div>
+          <button id="cancel-modal" type="button" onClick={onClose}>Cancelar</button>
         </div>
       </div>
     </div>

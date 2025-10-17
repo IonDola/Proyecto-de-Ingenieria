@@ -1,5 +1,5 @@
 import { useEffect, useState, Fragment } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import adminImage from "../assets/images/profile_admins.jpg";
 import closeSesion from "../assets/icons/logout.svg";
 import subSectionIcon from "../assets/icons/subsection.png"
@@ -11,10 +11,10 @@ export const CredentialLevel = {
     GUEST: "Guest",
 };
 
-const PageHead = ({ name, credential, icons }) => {
-    const credentialLevel = credential
-    const [displayedName, setName] = useState(name);
+const API_LOGOUT = "/api/auth/logout/";
 
+const PageHead = ({ name, credential, icons }) => {
+    const nav = useNavigate();
     const HeadClock = () => {
         var [date, setDate] = useState(new Date());
 
@@ -83,11 +83,32 @@ const PageHead = ({ name, credential, icons }) => {
 
     const HeadMenu = () => {
         const [goToLogin, setGoToLogin] = useState(false);
-        const logOut = () => {
-            setGoToLogin(true);
-            console.log("salir")
-            // TODO Logica de logout del sistema.
-        }
+        const logOut = async () => {
+            console.log("Cerrando sesión...");
+
+            const refresh = localStorage.getItem("refresh");
+
+            try {
+                if (refresh) {
+                    await fetch(API_LOGOUT, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ refresh }),
+                    });
+                }
+
+                localStorage.removeItem("access");
+                localStorage.removeItem("refresh");
+                localStorage.removeItem("userName");
+                localStorage.removeItem("role");
+
+                nav("/login", { replace: true });
+            } catch (err) {
+                console.error("Error al cerrar sesión:", err);
+                alert("No se pudo cerrar la sesión correctamente");
+            }
+        };
 
         if (goToLogin) {
             return <Navigate to="/" />

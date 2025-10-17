@@ -9,7 +9,7 @@
 }
 
 #action-modal {
-    width: 620px;
+    width: 650px;
     background-color: var(--main-color);
     border-radius: 12px;
     padding: 16px;
@@ -26,19 +26,37 @@
     grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     text-align: center;
-    column-gap: 10px;
+    column-gap: 20px;
+    padding: 10px;
 }
 
 #form-grid .type-button {
     background-color: var(--main-color);
     border-radius: 25px;
+    transition: 0.3s;
+}
+
+#form-grid .type-button:hover {
+    transform: scale(1.05);
+    border: white 1px solid;
 }
 
 #form-grid span {
+    padding-left: 20px;
+    padding-top: 10px;
     font-size: 20pt;
     font-family: inherit;
 }
 
 #form-grid button {
     margin: 10px;
+}
+
+#cancel-modal {
+    background-color: transparent;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16pt;
+    border: none;
+    cursor: pointer;
 }

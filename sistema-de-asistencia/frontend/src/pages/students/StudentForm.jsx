@@ -193,7 +193,7 @@ const StudentForm = ({ }) => {
                 // value seguro para pasar a <input>
                 return (
                   <div className="st-data" key={key}>
-                    <label>{key}</label>
+                    <a>{key}</a>
                     <input
                       type={!isDateField ? "text" : "date"}
                       value={rawValue}
@@ -216,7 +216,7 @@ const StudentForm = ({ }) => {
                 const value = formData.legal_guardians[key] ?? "";
                 return (
                   <div className="st-data" key={key}>
-                    <label>{key}</label>
+                    <a>{key}</a>
                     <input
                       type={"test"}
                       value={value}

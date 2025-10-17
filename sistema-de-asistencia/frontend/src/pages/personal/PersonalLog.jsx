@@ -104,30 +104,30 @@ export default function PersonalLog() {
 
   const rowElements = filtered.length
     ? filtered.map((r) => (
-        <div className="listable-row" key={r.id}>
-          <div>
-            {typeof r.timestamp === "string" && /\d{4}-\d{2}-\d{2}T/.test(r.timestamp)
-              ? new Date(r.timestamp).toLocaleString()
-              : r.timestamp}
-          </div>
-          <div>
-            <Link to={`/personal/${r.id}`} className="link">{r.action}</Link>
-          </div>
-          <div>{r.type}</div>
-          <div>{r.entity}</div>
-          <div>{r.status}</div>
-          <div>
-            <button className="page-tool" title="Exportar" onClick={() => onExport(r)}>
-              <img src={IconDownload} alt="Exportar" className="w-icon" />
-            </button>
-          </div>
+      <div className="listable-row" key={r.id}>
+        <div>
+          {typeof r.timestamp === "string" && /\d{4}-\d{2}-\d{2}T/.test(r.timestamp)
+            ? new Date(r.timestamp).toLocaleString()
+            : r.timestamp}
         </div>
-      ))
+        <div>
+          <Link to={`/personal/${r.id}`} className="link">{r.action}</Link>
+        </div>
+        <div>{r.type}</div>
+        <div>{r.entity}</div>
+        <div>{r.status}</div>
+        <div>
+          <button className="page-tool" title="Exportar" onClick={() => onExport(r)}>
+            <img src={IconDownload} alt="Exportar" className="w-icon" />
+          </button>
+        </div>
+      </div>
+    ))
     : [
-        <div className="listable-row" key="empty">
-          <div style={{ gridColumn: "1 / -1" }}>Sin acciones</div>
-        </div>,
-      ];
+      <div className="listable-row" key="empty">
+        <div style={{ gridColumn: "1 / -1" }}>Sin acciones</div>
+      </div>,
+    ];
 
   return (
     <>

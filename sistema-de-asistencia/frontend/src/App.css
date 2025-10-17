@@ -28,6 +28,23 @@ body,
   font-family: 'Open Sans';
 }
 
+button {
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  border: white 1px solid;
+}
+
+.rrd-link {
+  transition: 0.3s;
+}
+
+.rrd-link:hover {
+  transform: scale(1.05);
+}
+
 .login-container {
   width: fit-content;
   display: flex;
@@ -114,4 +131,14 @@ body,
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--light-blue-color);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  /* cambia el cursor al pasar sobre el ícono */
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: brightness(1.2);
+  /* opcional: pequeño efecto visual */
 }

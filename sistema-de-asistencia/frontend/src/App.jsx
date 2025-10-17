@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, } from "react-router-dom";
 import Login from './pages/auth/Login';
 import StudentsHome from "./pages/students/StudentsHome";
 import StudentsList from "./pages/students/StudentsList";

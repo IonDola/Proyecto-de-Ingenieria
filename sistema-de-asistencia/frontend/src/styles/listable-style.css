@@ -42,7 +42,7 @@
     font-weight: bolder;
 }
 
-.elements-table > div {
+.elements-table>div {
     padding: 25px;
 }
 
@@ -61,31 +61,39 @@
     border: 1px solid white;
 }
 
+.elements {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 60vh;
+
+}
+
 .elements .cb {
     text-align: center;
 }
 
 .elements .cb input[type="checkbox"] {
-  appearance: none;       /* quita estilo nativo */
-  -webkit-appearance: none;
-  width: 50px;
-  height: 50px;
-  border: 2px solid white;
-  border-radius: 25%;
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
+    appearance: none;
+    /* quita estilo nativo */
+    -webkit-appearance: none;
+    width: 50px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 25%;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
 }
 
 .elements .cb input[type="checkbox"]:checked::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 40px;
-  height: 40px;
-  background-color: white;
-  border-radius: 25%;  
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 25%;
 }
 
 .elements button {
