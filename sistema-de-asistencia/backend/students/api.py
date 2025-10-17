@@ -100,13 +100,11 @@ def students_create(request):
         value = data.get(f, "").strip() if isinstance(data.get(f), str) else data.get(f)
         setattr(s, f, value)
 
-    # 🔹 Normalizar campos específicos
     if "active" not in data:
         s.active = True
     elif isinstance(data["active"], str):
         s.active = data["active"].lower() in ["true", "1", "yes", "on"]
 
-    # 🔹 Validar formato de fecha antes de guardar
     if isinstance(s.birth_date, str) and s.birth_date:
         from datetime import datetime
         try:
@@ -118,7 +116,6 @@ def students_create(request):
             except ValueError:
                 return JsonResponse({"error": "Invalid date format. Use YYYY-MM-DD or DD/MM/YYYY."}, status=400)
 
-    # 🔹 Validación y guardado
     try:
         s.full_clean()
         s.save()
@@ -174,7 +171,6 @@ def students_update(request, student_id):
         "active",
     ]
 
-    # 🔹 Intentar actualizar solo los campos presentes en el JSON recibido
     for f in updatable_fields:
         if f in data:
             setattr(s, f, data[f])

@@ -2,11 +2,11 @@ import { PrepareStudentForSave, PrepareActionForSave } from "./RegisterFormat";
 
 export async function HelpSave(formData, isEdit = false, carnet, initial = null, actionTag) {
     try {
-        // 1️⃣ Preparar payloads para Django
+        // Preparar payloads para Django
         const studentPayload = PrepareStudentForSave(formData);
         const actionPayload = PrepareActionForSave(formData, actionTag);
 
-        // 2️⃣ Buscar si ya existe el estudiante por id_mep
+        // Buscar si ya existe el estudiante por id_mep
         const checkStudent = await CheckStudentId(carnet);
         let studentData;
         if (checkStudent.length > 0) {
@@ -22,7 +22,7 @@ export async function HelpSave(formData, isEdit = false, carnet, initial = null,
             studentData = await studentRes.json();
         }
 
-        // 3️⃣ Crear o actualizar la acción según corresponda
+        // Crear o actualizar la acción según corresponda
         let url, method;
         if (isEdit && initial != null) {
             url = `/api/actions/${initial}/update/`;
@@ -32,23 +32,24 @@ export async function HelpSave(formData, isEdit = false, carnet, initial = null,
             method = "POST";
         }
 
-        // Asegurar que la acción apunte al estudiante correcto
-        actionPayload.student = studentData.id;
+        // Asegurar que la acción apunte al estudiante correcto (usar student_id)
+        const actionResBody = { ...actionPayload, student_id: studentData.id };
+        delete actionResBody.student; // no enviar "student" al endpoint global
 
         const actionRes = await fetch(url, {
             method,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(actionPayload),
+            body: JSON.stringify(actionResBody),
         });
 
         const actionData = await actionRes.json();
         if (!actionRes.ok) throw new Error(actionData?.error || "Error al guardar la acción");
 
-        console.log("✅ Guardado correctamente:", actionData);
+        console.log(" Guardado correctamente:", actionData);
         return { success: true, data: actionData };
 
     } catch (err) {
-        console.error("❌ Error en handleSave:", err);
+        console.error(" Error en handleSave:", err);
         return { success: false, message: err.message || "Error desconocido" };
     }
 }
@@ -65,7 +66,6 @@ export async function CheckStudentId(id_mep) {
 
         const data = await response.json();
         const results = data.results || [];
-
 
         return results;
     } catch (err) {

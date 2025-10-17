@@ -107,27 +107,19 @@ export function PrepareStudentForSave(data) {
  * @returns {Object} Payload listo para POST/PATCH a Django.
  */
 export function PrepareActionForSave(data, actionTag) {
-    const {
-        type,
-        notes,
-        student_id,
-        transferred,
-        en_revision,
-        origin_school,
-    } = data;
+  const { notes, student_id, transferred, en_revision, origin_school } = data;
 
-    const actionData = {
-        type: actionTag || "ingreso",
-        notes: notes || "",
-        student: student_id,
-        transferred: !!transferred, // campo booleano en modelo
-        on_revision: en_revision !== undefined ? !!en_revision : true,
-    };
+  const actionData = {
+    type: actionTag || "ingreso",
+    notes: notes || "",
+    student: student_id,                
+    transferred: !!transferred,
+    on_revision: en_revision !== undefined ? !!en_revision : true,
+  };
 
-    // Solo incluir `escuela_origen` si la acción es de tipo ingreso
-    if (type === "ingreso" && origin_school) {
-        actionData.escuela_origen = origin_school;
-    }
+  if (actionTag === "ingreso" && origin_school) {
+    actionData.origin_school = origin_school;
+  }
 
-    return actionData;
+  return actionData;
 }
