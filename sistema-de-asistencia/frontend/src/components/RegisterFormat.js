@@ -102,24 +102,47 @@ export function PrepareStudentForSave(data) {
 }
 
 /**
- * Convierte la data del formulario o documento a un payload compatible con el modelo Action de Django.
- * @param {Object} data - Objeto que contiene los campos relevantes del registro de acción.
+ * Convierte la data del formulario/estado a un payload compatible con el modelo Action de Django.
+ * Importante: los campos del registro vienen con etiquetas amigables (ES), los mapeamos a claves técnicas (EN).
+ * @param {Object} data - Objeto que contiene `register` (etiquetas ES) y otros campos.
+ * @param {string} actionTag - "ingreso" | "egreso" | "abandono"
  * @returns {Object} Payload listo para POST/PATCH a Django.
  */
 export function PrepareActionForSave(data, actionTag) {
-  const { notes, student_id, transferred, en_revision, origin_school } = data;
+    const reg = data?.register || {};
+    // Etiquetas mostradas en el formulario
+    const originSchoolLabel = "Escuela de Origen";
+    const transferredLabel = "Transferido";
+    const notesLabel = "Notas";
 
-  const actionData = {
-    type: actionTag || "ingreso",
-    notes: notes || "",
-    student: student_id,                
-    transferred: !!transferred,
-    on_revision: en_revision !== undefined ? !!en_revision : true,
-  };
+    // Notas: puede venir en el registro o en data.notes
+    const notes = (reg[notesLabel] ?? data?.notes ?? "").toString();
 
-  if (actionTag === "ingreso" && origin_school) {
-    actionData.origin_school = origin_school;
-  }
+    // Transferido: normalizar a boolean
+    let transferredRaw = reg[transferredLabel] ?? data?.transferred;
+    if (typeof transferredRaw === "string") {
+        const t = transferredRaw.trim().toLowerCase();
+        transferredRaw = (t === "true" || t === "1" || t === "sí" || t === "si");
+    }
+    const transferred = !!transferredRaw;
 
-  return actionData;
+    // on_revision: default true si no viene (lo revisa dirección luego)
+    const on_revision = (typeof data?.en_revision !== "undefined")
+        ? !!data.en_revision
+        : (typeof data?.on_revision !== "undefined" ? !!data.on_revision : true);
+
+    // origin_school solo aplica para "ingreso"
+    let origin_school = null;
+    if (actionTag === "ingreso") {
+        const raw = reg[originSchoolLabel] ?? data?.origin_school;
+        origin_school = (raw === undefined || raw === null || String(raw).trim() === "") ? null : String(raw).trim();
+    }
+
+    return {
+        type: actionTag || "ingreso",
+        notes,
+        transferred,
+        on_revision,
+        ...(actionTag === "ingreso" ? { origin_school } : {}),
+    };
 }

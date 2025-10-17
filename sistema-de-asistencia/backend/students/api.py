@@ -39,6 +39,7 @@ def serialize_student_resumed(s):
         "first_name": s.first_name,
         "last_name": s.last_name,
     }
+
 def serialize_action(a):
     return {
         "id": str(a.id),
@@ -94,7 +95,6 @@ def students_create(request):
         "active",
     ]
 
-    # 🔹 Crear el estudiante usando solo los campos esperados
     s = Student()
     for f in expected_fields:
         value = data.get(f, "").strip() if isinstance(data.get(f), str) else data.get(f)
@@ -108,7 +108,6 @@ def students_create(request):
     if isinstance(s.birth_date, str) and s.birth_date:
         from datetime import datetime
         try:
-            # Acepta formatos "YYYY-MM-DD" o "DD/MM/YYYY"
             s.birth_date = datetime.strptime(s.birth_date, "%Y-%m-%d").date()
         except ValueError:
             try:
@@ -228,6 +227,9 @@ def actions_create(request, student_id):
         type=(data.get("type") or "").strip().lower(),
         notes=(data.get("notes") or "").strip(),
         actor=(getattr(request.user, "username", "") if getattr(request, "user", None) and request.user.is_authenticated else (data.get("actor") or "").strip()),
+        origin_school=(data.get("origin_school") or None),
+        transferred=bool(data.get("transferred")),
+        on_revision=True if data.get("on_revision") is None else bool(data.get("on_revision")),
     )
     try:
         a.full_clean()
@@ -250,7 +252,7 @@ def actions_create(request, student_id):
 @csrf_exempt
 @require_http_methods(["PATCH", "PUT"])
 def actions_update(request, action_id):
-    """Actualiza una acción (tipo / notas / actor)."""
+    """Actualiza una acción (tipo / notas / actor / on_revision / origin_school / transferred)."""
     try:
         a = Action.objects.get(pk=action_id)
     except Action.DoesNotExist:
@@ -261,12 +263,17 @@ def actions_update(request, action_id):
     except json.JSONDecodeError:
         return JsonResponse({"error": "invalid_json"}, status=400)
 
-    for f in ["type", "notes", "actor"]:
+    for f in ["type", "notes", "actor", "on_revision", "origin_school", "transferred"]:
         if f in data:
-            val = (data[f] or "")
+            val = data[f]
             if f == "type":
-                val = val.strip().lower()
+                val = (val or "").strip().lower()
+            if f == "on_revision":
+                val = bool(val)
+            if f == "transferred":
+                val = bool(val)
             setattr(a, f, val)
+
     try:
         a.full_clean()
         a.save()
@@ -294,7 +301,6 @@ def actions_delete(request, action_id):
     except Action.DoesNotExist:
         return JsonResponse({"error": "not_found"}, status=404)
 
-    # datos para el log antes de borrar
     sid = str(a.student_id)
     sid_mep = a.student.id_mep
     atype = a.type or "unknown"
@@ -357,7 +363,6 @@ def actions_list(request):
     results = []
     for a in qs[:limit]:
         item = serialize_action(a)
-        # enriquecemos con datos del estudiante (para la tabla)
         item["student"] = {
             "id": str(a.student_id),
             "id_mep": a.student.id_mep,
@@ -373,7 +378,8 @@ def actions_list(request):
 def actions_create_global(request):
     """
     Crea una acción indicando student_id en el body.
-    Body: { "student_id": "<uuid>", "type": "...", "notes": "..." }
+    Body: { "student_id": "<uuid>", "type": "...", "notes": "...",
+            "origin_school": "...", "transferred": true/false, "on_revision": true/false }
     """
     try:
         data = json.loads(request.body or "{}")
@@ -393,6 +399,10 @@ def actions_create_global(request):
         type=(data.get("type") or "").strip().lower(),
         notes=(data.get("notes") or "").strip(),
         actor=(getattr(request.user, "username", "") if getattr(request, "user", None) and request.user.is_authenticated else (data.get("actor") or "").strip()),
+        # ⬇️ campos adicionales desde el body
+        origin_school=(data.get("origin_school") or None),
+        transferred=bool(data.get("transferred")),
+        on_revision=True if data.get("on_revision") is None else bool(data.get("on_revision")),
     )
     try:
         a.full_clean()
