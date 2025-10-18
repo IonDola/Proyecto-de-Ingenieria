@@ -30,13 +30,14 @@ const StudentForm = ({ }) => {
   const [std, setS] = useState(null);
   const navigate = useNavigate();
   const [showActionModal, setShowActionModal] = useState(false);
+
   const [formData, setFormData] = useState({
     student: {},
-    carnet: " ",
+    carnet: "",              
     legal_guardians: {},
-    name: " Cargando... ",
+    name: " *Nuevo Estudiante* ",
   });
-  // Carga del Estudiante
+
   useEffect(() => {
     if (!id) return;
     fetch(`/api/students/${id}/`)
@@ -47,36 +48,34 @@ const StudentForm = ({ }) => {
       .then(setS)
       .catch((e) => setErr(`No se pudo cargar el estudiante: ${e.message}`));
   }, [id]);
+
   useEffect(() => {
     if (std == null && id) return;
     const stData = FormatStudentRegister({ student: std, withCarnet: true });
     setFormData({
-      student: stData.student,
-      carnet: stData.carnet,
-      legal_guardians: stData.legal_guardians,
-      name: stData.name,
+      student: stData.student || {},
+      carnet: (stData.carnet ?? "").toString(),
+      legal_guardians: stData.legal_guardians || {},
+      name: stData.name || (isNew ? " *Nuevo Estudiante* " : ""),
     });
-  }, [std]);
+  }, [std, id, isNew]);
 
   const switchActionModal = () => {
     setShowActionModal(!showActionModal);
   };
 
-  // Alternar edición
   const toggleEdit = () => {
     if (guestView) return;
     if (onEdition) {
-      // resetear datos previos
       const stData = FormatStudentRegister({ student: std, withCarnet: true });
       setFormData({
         student: stData.student || {},
+        carnet: (stData.carnet ?? "").toString(),
         legal_guardians: stData.legal_guardians || {},
-        name: stData.name || " *Nuevo Estudiante* ",
+        name: stData.name || (isNew ? " *Nuevo Estudiante* " : ""),
       });
     }
-    if (!isNew)
-      setOnEdition((prev) => !prev)
-
+    if (!isNew) setOnEdition((prev) => !prev);
   };
 
   const onCreated = () => navigate(`/students/profiles/${id}/history`);
@@ -84,6 +83,9 @@ const StudentForm = ({ }) => {
   const handleChange = (section, key, event) => {
     const { value } = event.target;
     setFormData((prev) => {
+      if (section === "carnet") {
+        return { ...prev, carnet: value };
+      }
       return {
         ...prev,
         [section]: { ...prev[section], [key]: value },
@@ -97,14 +99,32 @@ const StudentForm = ({ }) => {
     setMsg("");
     const method = !isNew ? "PATCH" : "POST";
     const url = !isNew ? `/api/students/${id}/update/` : `/api/students/new/`;
-    const body = FormatStudentForDB(formData, true);
+
+    // 1) cuerpo base
+    const body0 = FormatStudentForDB(formData, true);
+    const carnetUI = (formData.carnet || "").toString().trim();
+    const body = carnetUI
+      ? { ...body0, id_mep: carnetUI }   // <-- cambio clave
+      : body0;
+
     fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     })
-      .then(async (r) =>
-        (r.ok ? r.json() : Promise.reject(await r.json())))
+      .then(async (r) => {
+        const text = await r.text();
+        if (!r.ok) {
+          console.error(" /api/students/new|update error body:", text);
+          try {
+            const json = JSON.parse(text);
+            throw json;
+          } catch {
+            throw { error: text || `HTTP ${r.status}` };
+          }
+        }
+        return JSON.parse(text || "{}");
+      })
       .then((data) => {
         if (isNew) {
           setMsg("Estudiante creado con éxito");
@@ -116,23 +136,31 @@ const StudentForm = ({ }) => {
           window.location.reload(true);
         }
       })
-      .catch((err) => setMsg(err?.error || "Error al guardar los cambios"));
+      .catch((err) => {
+        console.error(" Guardar estudiante:", err);
+        setMsg(typeof err?.error === "string" ? err.error : JSON.stringify(err));
+      });
   }
 
   const baseTools = (
     <>
-      <Tool action={switchActionModal}>
-        <img src={IconNew} alt="Nueva acción" className="w-icon" />
-      </Tool>
-      <Tool action={toggleEdit}>
-        <img src={IconEdit} alt="Editar" className="w-icon" />
-      </Tool>
-      <Tool>
-        <Link to={`/students/profiles/${id}/history`} title="Ver historial" className="page-tool">
-          <img src={IconHistory} alt="Historial" className="w-icon" />
-        </Link>
-      </Tool>
-      {/* Botón marcar como revisado */}
+      {!isNew && (
+        <Tool action={switchActionModal}>
+          <img src={IconNew} alt="Nueva acción" className="w-icon" />
+        </Tool>
+      )}
+      {!isNew && (
+        <Tool action={toggleEdit}>
+          <img src={IconEdit} alt="Editar" className="w-icon" />
+        </Tool>
+      )}
+      {!isNew && (
+        <Tool>
+          <Link to={`/students/profiles/${id}/history`} title="Ver historial" className="page-tool">
+            <img src={IconHistory} alt="Historial" className="w-icon" />
+          </Link>
+        </Tool>
+      )}
     </>
   );
 
@@ -140,7 +168,6 @@ const StudentForm = ({ }) => {
   if (onEdition && !isNew) {
     sideTools = (
       <>
-        {/* Botones de acción */}
         <Tool action={handleSubmit} type={"submit"}>
           <img src={saveIcon} alt="Guardar" title="Guardar" className="w-icon" />
         </Tool>
@@ -153,7 +180,6 @@ const StudentForm = ({ }) => {
   if (isNew) {
     sideTools = (
       <>
-        {/* Botones de acción */}
         <Tool action={handleSubmit} type={"submit"}>
           <img src={saveIcon} alt="Guardar" title="Guardar" className="w-icon" />
         </Tool >
@@ -166,6 +192,7 @@ const StudentForm = ({ }) => {
   if (guestView) {
     sideTools = (<></>);
   }
+
   return (
     <>
       <PageHead icons={iconList} name={formData.name} />
@@ -178,10 +205,25 @@ const StudentForm = ({ }) => {
             </Link>
           </Tool>
           {sideTools}
-
         </div>
 
         <form id="register" onSubmit={handleSubmit}>
+          <div id="carnet" style={{ marginBottom: 10 }}>
+            <div id="inpt">
+              <label>Carnet:</label>
+              <input
+                type="text"
+                name="carnet"
+                value={formData.carnet}
+                onChange={(e) => handleChange("carnet", "carnet", e)}
+                readOnly={!onEdition}
+                className={onEdition ? "editing" : ""}
+                placeholder="Ej. 483872772"
+                required
+              />
+            </div>
+          </div>
+
           <div id="st-table">
             <div className="st-h">
               <p>Estudiante</p>
@@ -190,7 +232,6 @@ const StudentForm = ({ }) => {
               {Object.keys(formData.student).map((key) => {
                 const rawValue = formData.student[key];
                 const isDateField = key.toLowerCase().includes("fecha");
-                // value seguro para pasar a <input>
                 return (
                   <div className="st-data" key={key}>
                     <a>{key}</a>
@@ -218,7 +259,7 @@ const StudentForm = ({ }) => {
                   <div className="st-data" key={key}>
                     <a>{key}</a>
                     <input
-                      type={"test"}
+                      type={"text"}
                       value={value}
                       readOnly={!onEdition}
                       onChange={(e) => {

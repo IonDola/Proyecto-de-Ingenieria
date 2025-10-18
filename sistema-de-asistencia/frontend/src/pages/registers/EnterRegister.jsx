@@ -88,7 +88,9 @@ const EnterRegister = () => {
     fetchStudent();
   }, [action?.student_id]);
 
-  const [register, studentRegister, legalGuardians, carnet, revitionState] = FormatRegister({ action, student, schoolTag: true });
+  const [register, studentRegister, legalGuardians, carnet, revitionState] =
+    FormatRegister({ register: action, student, schoolTag: true });
+
   return (
     <>
       <PageHead icons={iconList} />

@@ -10,7 +10,7 @@ from .serializers import PersonalLogSerializer
 @permission_classes([IsAuthenticated])
 def my_actions(request):
     q = (request.GET.get("q") or "").strip()
-    qs = PersonalLog.objects.filter(user=request.user)
+    qs = PersonalLog.objects.filter(user=request.user).order_by("-timestamp")
     if q:
         qs = qs.filter(
             Q(action__icontains=q) |
