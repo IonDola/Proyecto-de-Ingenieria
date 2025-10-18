@@ -37,9 +37,16 @@
   margin-top: 0px;
 }
 
+#head-icons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
 
 #head-icons img {
-  margin-top: 20px;
+  margin-top: 10px;
   margin-right: 10px;
   width: 50px;
   height: 50px;

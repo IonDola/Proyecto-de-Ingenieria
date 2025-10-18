@@ -36,14 +36,14 @@ const PageHead = ({ name, credential, icons }) => {
     const HeadName = ({ name, icons }) => {
         if (name && icons && icons.length == 1) {
             return (
-                <div id="head-icons" style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "5px" }}>
+                <div id="head-icons">
                     <img
                         src={icons[0].image}
                         alt={icons[0].description}
                         title={icons[0].description}
                         className="w-icon"
                     />
-                    <div className="name" style={{ marginTop: "15px", fontSize: "15pt" }}> {name} </div>
+                    <div className="name"> {name} </div>
                 </div>
             );
         }
@@ -82,7 +82,6 @@ const PageHead = ({ name, credential, icons }) => {
     };
 
     const HeadMenu = () => {
-        const [goToLogin, setGoToLogin] = useState(false);
         const logOut = async () => {
             console.log("Cerrando sesión...");
 
@@ -109,10 +108,6 @@ const PageHead = ({ name, credential, icons }) => {
                 alert("No se pudo cerrar la sesión correctamente");
             }
         };
-
-        if (goToLogin) {
-            return <Navigate to="/" />
-        }
 
         return (
             <Fragment>
