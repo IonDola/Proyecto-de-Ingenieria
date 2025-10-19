@@ -117,7 +117,7 @@ export default function StudentsList() {
                 />
               </div>
               <div>{st.id_mep}</div>
-              <div>{st.first_name + " " + st.last_name}</div>
+              <div>{st.first_name + " " + st.surnames}</div>
               <Link to={`/students/profiles/${st.id}`} target="_blank">
                 <button><img src={ViewProfile} alt="Ver perfil" className="w-icon" /></button>
               </Link>
