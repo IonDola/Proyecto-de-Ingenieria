@@ -33,9 +33,8 @@ const StudentForm = ({ }) => {
 
   const [formData, setFormData] = useState({
     student: {},
-    carnet: "",              
     legal_guardians: {},
-    name: " *Nuevo Estudiante* ",
+    name: " Cargando... ",
   });
 
   useEffect(() => {
@@ -51,10 +50,9 @@ const StudentForm = ({ }) => {
 
   useEffect(() => {
     if (std == null && id) return;
-    const stData = FormatStudentRegister({ student: std, withCarnet: true });
+    const stData = FormatStudentRegister(std);
     setFormData({
       student: stData.student || {},
-      carnet: (stData.carnet ?? "").toString(),
       legal_guardians: stData.legal_guardians || {},
       name: stData.name || (isNew ? " *Nuevo Estudiante* " : ""),
     });
@@ -67,10 +65,9 @@ const StudentForm = ({ }) => {
   const toggleEdit = () => {
     if (guestView) return;
     if (onEdition) {
-      const stData = FormatStudentRegister({ student: std, withCarnet: true });
+      const stData = FormatStudentRegister(std);
       setFormData({
         student: stData.student || {},
-        carnet: (stData.carnet ?? "").toString(),
         legal_guardians: stData.legal_guardians || {},
         name: stData.name || (isNew ? " *Nuevo Estudiante* " : ""),
       });
@@ -83,9 +80,6 @@ const StudentForm = ({ }) => {
   const handleChange = (section, key, event) => {
     const { value } = event.target;
     setFormData((prev) => {
-      if (section === "carnet") {
-        return { ...prev, carnet: value };
-      }
       return {
         ...prev,
         [section]: { ...prev[section], [key]: value },
@@ -101,11 +95,7 @@ const StudentForm = ({ }) => {
     const url = !isNew ? `/api/students/${id}/update/` : `/api/students/new/`;
 
     // 1) cuerpo base
-    const body0 = FormatStudentForDB(formData, true);
-    const carnetUI = (formData.carnet || "").toString().trim();
-    const body = carnetUI
-      ? { ...body0, id_mep: carnetUI }   // <-- cambio clave
-      : body0;
+    const body = FormatStudentForDB(formData, true);
 
     fetch(url, {
       method,
@@ -208,22 +198,6 @@ const StudentForm = ({ }) => {
         </div>
 
         <form id="register" onSubmit={handleSubmit}>
-          <div id="carnet" style={{ marginBottom: 10 }}>
-            <div id="inpt">
-              <label>Carnet:</label>
-              <input
-                type="text"
-                name="carnet"
-                value={formData.carnet}
-                onChange={(e) => handleChange("carnet", "carnet", e)}
-                readOnly={!onEdition}
-                className={onEdition ? "editing" : ""}
-                placeholder="Ej. 483872772"
-                required
-              />
-            </div>
-          </div>
-
           <div id="st-table">
             <div className="st-h">
               <p>Estudiante</p>

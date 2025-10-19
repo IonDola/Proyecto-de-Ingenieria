@@ -18,17 +18,8 @@ function FormatEntries(obj, map) {
         .reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {});
 };
 
-export function FormatStudentRegister({ student, withCarnet = false }) {
+export function FormatStudentRegister(student) {
     const keyMapStudent = {
-        first_name: ["Nombre", 1],
-        last_name: ["Apellidos", 2],
-        nationality: ["Nacionalidad", 3],
-        birth_date: ["Fecha de Nacimiento", 4],
-        gender: ["Género", 5],
-        section: ["Sección", 6],
-        address: ["Dirección de Residencia", 7],
-    };
-    const keyMapStudentWithCarnet = {
         id_mep: ["Carnet", 0],
         first_name: ["Nombre", 1],
         last_name: ["Apellidos", 2],
@@ -53,7 +44,7 @@ export function FormatStudentRegister({ student, withCarnet = false }) {
         const emptyStudent = {};
         const emptyGuardian = {};
 
-        const selectedMap = withCarnet ? keyMapStudentWithCarnet : keyMapStudent;
+        const selectedMap = keyMapStudent;
         for (const key in selectedMap) {
             emptyStudent[key] = "";
         }
@@ -63,25 +54,20 @@ export function FormatStudentRegister({ student, withCarnet = false }) {
         return {
             student: FormatEntries(emptyStudent, selectedMap),
             legal_guardians: FormatEntries(emptyGuardian, keyMapGuardians),
-            carnet: " ",
             name: " *Nuevo Estudiante* "
         };
     }
 
     // Si sí hay estudiante, procesarlo normalmente
-    const orderedStudent = withCarnet
-        ? FormatEntries(student, keyMapStudentWithCarnet)
-        : FormatEntries(student, keyMapStudent);
+    const orderedStudent = FormatEntries(student, keyMapStudent)
 
     const orderedLG = FormatEntries(student, keyMapGuardians);
 
-    const carnet = student.id_mep ?? " ";
     const name = `${student.first_name ?? ""} ${student.last_name ?? ""}`.trim()
 
     return {
         student: orderedStudent,
         legal_guardians: orderedLG,
-        carnet: carnet,
         name: name
     };
 };
