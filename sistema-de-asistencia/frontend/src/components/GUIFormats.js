@@ -19,26 +19,33 @@ function FormatEntries(obj, map) {
 };
 
 export function FormatStudentRegister(student) {
+    const year = student?.ongoing_age_year || new Date().getFullYear();
     const keyMapStudent = {
         id_mep: ["Carnet", 0],
         first_name: ["Nombre", 1],
-        last_name: ["Apellidos", 2],
+        surnames: ["Apellidos", 2],
         nationality: ["Nacionalidad", 3],
         birth_date: ["Fecha de Nacimiento", 4],
-        gender: ["Género", 5],
-        section: ["Sección", 6],
-        address: ["Dirección de Residencia", 7],
+        birth_place: ["Lugar de Nacimiento", 5],
+        gender: ["Género", 6],
+        ongoing_age: ["Edad", 7],
+        section: ["Sección", 8],
+        address: ["Dirección de Residencia", 9],
     };
     const keyMapGuardians = {
         guardian_name_1: ["Nombre del Encargado 1", 1],
         guardian_id_1: ["Cédula del Encargado 1", 2],
         guardian_phone_1: ["Telefono del Encargado 1", 3],
-        guardian_name_2: ["Nombre del Encargado 2", 4],
-        guardian_id_2: ["Cédula del Encargado 2", 5],
-        guardian_phone_2: ["Telefono del Encargado 2", 6],
-        guardian_name_3: ["Nombre del Encargado 3", 7],
-        guardian_id_3: ["Cédula del Encargado 3", 5],
-        guardian_phone_3: ["Telefono del Encargado 3", 9],
+        guardian_relationship_1: ["Parentesco del Encargado 1", 4],
+        guardian_name_2: ["Nombre del Encargado 2", 5],
+        guardian_id_2: ["Cédula del Encargado 2", 6],
+        guardian_phone_2: ["Telefono del Encargado 2", 7],
+        guardian_relationship_2: ["Parentesco del Encargado 2", 8],
+        guardian_name_3: ["Nombre del Encargado 3", 9],
+        guardian_id_3: ["Cédula del Encargado 3", 10],
+        guardian_phone_3: ["Telefono del Encargado 3", 11],
+        guardian_relationship_3: ["Parentesco del Encargado 3", 12],
+        institutional_guardian: ["Encargado Legal ante la Institución", 13],
     };
     if (!student) {
         const emptyStudent = {};
@@ -63,12 +70,18 @@ export function FormatStudentRegister(student) {
 
     const orderedLG = FormatEntries(student, keyMapGuardians);
 
-    const name = `${student.first_name ?? ""} ${student.last_name ?? ""}`.trim()
+    const name = `${student.first_name ?? ""} ${student.surnames ?? ""}`.trim()
 
     return {
         student: orderedStudent,
         legal_guardians: orderedLG,
-        name: name
+        name: name,
+        going_year: year
     };
 };
 
+function ResumeStudent(student) {
+};
+
+export function FormatActionRegister(student, action) {
+};

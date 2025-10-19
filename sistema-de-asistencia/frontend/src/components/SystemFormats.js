@@ -23,23 +23,17 @@ function normalizeGender(g) {
   return "Indefinido";
 }
 
-export function FormatStudentForDB(formData, withCarnet = false) {
+export function FormatStudentForDB(formData) {
+  console.log("FormData to format for DB:", formData);
   const keyMapStudent = {
-    Nombre: "first_name",
-    Apellidos: "last_name",
-    Nacionalidad: "nationality",
-    "Fecha de Nacimiento": "birth_date",
-    Género: "gender",
-    Sección: "section",
-    "Dirección de Residencia": "address",
-  };
-
-  const keyMapStudentWithCarnet = {
     Carnet: "id_mep",
     Nombre: "first_name",
-    Apellidos: "last_name",
+    Apellidos: "surnames",
     Nacionalidad: "nationality",
     "Fecha de Nacimiento": "birth_date",
+    going_year: "ongoing_age_year",
+    "Lugar de Nacimiento": "birth_place",
+    Edad: "ongoing_age",
     Género: "gender",
     Sección: "section",
     "Dirección de Residencia": "address",
@@ -49,22 +43,25 @@ export function FormatStudentForDB(formData, withCarnet = false) {
     "Nombre del Encargado 1": "guardian_name_1",
     "Cédula del Encargado 1": "guardian_id_1",
     "Telefono del Encargado 1": "guardian_phone_1",
+    "Parentesco del Encargado 1": "guardian_relationship_1",
     "Nombre del Encargado 2": "guardian_name_2",
     "Cédula del Encargado 2": "guardian_id_2",
     "Telefono del Encargado 2": "guardian_phone_2",
+    "Parentesco del Encargado 2": "guardian_relationship_2",
     "Nombre del Encargado 3": "guardian_name_3",
     "Cédula del Encargado 3": "guardian_id_3",
     "Telefono del Encargado 3": "guardian_phone_3",
+    "Parentesco del Encargado 3": "guardian_relationship_3",
+    "Encargado Legal ante la Institución": "institutional_guardian",
   };
-
-  const map = withCarnet ? keyMapStudentWithCarnet : keyMapStudent;
 
   const backendStudent = {};
   const studentData = formData?.student || {};
-  const guardiansData = formData?.legal_guardians || formData?.leg_guardians || {};
+  const guardiansData = formData?.legal_guardians || {};
+  const year = formData?.going_year || new Date().getFullYear();
 
   // estudiante
-  for (const [label, backendKey] of Object.entries(map)) {
+  for (const [label, backendKey] of Object.entries(keyMapStudent)) {
     let value = studentData[label];
 
     // normalizaciones puntuales
@@ -75,13 +72,6 @@ export function FormatStudentForDB(formData, withCarnet = false) {
       value !== undefined && value !== null ? value : "";
   }
 
-  if (withCarnet) {
-    const carnetUI = (formData?.carnet ?? "").toString().trim();
-    if (!backendStudent.id_mep || backendStudent.id_mep.toString().trim() === "") {
-      backendStudent.id_mep = carnetUI;
-    }
-  }
-
   // encargados Legales
   for (const [label, backendKey] of Object.entries(keyMapGuardians)) {
     backendStudent[backendKey] =
@@ -90,6 +80,7 @@ export function FormatStudentForDB(formData, withCarnet = false) {
         : "";
   }
 
+  backendStudent["ongoing_age_year"] = year;
   return backendStudent;
 }
 

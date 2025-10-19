@@ -12,21 +12,28 @@ def serialize_student(s):
         "id": str(s.id),
         "id_mep": s.id_mep,
         "first_name": s.first_name,
-        "last_name": s.last_name,
+        "surnames": s.surnames,
         "section": s.section,
         "address": s.address,
         "birth_date": s.birth_date,
+        "birth_place": s.birth_place,
+        "ongoing_age": s.ongoing_age,
+        "ongoing_age_year": s.ongoing_age_year,
         "gender": s.gender,
         "nationality": s.nationality,
         "guardian_name_1": s.guardian_name_1,
         "guardian_id_1": s.guardian_id_1,
         "guardian_phone_1": s.guardian_phone_1,
-        "guardian_2": s.guardian_name_2,
+        "guardian_relationship_1": s.guardian_relationship_1,
+        "guardian_name_2": s.guardian_name_2,
         "guardian_id_2": s.guardian_id_2,
         "guardian_phone_2": s.guardian_phone_2,
-        "guardian_3": s.guardian_name_3,
+        "guardian_relationship_2": s.guardian_relationship_2,
+        "guardian_name_3": s.guardian_name_3,
         "guardian_id_3": s.guardian_id_3,
         "guardian_phone_3": s.guardian_phone_3,
+        "guardian_relationship_3": s.guardian_relationship_3,
+        "institutional_guardian": s.institutional_guardian,
         "active": s.active,
         "created_at": s.created_at.isoformat(),
         "updated_at": s.updated_at.isoformat(),
@@ -37,7 +44,7 @@ def serialize_student_resumed(s):
         "id": str(s.id),
         "id_mep": s.id_mep,
         "first_name": s.first_name,
-        "last_name": s.last_name,
+        "surnames": s.surnames,
     }
 
 def serialize_action(a):
@@ -67,7 +74,7 @@ def students_list(request):
     q = request.GET.get("q", "").strip()
     qs = Student.objects.exclude(active=False)
     if q:
-        qs = qs.filter(Q(id_mep__icontains=q) | Q(first_name__icontains=q) | Q(last_name__icontains=q))
+        qs = qs.filter(Q(id_mep__icontains=q) | Q(first_name__icontains=q) | Q(surnames__icontains=q))
     return JsonResponse({"results": [serialize_student_resumed(s) for s in qs[:200]]})
 
 @csrf_exempt
@@ -77,21 +84,28 @@ def students_create(request):
     expected_fields = [
         "id_mep",
         "first_name",
-        "last_name",
+        "surnames",
         "section",
         "address",
         "birth_date",
+        "birth_place",
+        "ongoing_age",
+        "ongoing_age_year",
         "gender",
         "nationality",
         "guardian_name_1",
         "guardian_id_1",
         "guardian_phone_1",
+        "guardian_relationship_1",
         "guardian_name_2",
         "guardian_id_2",
         "guardian_phone_2",
+        "guardian_relationship_2",
         "guardian_name_3",
         "guardian_id_3",
         "guardian_phone_3",
+        "guardian_relationship_3",
+        "institutional_guardian",
         "active",
     ]
 
@@ -125,7 +139,7 @@ def students_create(request):
         request.user,
         action="STUDENT_CREATED",
         type="create",
-        entity=f"{s.first_name} {s.last_name} ({s.id_mep})",
+        entity=f"{s.first_name} {s.surnames} ({s.id_mep})",
         status="success",
         metadata={"student_id": str(s.id)},
     )
@@ -152,21 +166,28 @@ def students_update(request, student_id):
     updatable_fields = [
         "id_mep",
         "first_name",
-        "last_name",
+        "surnames",
         "section",
         "address",
         "birth_date",
+        "birth_place",
+        "ongoing_age",
+        "ongoing_age_year",
         "gender",
         "nationality",
         "guardian_name_1",
         "guardian_id_1",
         "guardian_phone_1",
+        "guardian_relationship_1",
         "guardian_name_2",
         "guardian_id_2",
         "guardian_phone_2",
+        "guardian_relationship_2",
         "guardian_name_3",
         "guardian_id_3",
         "guardian_phone_3",
+        "guardian_relationship_3",
+        "institutional_guardian",
         "active",
     ]
 
@@ -183,7 +204,7 @@ def students_update(request, student_id):
         request.user,
         action="STUDENT_UPDATED",
         type="update",
-        entity=f"{s.first_name} {s.last_name} ({s.id_mep})",
+        entity=f"{s.first_name} {s.surnames} ({s.id_mep})",
         status="success",
         metadata={"student_id": str(s.id)},
     )
@@ -241,7 +262,7 @@ def actions_create(request, student_id):
         request.user,
         action="ACTION_CREATED",
         type=a.type or "unknown",
-        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        entity=f"Estudiante: {s.first_name} {s.surnames} ({s.id_mep})",
         status="success",
         metadata={"action_id": str(a.id), "student_id": str(s.id)},
     )
@@ -341,7 +362,7 @@ def actions_list(request):
     """
     Lista acciones de todos los estudiantes.
     Filtros:
-      ?q=...  (id_mep, first_name, last_name, actor, notes)
+      ?q=...  (id_mep, first_name, surnames, actor, notes)
       ?type=ingreso|egreso|abandono|transferencia
       ?limit=200
     """
@@ -355,7 +376,7 @@ def actions_list(request):
         qs = qs.filter(
             Q(student__id_mep__icontains=q) |
             Q(student__first_name__icontains=q) |
-            Q(student__last_name__icontains=q) |
+            Q(student__surnames__icontains=q) |
             Q(actor__icontains=q) |
             Q(notes__icontains=q)
         )
@@ -367,7 +388,7 @@ def actions_list(request):
             "id": str(a.student_id),
             "id_mep": a.student.id_mep,
             "first_name": a.student.first_name,
-            "last_name": a.student.last_name,
+            "surnames": a.student.surnames,
         }
         results.append(item)
     return JsonResponse({"results": results})
@@ -414,7 +435,7 @@ def actions_create_global(request):
         request.user,
         action="ACTION_CREATED",
         type=a.type or "unknown",
-        entity=f"Estudiante: {s.first_name} {s.last_name} ({s.id_mep})",
+        entity=f"Estudiante: {s.first_name} {s.surnames} ({s.id_mep})",
         status="success",
         metadata={"action_id": str(a.id), "student_id": str(s.id)},
     )

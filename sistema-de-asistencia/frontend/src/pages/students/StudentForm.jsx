@@ -35,6 +35,7 @@ const StudentForm = ({ }) => {
     student: {},
     legal_guardians: {},
     name: " Cargando... ",
+    going_year: "",
   });
 
   useEffect(() => {
@@ -55,6 +56,7 @@ const StudentForm = ({ }) => {
       student: stData.student || {},
       legal_guardians: stData.legal_guardians || {},
       name: stData.name || (isNew ? " *Nuevo Estudiante* " : ""),
+      going_year: stData.going_year || "",
     });
   }, [std, id, isNew]);
 
@@ -70,6 +72,7 @@ const StudentForm = ({ }) => {
         student: stData.student || {},
         legal_guardians: stData.legal_guardians || {},
         name: stData.name || (isNew ? " *Nuevo Estudiante* " : ""),
+        going_year: stData.going_year || "",
       });
     }
     if (!isNew) setOnEdition((prev) => !prev);
@@ -95,7 +98,7 @@ const StudentForm = ({ }) => {
     const url = !isNew ? `/api/students/${id}/update/` : `/api/students/new/`;
 
     // 1) cuerpo base
-    const body = FormatStudentForDB(formData, true);
+    const body = FormatStudentForDB(formData);
 
     fetch(url, {
       method,
@@ -206,9 +209,10 @@ const StudentForm = ({ }) => {
               {Object.keys(formData.student).map((key) => {
                 const rawValue = formData.student[key];
                 const isDateField = key.toLowerCase().includes("fecha");
+                const isAgeField = key.toLowerCase().includes("edad");
                 return (
                   <div className="st-data" key={key}>
-                    <a>{key}</a>
+                    <a>{!isAgeField ? key : "Edad Cumplida al 15 de Febrero de " + formData.going_year}</a>
                     <input
                       type={!isDateField ? "text" : "date"}
                       value={rawValue}

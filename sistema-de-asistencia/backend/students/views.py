@@ -13,7 +13,7 @@ def student_list(request):
         qs = qs.filter(
             Q(id_mep__icontains=q) |
             Q(first_name__icontains=q) |
-            Q(last_name__icontains=q)
+            Q(surnames__icontains=q)
         )
     students = Paginator(qs, 10).get_page(request.GET.get("page"))
     return render(request, "students/student_list.html", {"students": students, "q": q})
