@@ -63,9 +63,9 @@ def serialize_action(a):
 def serialize_action_resumed(a):
     return {
         "id": str(a.id),
-        "student_id": str(a.student_id),
         "type": a.type,
         "on_revision": a.on_revision,
+        "created_at": a.created_at.isoformat(),
     }
 
 
@@ -383,9 +383,8 @@ def actions_list(request):
     limit = min(int(request.GET.get("limit", 200)), 500)
     results = []
     for a in qs[:limit]:
-        item = serialize_action(a)
+        item = serialize_action_resumed(a)
         item["student"] = {
-            "id": str(a.student_id),
             "id_mep": a.student.id_mep,
             "first_name": a.student.first_name,
             "surnames": a.student.surnames,

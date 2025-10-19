@@ -130,7 +130,7 @@ export default function ActionsList() {
               <div className="cb">
                 <input type="checkbox" checked={!!selected[a.id]} onChange={(e) => toggleSel(a.id, e.target.checked)} />
               </div>
-              <div><img src={StateIcon} alt="Estado" title="Estado" className="w-icon action-icon" /></div>
+              <div><img src={StateIcon} id={a.on_revision ? "rev-yellow" : "rev-green"} alt="Estado" title={a.on_revision ? "En revisión" : "Revisado"} className="action-icon" /></div>
               <div>{a.type}</div>
               <div>{new Date(a.created_at).toLocaleString()}</div>
               <div className="mono">{a.student?.id_mep}</div>

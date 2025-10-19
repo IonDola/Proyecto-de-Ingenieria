@@ -210,18 +210,31 @@ const StudentForm = ({ }) => {
                 const rawValue = formData.student[key];
                 const isDateField = key.toLowerCase().includes("fecha");
                 const isAgeField = key.toLowerCase().includes("edad");
+                const isGenderField = key.toLowerCase().includes("género");
                 return (
                   <div className="st-data" key={key}>
                     <a>{!isAgeField ? key : "Edad Cumplida al 15 de Febrero de " + formData.going_year}</a>
-                    <input
-                      type={!isDateField ? "text" : "date"}
-                      value={rawValue}
-                      readOnly={!onEdition}
-                      onChange={(e) => {
-                        handleChange("student", key, e);
-                      }}
-                      className={onEdition ? "editing" : ""}
-                    />
+                    {(!isGenderField || !onEdition) ? (
+                      <input
+                        type={!isDateField ? "text" : "date"}
+                        value={rawValue}
+                        readOnly={!onEdition}
+                        onChange={(e) => handleChange("student", key, e)}
+                        className={onEdition ? "editing" : ""}
+                      />
+                    ) : (
+                      <select
+                        value={formData.student[key] || ""}
+                        onChange={(e) => handleChange("student", key, e)}
+                        className={onEdition ? "editing" : ""}
+                        disabled={!onEdition}
+                      >
+                        <option value="Indefinido">Indefinido</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Masculino">Masculino</option>
+                      </select>
+                    )}
+
                   </div>
                 );
               })}

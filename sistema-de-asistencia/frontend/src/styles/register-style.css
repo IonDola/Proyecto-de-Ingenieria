@@ -3,6 +3,14 @@
     --rev-green: #31FF5F;
 }
 
+#rev-yellow {
+    filter: invert(79%) sepia(63%) saturate(441%) hue-rotate(346deg) brightness(105%) contrast(101%);
+}
+
+#rev-green {
+    filter: invert(95%) sepia(53%) saturate(5046%) hue-rotate(57deg) brightness(103%) contrast(101%);
+}
+
 #register {
     margin-right: 25px;
     background-color: var(--main-color);
