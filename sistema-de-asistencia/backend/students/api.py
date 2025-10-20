@@ -7,6 +7,69 @@ import json
 from .models import Student, Action
 from logs.utils import log_event
 
+def _debug_user_info(request, user, origin, extra=None):
+    """
+    Imprime info de atribución de usuario para depurar bitácora.
+    - origin: cadena corta del endpoint/operación (p.ej. 'students_create')
+    - extra: dict opcional con datos relevantes
+    """
+    try:
+        auth = request.META.get("HTTP_AUTHORIZATION", "")
+        auth_short = (auth[:60] + "...") if auth and len(auth) > 60 else auth
+        print("=== DEBUG LOG ATTRIBUTION ===")
+        print(f"origin={origin}")
+        print(f"request.user.is_authenticated={getattr(getattr(request,'user',None),'is_authenticated', False)}")
+        print(f"Authorization header (short)={auth_short!r}")
+        if user is None:
+            print("resolved_user=None")
+        else:
+            print(f"resolved_user.id={getattr(user,'id',None)} username={getattr(user,'username',None)}")
+        if extra:
+            try:
+                print("extra=", json.dumps(extra, ensure_ascii=False))
+            except Exception:
+                print("extra(raw)=", extra)
+        print("=============================")
+    except Exception as e:
+        print("DEBUG ERROR:", e)
+
+def _maybe_attach_debug_header(request, response, user, origin):
+    """
+    Si viene ?debug=1, agrega X-Debug-User con info básica.
+    """
+    try:
+        if request.GET.get("debug") in ("1", "true", "yes", "on"):
+            if user is None:
+                response["X-Debug-User"] = f"{origin}: user=None"
+            else:
+                response["X-Debug-User"] = f"{origin}: user_id={getattr(user,'id',None)} username={getattr(user,'username',None)}"
+    except Exception:
+        pass
+    return response
+
+# Auth helper: intenta resolver el usuario autenticado desde JWT (o request.user)
+def _get_request_user(request):
+    try:
+        # si ya viene autenticado por middleware/session, úsalo
+        u = getattr(request, "user", None)
+        if u is not None and getattr(u, "is_authenticated", False):
+            return u
+    except Exception:
+        pass
+
+    # Intentar con JWTAuthentication (lee Authorization: Bearer <access>)
+    try:
+        from rest_framework_simplejwt.authentication import JWTAuthentication
+        authenticator = JWTAuthentication()
+        auth = authenticator.authenticate(request)  # (user, token) o None
+        if auth:
+            return auth[0]
+    except Exception:
+        # no hacemos ruido: si no podemos autenticar, devolvemos None
+        return None
+    return None
+
+
 def serialize_student(s):
     return {
         "id": str(s.id),
@@ -135,8 +198,12 @@ def students_create(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+    # Asegurar usuario autenticado para la bitácora
+    user = _get_request_user(request)
+    _debug_user_info(request, user, origin="students_create", extra={"student_id": str(s.id)})
+
     log_event(
-        request.user,
+        user,
         action="STUDENT_CREATED",
         type="create",
         entity=f"{s.first_name} {s.surnames} ({s.id_mep})",
@@ -144,7 +211,8 @@ def students_create(request):
         metadata={"student_id": str(s.id)},
     )
 
-    return JsonResponse(serialize_student(s), status=201)
+    resp = JsonResponse(serialize_student(s), status=201)
+    return _maybe_attach_debug_header(request, resp, user, "students_create")
 
 @require_http_methods(["GET"])
 def students_detail(request, student_id):
@@ -200,8 +268,12 @@ def students_update(request, student_id):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+    # Usuario para bitácora
+    user = _get_request_user(request)
+    _debug_user_info(request, user, origin="students_update", extra={"student_id": str(s.id)})
+
     log_event(
-        request.user,
+        user,
         action="STUDENT_UPDATED",
         type="update",
         entity=f"{s.first_name} {s.surnames} ({s.id_mep})",
@@ -209,7 +281,8 @@ def students_update(request, student_id):
         metadata={"student_id": str(s.id)},
     )
 
-    return JsonResponse(serialize_student(s))
+    resp = JsonResponse(serialize_student(s))
+    return _maybe_attach_debug_header(request, resp, user, "students_update")
 
 @require_http_methods(["GET"])
 def student_history(request, student_id):
@@ -243,11 +316,16 @@ def actions_create(request, student_id):
     except json.JSONDecodeError:
         return JsonResponse({"error": "invalid_json"}, status=400)
 
+    # Resolver usuario/actor
+    user = _get_request_user(request)
+    actor = (user.username if user and getattr(user, "username", "") else
+             (data.get("actor") or "").strip())
+
     a = Action(
         student=s,
         type=(data.get("type") or "").strip().lower(),
         notes=(data.get("notes") or "").strip(),
-        actor=(getattr(request.user, "username", "") if getattr(request, "user", None) and request.user.is_authenticated else (data.get("actor") or "").strip()),
+        actor=actor,
         origin_school=(data.get("origin_school") or None),
         transferred=bool(data.get("transferred")),
         on_revision=True if data.get("on_revision") is None else bool(data.get("on_revision")),
@@ -258,8 +336,10 @@ def actions_create(request, student_id):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+    _debug_user_info(request, user, origin="actions_create", extra={"student_id": str(s.id), "action_id": str(a.id)})
+
     log_event(
-        request.user,
+        user,  # ahora sí atribuimos al usuario autenticado
         action="ACTION_CREATED",
         type=a.type or "unknown",
         entity=f"Estudiante: {s.first_name} {s.surnames} ({s.id_mep})",
@@ -267,7 +347,8 @@ def actions_create(request, student_id):
         metadata={"action_id": str(a.id), "student_id": str(s.id)},
     )
 
-    return JsonResponse(serialize_action(a), status=201)
+    resp = JsonResponse(serialize_action(a), status=201)
+    return _maybe_attach_debug_header(request, resp, user, "actions_create")
 
 
 @csrf_exempt
@@ -301,8 +382,12 @@ def actions_update(request, action_id):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+    # Usuario para bitácora
+    user = _get_request_user(request)
+    _debug_user_info(request, user, origin="actions_update", extra={"action_id": str(a.id), "student_id": str(a.student_id)})
+
     log_event(
-        request.user,
+        user,
         action="ACTION_UPDATED",
         type=a.type or "unknown",
         entity=f"Acción {a.id} de estudiante {a.student.id_mep}",
@@ -310,7 +395,8 @@ def actions_update(request, action_id):
         metadata={"action_id": str(a.id), "student_id": str(a.student_id)},
     )
 
-    return JsonResponse(serialize_action(a))
+    resp = JsonResponse(serialize_action(a))
+    return _maybe_attach_debug_header(request, resp, user, "actions_update")
 
 
 @csrf_exempt
@@ -328,8 +414,12 @@ def actions_delete(request, action_id):
 
     a.delete()
 
+    # Usuario para bitácora
+    user = _get_request_user(request)
+    _debug_user_info(request, user, origin="actions_delete", extra={"deleted_id": str(action_id), "student_id": sid})
+
     log_event(
-        request.user,
+        user,
         action="ACTION_DELETED",
         type=atype,
         entity=f"Acción {action_id} de estudiante {sid_mep}",
@@ -337,7 +427,8 @@ def actions_delete(request, action_id):
         metadata={"deleted_id": str(action_id), "student_id": sid},
     )
 
-    return JsonResponse({"ok": True})
+    resp = JsonResponse({"ok": True})
+    return _maybe_attach_debug_header(request, resp, user, "actions_delete")
 
 
 @require_http_methods(["GET"])
@@ -414,12 +505,17 @@ def actions_create_global(request):
     except Student.DoesNotExist:
         return JsonResponse({"error": "student_not_found"}, status=404)
 
+    # Resolver usuario/actor
+    user = _get_request_user(request)
+    actor = (user.username if user and getattr(user, "username", "") else
+             (data.get("actor") or "").strip())
+
     a = Action(
         student=s,
         type=(data.get("type") or "").strip().lower(),
         notes=(data.get("notes") or "").strip(),
-        actor=(getattr(request.user, "username", "") if getattr(request, "user", None) and request.user.is_authenticated else (data.get("actor") or "").strip()),
-        # ⬇️ campos adicionales desde el body
+        actor=actor,
+        # campos adicionales desde el body
         origin_school=(data.get("origin_school") or None),
         transferred=bool(data.get("transferred")),
         on_revision=True if data.get("on_revision") is None else bool(data.get("on_revision")),
@@ -430,8 +526,10 @@ def actions_create_global(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
 
+    _debug_user_info(request, user, origin="actions_create_global", extra={"student_id": str(s.id), "action_id": str(a.id)})
+
     log_event(
-        request.user,
+        user,  # atribuimos al usuario autenticado
         action="ACTION_CREATED",
         type=a.type or "unknown",
         entity=f"Estudiante: {s.first_name} {s.surnames} ({s.id_mep})",
@@ -439,7 +537,8 @@ def actions_create_global(request):
         metadata={"action_id": str(a.id), "student_id": str(s.id)},
     )
 
-    return JsonResponse(serialize_action(a), status=201)
+    resp = JsonResponse(serialize_action(a), status=201)
+    return _maybe_attach_debug_header(request, resp, user, "actions_create_global")
 
 
 @csrf_exempt
