@@ -97,7 +97,6 @@ def serialize_student(s):
         "guardian_phone_3": s.guardian_phone_3,
         "guardian_relationship_3": s.guardian_relationship_3,
         "institutional_guardian": s.institutional_guardian,
-        "active": s.active,
         "created_at": s.created_at.isoformat(),
         "updated_at": s.updated_at.isoformat(),
     }
@@ -118,8 +117,10 @@ def serialize_action(a):
         "on_revision": a.on_revision,
         "origin_school": a.origin_school,
         "transferred": a.transferred,
+        "matriculate_level": a.matriculate_level,
         "notes": a.notes,
         "actor": a.actor,
+        "last_edition_by": a.last_edition_by,
         "created_at": a.created_at.isoformat(),
     }
 
@@ -135,7 +136,8 @@ def serialize_action_resumed(a):
 @require_http_methods(["GET"])
 def students_list(request):
     q = request.GET.get("q", "").strip()
-    qs = Student.objects.exclude(active=False)
+    qs = Student.objects.all()
+
     if q:
         qs = qs.filter(Q(id_mep__icontains=q) | Q(first_name__icontains=q) | Q(surnames__icontains=q))
     return JsonResponse({"results": [serialize_student_resumed(s) for s in qs[:200]]})
@@ -169,18 +171,12 @@ def students_create(request):
         "guardian_phone_3",
         "guardian_relationship_3",
         "institutional_guardian",
-        "active",
     ]
 
     s = Student()
     for f in expected_fields:
         value = data.get(f, "").strip() if isinstance(data.get(f), str) else data.get(f)
         setattr(s, f, value)
-
-    if "active" not in data:
-        s.active = True
-    elif isinstance(data["active"], str):
-        s.active = data["active"].lower() in ["true", "1", "yes", "on"]
 
     if isinstance(s.birth_date, str) and s.birth_date:
         from datetime import datetime
@@ -256,7 +252,6 @@ def students_update(request, student_id):
         "guardian_phone_3",
         "guardian_relationship_3",
         "institutional_guardian",
-        "active",
     ]
 
     for f in updatable_fields:
@@ -328,7 +323,9 @@ def actions_create(request, student_id):
         actor=actor,
         origin_school=(data.get("origin_school") or None),
         transferred=bool(data.get("transferred")),
+        matriculate_level=(data.get("matriculate_level" or "")),
         on_revision=True if data.get("on_revision") is None else bool(data.get("on_revision")),
+        last_edition_by=(data.get("last_edition_by" or "")),
     )
     try:
         a.full_clean()
@@ -365,17 +362,20 @@ def actions_update(request, action_id):
     except json.JSONDecodeError:
         return JsonResponse({"error": "invalid_json"}, status=400)
 
-    for f in ["type", "notes", "actor", "on_revision", "origin_school", "transferred"]:
+    for f in ["type", "notes", "actor", "on_revision", "origin_school", "matriculate_level", "transferred", "last_edition_by"]:
         if f in data:
             val = data[f]
             if f == "type":
+                val = (val or "").strip().lower()
+            if f == "matriculate_level":
                 val = (val or "").strip().lower()
             if f == "on_revision":
                 val = bool(val)
             if f == "transferred":
                 val = bool(val)
+            if f == "last_edition_by":
+                val = (val or "").strip().lower()
             setattr(a, f, val)
-
     try:
         a.full_clean()
         a.save()

@@ -3,7 +3,7 @@ from .models import Student, Action
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ("id_mep", "first_name", "surnames", "section", "active", "created_at", "updated_at")
+    list_display = ("id_mep", "first_name", "surnames", "section", "created_at", "updated_at")
     search_fields = ("id_mep", "first_name", "surnames")
 
 @admin.register(Action)

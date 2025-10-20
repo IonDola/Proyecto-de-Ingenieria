@@ -15,7 +15,6 @@ class Student(models.Model):
     first_name = models.CharField("Nombre", max_length=80)
     surnames = models.CharField("Apellidos", max_length=120)
     section = models.CharField("Sección", max_length=20, blank=True, default="")
-    active = models.BooleanField(default=True)
 
     nationality = models.CharField("Nacionalidad", max_length=60, default="Costa Rica")
     birth_date = models.DateField("Fecha de nacimiento", default=timezone.now)
@@ -81,7 +80,7 @@ class Action(models.Model):
 
     origin_school = models.CharField("Escuela de origen", max_length=120, null=True, blank=True)
     transferred = models.BooleanField(default=False)
-    matriculate_level = models.CharField("Nivel a Matricular", max_length=20, choices=MATRICLE_CHOICES, db_index=True, default="primero")
+    matriculate_level = models.CharField("Nivel a| Matricular", max_length=20, choices=MATRICLE_CHOICES, db_index=True, default="primero")
 
     "Reglas del negocio"
     def clean(self):
