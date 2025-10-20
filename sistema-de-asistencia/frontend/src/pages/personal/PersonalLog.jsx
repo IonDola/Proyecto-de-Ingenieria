@@ -34,7 +34,6 @@ export default function PersonalLog() {
     try {
       setLoading(true);
 
-      // tomamos el token guardado por el login (acepta "access" o "token" por si acaso)
       const token = localStorage.getItem("access") || localStorage.getItem("token") || "";
 
       const r = await fetch(`/api/users/me/actions/?q=${encodeURIComponent(q)}`, {

@@ -3,6 +3,82 @@ import { useNavigate } from "react-router-dom";
 
 const API_LOGIN = "/api/auth/login/";
 
+// para normalizar tokens
+function decodeJwt(token) {
+  try {
+    const [, payload] = token.split(".");
+    return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+  } catch {
+    return null;
+  }
+}
+
+async function tryRefreshWith(refresh) {
+  const candidates = [
+    { url: "/api/users/token/refresh/", body: { refresh } },
+    { url: "/api/token/refresh/",      body: { refresh } },
+    { url: "/api/auth/jwt/refresh/",   body: { refresh } },
+    { url: "/api/users/token/refresh/", body: { refresh_token: refresh } },
+    { url: "/api/token/refresh/",       body: { refresh_token: refresh } },
+    { url: "/api/auth/jwt/refresh/",    body: { refresh_token: refresh } },
+  ];
+  for (const c of candidates) {
+    try {
+      const r = await fetch(c.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(c.body),
+      });
+      const txt = await r.text();
+      if (!r.ok) {
+        console.warn("refresh falló:", c.url, r.status, txt);
+        continue;
+      }
+      let data = {};
+      try { data = JSON.parse(txt || "{}"); } catch {}
+      const access = data.access || data.access_token;
+      if (access) return access;
+    } catch (e) {
+      console.warn("refresh error:", e);
+    }
+  }
+  return null;
+}
+
+async function normalizeAndStoreTokens(loginData) {
+  let access  = loginData.access  || loginData.access_token  || loginData.jwt_access  || null;
+  let refresh = loginData.refresh || loginData.refresh_token || loginData.jwt_refresh || null;
+  const token = loginData.token   || loginData.jwt           || null;
+
+  // si el backend devuelve token generico, decide por token_type
+  if (!access && !refresh && token) {
+    const d = decodeJwt(token);
+    const tt = d?.token_type?.toLowerCase();
+    if (tt === "access") access = token;
+    else if (tt === "refresh") refresh = token;
+    else access = token; // si no etiqueta, asumimos access
+  }
+
+  // si no hay access pero si refresh then obtener access con refresh
+  if (!access && refresh) {
+    const newAccess = await tryRefreshWith(refresh);
+    if (newAccess) access = newAccess;
+  }
+
+  // guardar de forma estandarizada
+  if (access)  localStorage.setItem("access", access);
+  if (refresh) localStorage.setItem("refresh", refresh);
+
+  const decAcc = decodeJwt(localStorage.getItem("access") || "");
+  if (decAcc?.token_type === "refresh") {
+    localStorage.setItem("refresh", localStorage.getItem("access") || "");
+    localStorage.removeItem("access");
+  }
+
+  ["token","jwt","jwt_access","jwt_refresh","access_token","refresh_token"] // limpiar
+    .forEach(k => localStorage.removeItem(k));
+}
+
 export default function LoginForm() {
   const nav = useNavigate();
   const [username, setUsername] = useState("");
@@ -26,29 +102,25 @@ export default function LoginForm() {
       const ct = (r.headers.get("content-type") || "").toLowerCase();
       const text = await r.text();
       let data = null;
-      if (ct.includes("application/json")) { try { data = JSON.parse(text); } catch { } }
+      if (ct.includes("application/json")) { try { data = JSON.parse(text); } catch {} }
 
       if (!r.ok) {
         alert(data?.error || `Error de autenticación (HTTP ${r.status})`);
         return;
       }
 
-      // backend devuelve { token, nombre, rol }
-      const token = data?.refresh;
-      const nombre = data?.nombre || username;
-      const rol = data?.rol || "admin";
+      // AJUSTAR MAYBE
+      const nombre = (data?.nombre || username);
+      const rol    = (data?.rol || "admin");
 
-      if (!token) {
-        alert("Respuesta inválida del servidor (sin token)");
-        return;
-      }
+      await normalizeAndStoreTokens(data || {});
 
-      localStorage.setItem("access", token);
       localStorage.setItem("userName", nombre);
       localStorage.setItem("role", rol);
 
       nav("/home", { replace: true });
-    } catch {
+    } catch (e) {
+      console.error(e);
       alert("Error al conectar con el servidor");
     } finally {
       setBusy(false);
