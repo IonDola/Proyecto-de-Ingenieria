@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 import uuid
@@ -57,17 +58,40 @@ class Action(models.Model):
         ("egreso", "Egreso"),
         ("abandono", "Abandono"),
     ]
+    MATRICLE_CHOICES = [
+        ("interactivo_ii", "Interactivo_II"),
+        ("transicion", "Transicion"),
+        ("primero", "Primero"),
+        ("segundo", "Segundo"),
+        ("tercero", "Tercero"),
+        ("cuarto", "Cuarto"),
+        ("quinto", "Quinto"),
+        ("sexto", "Sexto"),
+        ("aula_integrada", "Aula_Integrada"),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="actions")
     type = models.CharField(max_length=20, choices=TYPE_CHOICES, db_index=True)
-    notes = models.TextField(blank=True, default="")
+    notes = models.TextField("Observaciones", blank=True, default="")
     created_at = models.DateTimeField(default=timezone.now, editable=False, db_index=True)
     actor = models.CharField(max_length=80, blank=True, default="")
-
-    transferred = models.BooleanField(default=False)
+    last_edition_by = models.CharField(max_length=80, blank=True, default="")
     on_revision = models.BooleanField(default=True)
+
     origin_school = models.CharField("Escuela de origen", max_length=120, null=True, blank=True)
+    transferred = models.BooleanField(default=False)
+    matriculate_level = models.CharField("Nivel a Matricular", max_length=20, choices=MATRICLE_CHOICES, db_index=True, default="primero")
+
+    "Reglas del negocio"
+    def clean(self):
+            if self.type == "ingreso":
+                if (self.transferred and not self.origin_school) or (self.origin_school and not self.transferred):
+                    raise ValidationError("Para estudiantes transferidos debe indicar su procedencia.")
+                if not self.matriculate_level:
+                    raise ValidationError("Ingresar el nivel al que va a matricular")
+
+
 
     class Meta:
         ordering = ["-created_at"]

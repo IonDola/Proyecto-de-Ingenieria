@@ -28,6 +28,7 @@ export default function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/test" element={<InTest />} />
           <Route path="/test/:student_id/newRegister" element={<InTest />} />
+          <Route path="/test/:student_id/:register_id" element={<InTest />} />
 
           {/* protegidas */}
           <Route path="/students" element={<RequireAuth><StudentsHome /></RequireAuth>} />

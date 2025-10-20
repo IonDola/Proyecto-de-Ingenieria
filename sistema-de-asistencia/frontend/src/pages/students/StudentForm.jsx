@@ -201,7 +201,7 @@ const StudentForm = ({ }) => {
         </div>
 
         <form id="register" onSubmit={handleSubmit}>
-          <div id="st-table">
+          <div className="st-table">
             <div className="st-h">
               <p>Estudiante</p>
             </div>

@@ -5,7 +5,7 @@ import "../../styles/register-style.css";
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
 import PageHead from "../../components/PageHead"
-import { FormatStudentRegister } from "../../components/GUIFormats";
+import { FormatActionRegister } from "../../components/GUIFormats";
 
 import StudentIcon from "../../assets/icons/student.svg"
 import StudentActions from "../../assets/icons/student_registers.svg"
@@ -27,17 +27,18 @@ const ActionRegister = () => {
             description: "Registro"
         },
     ];
-    const { student_id, registerId } = useParams();
+    const { student_id, register_id } = useParams();
     const guestView = false;
     const [err, setErr] = useState("");
     const [msg, setMsg] = useState("");
     const [std, setS] = useState(null);
-    const isNew = !Boolean(registerId) && !guestView;
+    const isNew = !Boolean(register_id);
     const [onEdition, setOnEdition] = useState(Boolean(isNew));
     const [formData, setFormData] = useState({
         student: {},
-        legal_guardians: {},
-        name: " Cargando... ",
+        going_year: "",
+        actionName: " Cargando... ",
+        action: {},
     });
     useEffect(() => {
         if (!student_id) return;
@@ -52,11 +53,12 @@ const ActionRegister = () => {
 
     useEffect(() => {
         if (std == null && student_id) return;
-        const stData = FormatStudentRegister(std);
+        const actionData = FormatActionRegister(std);
         setFormData({
-            student: stData.student || {},
-            legal_guardians: stData.legal_guardians || {},
-            name: stData.name || (isNew ? " *Nuevo Estudiante* " : ""),
+            student: actionData.student || {},
+            going_year: actionData.going_year || "",
+            actionName: actionData.name || (isNew ? " *Nuevo Estudiante* " : ""),
+            action: actionData.action || {},
         });
     }, [std, student_id, isNew]);
 
@@ -102,7 +104,7 @@ const ActionRegister = () => {
     }
     return (
         <>
-            <PageHead icons={iconList} name={"Boleta de Estado de Matrícula"} />
+            <PageHead icons={iconList} name={formData.actionName} />
             <main>
                 <div className="tools">
                     <Home />
@@ -115,7 +117,7 @@ const ActionRegister = () => {
                 </div>
 
                 <form id="register" onSubmit={handleSubmit}>
-                    <div id="st-table">
+                    <div className="st-table">
                         <div className="st-h">
                             <p>Estudiante</p>
                         </div>
@@ -123,44 +125,24 @@ const ActionRegister = () => {
                             {Object.keys(formData.student).map((key) => {
                                 const rawValue = formData.student[key];
                                 const isDateField = key.toLowerCase().includes("fecha");
+                                const isAgeField = key.toLowerCase().includes("edad");
+                                const isGenderField = key.toLowerCase().includes("género");
                                 return (
                                     <div className="st-data" key={key}>
-                                        <a>{key}</a>
+                                        <a>{!isAgeField ? key : "Edad Cumplida al 15 de Febrero de " + formData.going_year}</a>
                                         <input
                                             type={!isDateField ? "text" : "date"}
                                             value={rawValue}
-                                            readOnly={!onEdition}
-                                            onChange={(e) => {
-                                                handleChange("student", key, e);
-                                            }}
-                                            className={onEdition ? "editing" : ""}
+                                            readOnly
                                         />
                                     </div>
                                 );
                             })}
                         </div>
-
+                    </div>
+                    <div className="st-table">
                         <div className="st-h">
-                            <p>Encargados Legales</p>
-                        </div>
-                        <div>
-                            {Object.keys(formData.legal_guardians).map((key) => {
-                                const value = formData.legal_guardians[key] ?? "";
-                                return (
-                                    <div className="st-data" key={key}>
-                                        <a>{key}</a>
-                                        <input
-                                            type={"text"}
-                                            value={value}
-                                            readOnly={!onEdition}
-                                            onChange={(e) => {
-                                                handleChange("legal_guardians", key, e);
-                                            }}
-                                            className={onEdition ? "editing" : ""}
-                                        />
-                                    </div>
-                                );
-                            })}
+                            <p>Boleta de Estado de Matrícula</p>
                         </div>
                     </div>
                 </form>
