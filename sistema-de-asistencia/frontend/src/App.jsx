@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, } from "react-router-dom";
 import Login from './pages/auth/Login';
 import StudentsHome from "./pages/students/StudentsHome";
+import StudentsHomeVisitor from "./pages/students/StudentsHomeVisitor";
 import StudentsList from "./pages/students/StudentsList";
+import StudentsListVisitor from "./pages/students/StudentsListVisitor";
 import StudentForm from "./pages/students/StudentForm";
 import HistoryList from "./pages/students/HistoryList";
 import EnterRegister from "./pages/registers/EnterRegister";
@@ -9,11 +11,13 @@ import ExitRegister from "./pages/registers/ExitRegister";
 import AbandonRegister from "./pages/registers/AbandonRegister";
 import Home from "./pages/home/Home";
 import ActionsList from "./pages/students/ActionsList";
+import ActionsListVisitor from "./pages/students/ActionsListVisitor";
 import PersonalLog from "./pages/personal/PersonalLog";
 import RequireAuth from "./auth/RequireAuth";
 import InTest from "./pages/students/ActionRegister";
 import VisitorsHome from "./pages/visitors/VisitorsHome";
 import VisitorsList from "./pages/visitors/VisitorsList";
+import TempHome from "./pages/home/TempHome";
 
 export default function App() {
   const devView = localStorage.getItem("role") === "Dev";
@@ -34,6 +38,8 @@ export default function App() {
 
           {/* protegidas */}
           <Route path="/students" element={<RequireAuth><StudentsHome /></RequireAuth>} />
+          <Route path="/studentsVisitorView" element={<RequireAuth><StudentsHomeVisitor /></RequireAuth>} />
+          <Route path="/studentsVisitorView/profiles" element={<RequireAuth><StudentsListVisitor /></RequireAuth>} />
           <Route path="/students/profiles" element={<RequireAuth><StudentsList /></RequireAuth>} />
           <Route path="/students/profiles/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
           <Route path="/students/profiles/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
@@ -46,9 +52,12 @@ export default function App() {
           <Route path="/actions/abandon/:actionId" element={<RequireAuth><AbandonRegister /></RequireAuth>} />
           <Route path="/actions/abandon/new" element={<RequireAuth><AbandonRegister /></RequireAuth>} />
           <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
+          <Route path="/studentsVisitorView/actions" element={<RequireAuth><ActionsListVisitor /></RequireAuth>} />
           <Route path="/personal" element={<RequireAuth><PersonalLog /></RequireAuth>} />
           <Route path="/users" element={<RequireAuth><VisitorsHome /></RequireAuth>} />
           <Route path="/users/visitors" element={<RequireAuth><VisitorsList /></RequireAuth>} />
+
+          <Route path="/home/visitor" element={<RequireAuth><TempHome /></RequireAuth>} />
 
           {/* desconocidas -> login */}
           <Route path="*" element={<Navigate to="/login" replace />} />

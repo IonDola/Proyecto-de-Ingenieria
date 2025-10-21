@@ -109,7 +109,6 @@ export default function LoginForm() {
         return;
       }
 
-      // AJUSTAR MAYBE
       const nombre = (data?.nombre || username);
       const rol    = (data?.rol || "admin");
 
@@ -118,7 +117,15 @@ export default function LoginForm() {
       localStorage.setItem("userName", nombre);
       localStorage.setItem("role", rol);
 
-      nav("/home", { replace: true });
+      const role = (data?.rol || data?.role || "ADMIN").toUpperCase();
+      localStorage.setItem("role", role);
+
+      // redirección según rol
+      if (role === "VISITOR") {
+        nav("/home/visitor", { replace: true });
+      } else {
+        nav("/home", { replace: true });
+      }
     } catch (e) {
       console.error(e);
       alert("Error al conectar con el servidor");

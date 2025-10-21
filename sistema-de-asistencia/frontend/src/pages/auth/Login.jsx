@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import loginImage from "../../assets/images/school_shield.png"; // Ajusta la ruta a tu PNG
+import loginImage from "../../assets/images/school_shield.png"; 
 import LoginForm from "../../components/LoginForm.jsx";
 
 const Login = () => {
