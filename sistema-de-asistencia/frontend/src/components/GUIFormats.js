@@ -82,7 +82,7 @@ export function FormatStudentRegister(student) {
     };
 };
 
-function ResumeStudent(student) {
+export function ResumeStudent(student) {
     const keyMapStudent = {
         id_mep: ["Carnet", 0],
         first_name: ["Nombre", 1],
@@ -92,39 +92,8 @@ function ResumeStudent(student) {
         ongoing_age: ["Edad", 5],
         section: ["Sección", 6],
     };
-    return FormatEntries(student, keyMapStudent);
-};
-
-export function FormatActionRegister(student, action) {
-    const studentResume = ResumeStudent(student);
-    const keyMapAction = {
-        id: ["ID de Acción", 0],
-        type: ["Tipo de Acción", 1],
-        date: ["Fecha de Acción", 2],
-        description: ["Descripción", 3],
-        performed_by: ["Realizado por", 4],
-    };
-    const year = student?.ongoing_age_year || new Date().getFullYear();
-
-    if (!action) {
-        const emptyAction = {};
-        const selectedMap = keyMapAction;
-        for (const key in selectedMap) {
-            emptyAction[key] = "";
-        }
-        return {
-            student: studentResume,
-            going_year: year,
-            action: FormatEntries(emptyAction, selectedMap),
-            name: " *Nueva Boleta de Estado de Matrícula* "
-        };
-    }
-
-    const actionDetails = FormatEntries(action, keyMapAction);
     return {
-        student: studentResume,
-        going_year: year,
-        action: actionDetails,
-        name: `Boleta de Estado de Matricula de ${student?.first_name ?? ""}`.trim()
+        student: FormatEntries(student, keyMapStudent),
+        going_year: student.ongoing_age_year
     };
 };
