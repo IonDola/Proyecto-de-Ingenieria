@@ -8,7 +8,7 @@ import Home from "./pages/home/Home";
 import ActionsList from "./pages/students/ActionsList";
 import PersonalLog from "./pages/personal/PersonalLog";
 import RequireAuth from "./auth/RequireAuth";
-import InTest from "./pages/students/ActionRegister";
+import ActionRegister from "./pages/students/ActionRegister";
 import VisitorsHome from "./pages/visitors/VisitorsHome";
 import VisitorsList from "./pages/visitors/VisitorsList";
 
