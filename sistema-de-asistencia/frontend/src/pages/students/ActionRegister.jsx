@@ -67,6 +67,11 @@ const ActionRegister = () => {
             student: actionData.student || {},
             going_year: actionData.going_year || "",
         });
+        setFormData(
+            {
+                actionName: (isNew ? "Nueva" : "") + ` Boleta de Estado de Matrícula de ${studentData.student.Nombre} `,
+            }
+        )
     }, [std, student_id]);
 
     useEffect(() => {
@@ -83,7 +88,6 @@ const ActionRegister = () => {
 
     useEffect(() => {
         setFormData({
-            actionName: isNew ? " Nueva Boleta de Estado de Matrícula " : ` Boleta de Estado de Matrícula de ${studentData.student.Nombre || ""} `,
             type: act?.type || "ingreso",
             notes: act?.notes || "",
             on_revision: act?.on_revision || true,
@@ -92,22 +96,16 @@ const ActionRegister = () => {
             matriculate_level: act?.matriculate_level || "",
         })
     }, [act]);
-    console.log("ACT:", act);
-    console.log("FORM DATA:", formData);
 
     const toggleEdit = () => {
+        setOnEdition((prev) => !prev);
     };
-    const handleChange = (section, key, event) => {
-        const { value } = event.target;
-        setFormData((prev) => {
-            if (section === "carnet") {
-                return { ...prev, carnet: value };
-            }
-            return {
-                ...prev,
-                [section]: { ...prev[section], [key]: value },
-            };
-        });
+    const handleChange = (key, event) => {
+        const { value, type, checked } = event.target;
+        setFormData((prev) => ({
+            ...prev,
+            [key]: type === "checkbox" ? checked : value === "true" ? true : value === "false" ? false : value,
+        }));
     };
     const handleSubmit = (e) => {
     };
@@ -135,6 +133,13 @@ const ActionRegister = () => {
             </>
         );
     }
+
+    let actionState = [
+        { value: "ingreso", img: StudentEnter, label: "Ingreso", className: formData.type == "ingreso" ? "w-icon" : "" },
+        { value: "egreso", img: StudentExit, label: "Egreso", className: formData.type == "egreso" ? "w-icon" : "" },
+        { value: "abandono", img: StudentAbandon, label: "Abandono", className: formData.type == "abandono" ? "w-icon" : "" },
+    ]
+
     return (
         <>
             <PageHead icons={iconList} name={formData.actionName} />
@@ -159,10 +164,9 @@ const ActionRegister = () => {
                                 const rawValue = studentData.student[key];
                                 const isDateField = key.toLowerCase().includes("fecha");
                                 const isAgeField = key.toLowerCase().includes("edad");
-                                const isGenderField = key.toLowerCase().includes("género");
                                 return (
                                     <div className="st-data" key={key}>
-                                        <a>{!isAgeField ? key : "Edad Cumplida al 15 de Febrero de " + formData.going_year}</a>
+                                        <a>{!isAgeField ? key : "Edad Cumplida al 15 de Febrero de " + studentData.going_year}</a>
                                         <input
                                             type={!isDateField ? "text" : "date"}
                                             value={rawValue}
@@ -179,24 +183,123 @@ const ActionRegister = () => {
                         </div>
                         <div>
                             <div className="st-data">
-                                <label>Tipo de Boleta</label>
-                                <div className="flex gap-3">
-                                    {[
-                                        { value: "ingreso", img: StudentEnter, label: "Ingreso" },
-                                        { value: "egreso", img: StudentExit, label: "Egreso" },
-                                        { value: "abandono", img: StudentAbandon, label: "Abandono" },
-                                    ].map((opt) => (
-                                        <button
-                                            key={opt.value}
-                                            type="button"
-                                            onClick={() => setFormData({ ...formData, type: opt.value })}
-                                            className={""}
-                                        >
-                                            <img src={opt.img} alt={opt.label} />
-                                            <p className="text-sm">{opt.label}</p>
-                                        </button>
-                                    ))}
+                                <label>Tipo de Acción</label>
+                                <div>
+                                    {onEdition &&
+                                        actionState.map((opt) => (
+                                            <>
+                                                <Tool key={opt.value} action={() => setFormData((prev) => ({ ...prev, type: opt.value }))}>
+                                                    <img src={opt.img} alt={opt.label} className={opt.className} title={opt.label} />
+                                                </Tool>
+                                            </>
+                                        ))}
+                                    {!onEdition &&
+                                        <div>
+                                            {actionState.map((opt) => (
+                                                formData.type === opt.value &&
+                                                <>
+                                                    <img src={opt.img} alt={opt.label} className=" w-icon" style={{ width: "50px", height: "50px", filter: "invert(40%) sepia(8%) saturate(2389%) hue-rotate(174deg) brightness(90%) contrast(90%)" }} />
+                                                    <input
+                                                        type={"text"}
+                                                        value={opt.label}
+                                                        readOnly
+                                                        style={{ marginLeft: "1rem", fontWeight: "bold", fontSize: "1.2rem", verticalAlign: "top", marginTop: "15px" }}
+                                                    />
+                                                </>
+                                            ))}
+                                        </div>
+                                    }
                                 </div>
+                            </div>
+
+                            {formData.type !== "abandono" && (
+                                onEdition ? (
+                                    <div className="st-data">
+                                        <label>Transferido</label>
+                                        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    name="transferred"
+                                                    value="true"
+                                                    checked={formData.transferred === true}
+                                                    onChange={(e) => handleChange("transferred", e)}
+                                                />
+                                                Sí
+                                            </label>
+                                            <label>
+                                                <input
+                                                    type="radio"
+                                                    name="transferred"
+                                                    value="false"
+                                                    checked={formData.transferred === false}
+                                                    onChange={(e) => handleChange("transferred", e)}
+                                                />
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    // Versión no editable
+                                    <div className="st-data">
+                                        <label>Transferido</label>
+                                        <input
+                                            type="text"
+                                            value={formData.transferred ? "Sí" : "No"} // acá podés poner lo que quieras
+                                            readOnly
+                                        />
+                                    </div>
+                                )
+                            )}
+                            {formData.type !== "abandono" && formData.transferred &&
+                                <div className="st-data">
+                                    <label htmlFor="origin_school">Escuela de Origen</label>
+                                    <input
+                                        type="text"
+                                        id="origin_school"
+                                        value={formData.origin_school}
+                                        onChange={(e) => handleChange("origin_school", e)}
+                                        readOnly={!onEdition}
+                                    />
+                                </div>}
+                            {formData.type !== "abandono" &&
+                                <div className="st-data">
+                                    <label htmlFor="matriculate_level">Nivel de Matriculación</label>
+                                    {!onEdition ? (
+                                        <input
+                                            type="text"
+                                            value={formData.matriculate_level}
+                                            readOnly
+                                        />
+                                    ) : (
+                                        <select
+                                            id="matriculate_level"
+                                            onChange={(e) => handleChange("matriculate_level", e)}
+                                            value={formData.matriculate_level}
+                                        >
+                                            <option value="">Seleccione un nivel</option>
+                                            <option value="interactivo_ii">Interactivo II</option>
+                                            <option value="transicion">Transición</option>
+                                            <option value="primero">Primero</option>
+                                            <option value="segundo">Segundo</option>
+                                            <option value="tercero">Tercero</option>
+                                            <option value="cuarto">Cuarto</option>
+                                            <option value="quinto">Quinto</option>
+                                            <option value="sexto">Sexto</option>
+                                            <option value="aula_integrada">Aula Integrada</option>
+                                        </select>
+                                    )}
+                                </div>}
+                            <div className="st-data">
+                                <label htmlFor="notes">Descripción</label>
+                                <input
+                                    type="text"
+                                    id="notes"
+                                    value={formData.notes}
+                                    onChange={(e) => handleChange("notes", e)}
+                                    readOnly={!onEdition}
+                                    style={{ height: "100px" }}
+                                />
                             </div>
                         </div>
                     </div>
