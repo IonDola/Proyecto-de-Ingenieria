@@ -8,7 +8,9 @@ import Home from "./pages/home/Home";
 import ActionsList from "./pages/students/ActionsList";
 import PersonalLog from "./pages/personal/PersonalLog";
 import RequireAuth from "./auth/RequireAuth";
-import ActionRegister from "./pages/students/ActionRegister";
+import InTest from "./pages/students/ActionRegister";
+import VisitorsHome from "./pages/visitors/VisitorsHome";
+import VisitorsList from "./pages/visitors/VisitorsList";
 
 export default function App() {
   const devView = localStorage.getItem("role") === "Dev";
@@ -38,6 +40,8 @@ export default function App() {
           <Route path="/students/:student_id/newRegister" element={<RequireAuth><ActionRegister /></RequireAuth>} />
           <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
           <Route path="/personal" element={<RequireAuth><PersonalLog /></RequireAuth>} />
+          <Route path="/users" element={<RequireAuth><VisitorsHome /></RequireAuth>} />
+          <Route path="/users/visitors" element={<RequireAuth><VisitorsList /></RequireAuth>} />
 
           {/* desconocidas -> login */}
           <Route path="*" element={<Navigate to="/login" replace />} />

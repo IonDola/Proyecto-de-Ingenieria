@@ -24,8 +24,10 @@ const Home = () => {
           </div>
           <div>
             <Tool>
-              <img src={UserIcon} alt="" className="w-icon" />
-              <p>Usuarios</p>
+              <Link to={"/users"}>
+                <img src={UserIcon} alt="" className="w-icon" />
+                <p>Usuarios</p>
+              </Link>
             </Tool>
           </div>
           <div id="halved">
