@@ -6,15 +6,12 @@ import StudentsList from "./pages/students/StudentsList";
 import StudentsListVisitor from "./pages/students/StudentsListVisitor";
 import StudentForm from "./pages/students/StudentForm";
 import HistoryList from "./pages/students/HistoryList";
-import EnterRegister from "./pages/registers/EnterRegister";
-import ExitRegister from "./pages/registers/ExitRegister";
-import AbandonRegister from "./pages/registers/AbandonRegister";
 import Home from "./pages/home/Home";
 import ActionsList from "./pages/students/ActionsList";
 import ActionsListVisitor from "./pages/students/ActionsListVisitor";
 import PersonalLog from "./pages/personal/PersonalLog";
 import RequireAuth from "./auth/RequireAuth";
-import InTest from "./pages/students/ActionRegister";
+import ActionRegister from "./pages/students/ActionRegister";
 import VisitorsHome from "./pages/visitors/VisitorsHome";
 import VisitorsList from "./pages/visitors/VisitorsList";
 import TempHome from "./pages/home/TempHome";
@@ -32,9 +29,9 @@ export default function App() {
           {/* publicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/test" element={<InTest />} />
-          <Route path="/test/:student_id/newRegister" element={<InTest />} />
-          <Route path="/test/:student_id/:register_id" element={<InTest />} />
+          <Route path="/test" element={<ActionRegister />} />
+          <Route path="/test/:student_id/newRegister" element={<ActionRegister />} />
+          <Route path="/test/:student_id/:register_id" element={<ActionRegister />} />
 
           {/* protegidas */}
           <Route path="/students" element={<RequireAuth><StudentsHome /></RequireAuth>} />
@@ -45,12 +42,8 @@ export default function App() {
           <Route path="/students/profiles/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
           <Route path="/students/profiles/:id/edit" element={<RequireAuth><StudentForm /></RequireAuth>} />
           <Route path="/students/profiles/:id/history" element={<RequireAuth><HistoryList /></RequireAuth>} />
-          <Route path="/actions/enter/:actionId" element={<RequireAuth><EnterRegister /></RequireAuth>} />
-          <Route path="/actions/enter/new" element={<RequireAuth><EnterRegister /></RequireAuth>} />
-          <Route path="/actions/exit/:actionId" element={<RequireAuth><ExitRegister /></RequireAuth>} />
-          <Route path="/actions/exit/new" element={<RequireAuth><ExitRegister /></RequireAuth>} />
-          <Route path="/actions/abandon/:actionId" element={<RequireAuth><AbandonRegister /></RequireAuth>} />
-          <Route path="/actions/abandon/new" element={<RequireAuth><AbandonRegister /></RequireAuth>} />
+          <Route path="/actions/:register_id" element={<RequireAuth><ActionRegister /></RequireAuth>} />
+          <Route path="/students/:student_id/newRegister" element={<RequireAuth><ActionRegister /></RequireAuth>} />
           <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
           <Route path="/studentsVisitorView/actions" element={<RequireAuth><ActionsListVisitor /></RequireAuth>} />
           <Route path="/personal" element={<RequireAuth><PersonalLog /></RequireAuth>} />

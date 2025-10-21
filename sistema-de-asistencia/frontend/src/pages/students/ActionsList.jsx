@@ -136,7 +136,7 @@ export default function ActionsList() {
               <div className="mono">{a.student?.id_mep}</div>
               <div>{a.student ? `${a.student.first_name} ${a.student.surnames}` : "—"}</div>
               <div>
-                <Link to={`/actions/enter/${a.id}`} target="_blank">
+                <Link to={`/actions/${a.id}/`} target="_blank">
                   <button><img src={ViewProfile} alt="Detalle" className="w-icon action-icon" /></button>
                 </Link>
               </div>

@@ -24,7 +24,6 @@ function normalizeGender(g) {
 }
 
 export function FormatStudentForDB(formData) {
-  console.log("FormData to format for DB:", formData);
   const keyMapStudent = {
     Carnet: "id_mep",
     Nombre: "first_name",
@@ -84,32 +83,29 @@ export function FormatStudentForDB(formData) {
   return backendStudent;
 }
 
-export function FormatActionForDB(data, tag) {
-  const reg = data?.register || {};
-  const notes = (reg["Notas"] ?? data?.notes ?? "").toString();
-
-  let transferredRaw = reg["Transferido"] ?? data?.transferred;
-  if (typeof transferredRaw === "string") {
-    const t = transferredRaw.trim().toLowerCase();
-    transferredRaw = (t === "true" || t === "1" || t === "sí" || t === "si");
-  }
-  const transferred = !!transferredRaw;
-
-  const on_revision = (typeof data?.en_revision !== "undefined")
-    ? !!data.en_revision
-    : (typeof data?.on_revision !== "undefined" ? !!data.on_revision : true);
-
-  let origin_school = null;
-  if (tag === "ingreso") {
-    const raw = reg["Escuela de Origen"] ?? data?.origin_school;
-    origin_school = (raw === undefined || raw === null || String(raw).trim() === "") ? null : String(raw).trim();
-  }
-
-  return {
-    type: tag || "ingreso",
-    notes,
-    transferred,
-    on_revision,
-    ...(tag === "ingreso" ? { origin_school } : {}),
+export function FormatActionForDB(formData, isNew = false) {
+  let backendAction = {
+    type: formData.type || "",
+    notes: formData.notes || "",
+    transferred: formData.transferred,
+    origin_school: formData.origin_school || "",
+    matriculate_level: formData.matriculate_level || "",
+    on_revision: formData.on_revision,
   };
-}
+
+  if (isNew) {
+    backendAction.on_revision = true;
+  }
+
+  if (formData.type === "abandono") {
+    backendAction.matriculate_level = "";
+    backendAction.origin_school = "";
+    backendAction.transferred = ""
+  } else {
+    if (!formData.transferred) {
+      backendAction.origin_school = ""
+    }
+  }
+
+  return backendAction;
+};

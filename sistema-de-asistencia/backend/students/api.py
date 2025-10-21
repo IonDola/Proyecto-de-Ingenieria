@@ -112,7 +112,7 @@ def serialize_student_resumed(s):
 def serialize_action(a):
     return {
         "id": str(a.id),
-        "student_id": str(a.student_id),
+        "student_id": str(a.student.id),
         "type": a.type,
         "on_revision": a.on_revision,
         "origin_school": a.origin_school,
@@ -325,7 +325,7 @@ def actions_create(request, student_id):
         transferred=bool(data.get("transferred")),
         matriculate_level=(data.get("matriculate_level" or "")),
         on_revision=True if data.get("on_revision") is None else bool(data.get("on_revision")),
-        last_edition_by=(data.get("last_edition_by" or "")),
+        last_edition_by=(data.get("last_edition_by") or actor),
     )
     try:
         a.full_clean()
@@ -371,13 +371,12 @@ def actions_update(request, action_id):
                 val = (val or "").strip().lower()
             if f == "on_revision":
                 val = bool(val)
+                print(val)
             if f == "transferred":
                 val = bool(val)
-            if f == "last_edition_by":
-                val = (val or "").strip().lower()
             setattr(a, f, val)
     try:
-        a.full_clean()
+        a.clean()
         a.save()
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
