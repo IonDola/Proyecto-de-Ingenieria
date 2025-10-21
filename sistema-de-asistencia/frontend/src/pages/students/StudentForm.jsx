@@ -29,7 +29,6 @@ const StudentForm = ({ }) => {
   const [msg, setMsg] = useState("");
   const [std, setS] = useState(null);
   const navigate = useNavigate();
-  const [showActionModal, setShowActionModal] = useState(false);
 
   const [formData, setFormData] = useState({
     student: {},
@@ -60,10 +59,6 @@ const StudentForm = ({ }) => {
     });
   }, [std, id, isNew]);
 
-  const switchActionModal = () => {
-    setShowActionModal(!showActionModal);
-  };
-
   const toggleEdit = () => {
     if (guestView) return;
     if (onEdition) {
@@ -77,8 +72,6 @@ const StudentForm = ({ }) => {
     }
     if (!isNew) setOnEdition((prev) => !prev);
   };
-
-  const onCreated = () => navigate(`/students/profiles/${id}/history`);
 
   const handleChange = (section, key, event) => {
     const { value } = event.target;
@@ -138,7 +131,7 @@ const StudentForm = ({ }) => {
   const baseTools = (
     <>
       {!isNew && (
-        <Tool action={switchActionModal}>
+        <Tool action={() => { navigate(`/students/${id}/newRegister`); }}>
           <img src={IconNew} alt="Nueva acción" className="w-icon" />
         </Tool>
       )}
@@ -265,13 +258,6 @@ const StudentForm = ({ }) => {
           </div>
         </form>
       </main>
-      {showActionModal && (
-        <ActionModal
-          studentId={id}
-          onClose={() => setShowActionModal(false)}
-          onSuccess={onCreated}
-        />
-      )}
     </>
   );
 };

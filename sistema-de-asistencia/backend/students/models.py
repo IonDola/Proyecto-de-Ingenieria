@@ -49,7 +49,7 @@ class Student(models.Model):
         ordering = ["surnames", "first_name"]
 
     def __str__(self):
-        return f"{self.surnames}, {self.first_name} ({self.id_mep})"
+        return f"{self.surnames}, {self.first_name} ({self.id_mep}) ({self.id})"
 
 class Action(models.Model):
     TYPE_CHOICES = [
