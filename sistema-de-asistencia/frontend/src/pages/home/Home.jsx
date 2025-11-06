@@ -38,12 +38,12 @@ const Home = () => {
               </Tool>
             </div>
             <div style={{ gridRow: "2" }}>
-              <Tool>
-                <Link to={"/generallog"}>
+              <Link to={"/generallog"} className="tool-link">
+                <Tool>
                   <img src={LogsIcon} alt="" className="w-icon" />
-                  <p>Bitacora</p>
-                </Link>
-              </Tool>
+                  <p>Bitácora</p>
+                </Tool>
+              </Link>
             </div>
           </div>
 
