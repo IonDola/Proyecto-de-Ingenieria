@@ -82,14 +82,13 @@ async function flexibleRefresh() {
 
 export default function PersonalLog() {
   const iconList = [{ id: 1, image: IconRegisters, description: "Bitácora personal" }];
-
   const columns = [
-    { name: "Fecha/Hora", width: "210px" },
+    { name: "Fecha/Hora", width: "0.8fr" },
     { name: "Acción", width: "1fr" },
-    { name: "Tipo", width: "160px" },
-    { name: "Entidad", width: "1fr" },
-    { name: "Estado", width: "130px" },
-    { name: "", width: "110px" },
+    { name: "Tipo", width: "0.7fr" },
+    { name: "Entidad", width: "1.2fr" },
+    { name: "Estado", width: "0.6fr" },
+    { name: "", width: "0.4fr" },
   ];
 
   const [rows, setRows] = useState([]);
