@@ -39,8 +39,10 @@ const Home = () => {
             </div>
             <div style={{ gridRow: "2" }}>
               <Tool>
-                <img src={LogsIcon} alt="" className="w-icon" />
-                <p>Bitacora</p>
+                <Link to={"/generallog"}>
+                  <img src={LogsIcon} alt="" className="w-icon" />
+                  <p>Bitacora</p>
+                </Link>
               </Tool>
             </div>
           </div>

@@ -15,6 +15,8 @@ import ActionRegister from "./pages/students/ActionRegister";
 import VisitorsHome from "./pages/visitors/VisitorsHome";
 import VisitorsList from "./pages/visitors/VisitorsList";
 import TempHome from "./pages/home/TempHome";
+import GlobalLogs from "./pages/generallog/GlobalLog";
+import GlobalLogDetail from "./pages/generallog/GlobalLogDetail";
 
 export default function App() {
   const devView = localStorage.getItem("role") === "Dev";
@@ -49,6 +51,8 @@ export default function App() {
           <Route path="/personal" element={<RequireAuth><PersonalLog /></RequireAuth>} />
           <Route path="/users" element={<RequireAuth><VisitorsHome /></RequireAuth>} />
           <Route path="/users/visitors" element={<RequireAuth><VisitorsList /></RequireAuth>} />
+          <Route path="/generallog" element={<RequireAuth><GlobalLogs/></RequireAuth>} />
+          <Route path="/generallog/detail" element={<RequireAuth><GlobalLogDetail/></RequireAuth>} />
 
           <Route path="/home/visitor" element={<RequireAuth><TempHome /></RequireAuth>} />
 
