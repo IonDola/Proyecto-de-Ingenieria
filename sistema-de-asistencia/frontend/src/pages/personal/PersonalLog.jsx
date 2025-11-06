@@ -251,7 +251,6 @@ export default function PersonalLog() {
       <main>
         <div className="tools">
           <Home />
-          <Tool key={"Tool-search"}> </Tool>
         </div>
 
         {loading ? (
