@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 import uuid
+from .encryption import encrypt_field, decrypt_field
 
 class Student(models.Model):
     GENDER_CHOICES = [
@@ -19,25 +20,28 @@ class Student(models.Model):
     nationality = models.CharField("Nacionalidad", max_length=60, default="Costa Rica")
     birth_date = models.DateField("Fecha de nacimiento", default=timezone.now)
     birth_place = models.TextField("Lugar de Nacimiento",  max_length=60, null=True, blank=True)
-    address = models.TextField("Dirección de residencia",  max_length=120, null=True, blank=True)
+    
+    # F-061: Campo cifrado - dirección
+    _address_encrypted = models.TextField("Dirección cifrada", max_length=500, null=True, blank=True, db_column="address")
+    
     gender = models.CharField("Género", max_length=15, choices=GENDER_CHOICES, default="Indefinido")
     ongoing_age = models.TextField("Edad cumplida el presente año", max_length=2, null=True, blank=False)
     ongoing_age_year = models.TextField("Año de referencia", max_length=4, null=True, blank=False)
 
-    # Encargados
+    # F-061: Encargados con teléfonos cifrados
     guardian_name_1 = models.CharField("Nombre encargado 1", max_length=120, default="Missing Parent")
     guardian_id_1 = models.CharField("Cédula encargado 1", max_length=50, default="Missing ID")
-    guardian_phone_1 = models.CharField("Teléfono encargado 1", max_length=30, default="Missing PhoneNumber")
+    _guardian_phone_1_encrypted = models.CharField("Teléfono encargado 1 cifrado", max_length=200, default="Missing PhoneNumber", db_column="guardian_phone_1")
     guardian_relationship_1 = models.CharField("Parentesco al estudiante 1", max_length=30, default="Missing PhoneNumber")
 
     guardian_name_2 = models.CharField("Nombre encargado 2", max_length=120, null=True, blank=True)
     guardian_id_2 = models.CharField("Cédula encargado 2", max_length=50, null=True, blank=True)
-    guardian_phone_2 = models.CharField("Teléfono encargado 2", max_length=30, null=True, blank=True)
+    _guardian_phone_2_encrypted = models.CharField("Teléfono encargado 2 cifrado", max_length=200, null=True, blank=True, db_column="guardian_phone_2")
     guardian_relationship_2 = models.CharField("Parentesco al estudiante 2", max_length=30, default="Missing PhoneNumber")
 
     guardian_name_3 = models.CharField("Nombre encargado 3", max_length=120, null=True, blank=True)
     guardian_id_3 = models.CharField("Cédula encargado 3", max_length=50, null=True, blank=True)
-    guardian_phone_3 = models.CharField("Teléfono encargado 3", max_length=30, null=True, blank=True)
+    _guardian_phone_3_encrypted = models.CharField("Teléfono encargado 3 cifrado", max_length=200, null=True, blank=True, db_column="guardian_phone_3")
     guardian_relationship_3 = models.CharField("Parentesco al estudiante 3", max_length=30, default="Missing PhoneNumber")
 
     institutional_guardian = models.CharField("Nombre encargado 1", max_length=120, default="Missing Parent")
@@ -49,6 +53,41 @@ class Student(models.Model):
 
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # F-061: Properties para cifrado/descifrado transparente
+    @property
+    def address(self):
+        """Descifra y retorna la dirección"""
+        return decrypt_field(self._address_encrypted or "")
+    
+    @address.setter
+    def address(self, value):
+        """Cifra y guarda la dirección"""
+        self._address_encrypted = encrypt_field(value or "")
+
+    @property
+    def guardian_phone_1(self):
+        return decrypt_field(self._guardian_phone_1_encrypted or "")
+    
+    @guardian_phone_1.setter
+    def guardian_phone_1(self, value):
+        self._guardian_phone_1_encrypted = encrypt_field(value or "")
+
+    @property
+    def guardian_phone_2(self):
+        return decrypt_field(self._guardian_phone_2_encrypted or "")
+    
+    @guardian_phone_2.setter
+    def guardian_phone_2(self, value):
+        self._guardian_phone_2_encrypted = encrypt_field(value or "")
+
+    @property
+    def guardian_phone_3(self):
+        return decrypt_field(self._guardian_phone_3_encrypted or "")
+    
+    @guardian_phone_3.setter
+    def guardian_phone_3(self, value):
+        self._guardian_phone_3_encrypted = encrypt_field(value or "")
 
     class Meta:
         ordering = ["surnames", "first_name"]
