@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
@@ -6,6 +6,7 @@ from django.db.models import Q
 import json
 from .models import Student, Action
 from logs.utils import log_event
+from .pdf_utils import generate_student_history_pdf
 
 def _debug_user_info(request, user, origin, extra=None):
     """
@@ -576,3 +577,55 @@ def students_bulk_delete(request):
 
     deleted, _ = Student.objects.filter(id__in=ids).delete()
     return JsonResponse({"ok": True, "deleted": deleted})
+
+
+# EXPORTACIÓN PDF
+
+@require_http_methods(["GET"])
+def export_student_pdf(request, student_id):
+    """
+    F-037: Exporta el historial de un estudiante en formato PDF.
+    Endpoint: GET /api/students/<student_id>/export-pdf/
+    """
+    try:
+        student = Student.objects.get(pk=student_id)
+    except Student.DoesNotExist:
+        return JsonResponse({"error": "not_found"}, status=404)
+    
+    # Obtener todas las acciones del estudiante ordenadas por fecha
+    actions = student.actions.all().order_by("-created_at")
+    
+    # Usuario para bitácora
+    user = _get_request_user(request)
+    
+    # Generar el PDF
+    try:
+        pdf_buffer = generate_student_history_pdf(student, actions)
+        
+        # Registrar la exportación en la bitácora
+        log_event(
+            user,
+            action="STUDENT_PDF_EXPORTED",
+            type="export",
+            entity=f"Estudiante: {student.first_name} {student.surnames} ({student.id_mep})",
+            status="success",
+            metadata={"student_id": str(student.id), "action_count": len(actions)},
+        )
+        
+        # Preparar la respuesta HTTP con el PDF
+        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+        filename = f"Historial_{student.first_name}_{student.surnames}_{student.id_mep}.pdf"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
+        
+    except Exception as e:
+        log_event(
+            user,
+            action="STUDENT_PDF_EXPORT_FAILED",
+            type="export",
+            entity=f"Estudiante: {student.first_name} {student.surnames} ({student.id_mep})",
+            status="failed",
+            metadata={"student_id": str(student.id), "error": str(e)},
+        )
+        return JsonResponse({"error": f"Error generando PDF: {str(e)}"}, status=500)

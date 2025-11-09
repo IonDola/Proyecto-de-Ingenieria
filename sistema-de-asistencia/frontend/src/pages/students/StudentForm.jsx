@@ -16,6 +16,7 @@ import IconProfile from "../../assets/icons/student_profiles.svg";
 import IconHistory from "../../assets/icons/report.svg";
 import IconEdit from "../../assets/icons/edit.svg";
 import IconNew from "../../assets/icons/new_doc.svg";
+import IconPDF from "../../assets/icons/downloadd.png";
 
 const StudentForm = ({ }) => {
   const iconList = [
@@ -128,6 +129,46 @@ const StudentForm = ({ }) => {
       });
   }
 
+  // F-037: Exportar PDF
+  const handleExportPDF = async () => {
+    if (!id) return;
+    
+    try {
+      const access = localStorage.getItem("access") || "";
+      const response = await fetch(`/api/students/${id}/export-pdf/`, {
+        method: "GET",
+        headers: {
+          ...(access ? { Authorization: `Bearer ${access}` } : {}),
+        },
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || `Error ${response.status}`);
+      }
+      
+      // Obtener el blob del PDF
+      const blob = await response.blob();
+      
+      // Crear URL temporal y descargar
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Historial_${formData.name.replace(/\s+/g, "_")}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      setMsg("PDF descargado exitosamente");
+      setTimeout(() => setMsg(""), 3000);
+    } catch (err) {
+      console.error("Error exportando PDF:", err);
+      setMsg("Error al generar el PDF: " + err.message);
+    }
+  };
+
   const baseTools = (
     <>
       {!isNew && (
@@ -145,6 +186,11 @@ const StudentForm = ({ }) => {
           <Link to={`/students/profiles/${id}/history`} title="Ver historial" className="page-tool">
             <img src={IconHistory} alt="Historial" className="w-icon" />
           </Link>
+        </Tool>
+      )}
+      {!isNew && (
+        <Tool action={handleExportPDF}>
+          <img src={IconPDF} alt="Exportar PDF" title="Exportar PDF" className="w-icon" />
         </Tool>
       )}
     </>
@@ -192,6 +238,20 @@ const StudentForm = ({ }) => {
           </Tool>
           {sideTools}
         </div>
+
+        {msg && (
+          <div style={{
+            background: "var(--main-color)",
+            color: "white",
+            padding: "12px",
+            marginBottom: "12px",
+            marginRight: "25px",
+            borderRadius: "8px",
+            fontWeight: "bold",
+          }}>
+            {msg}
+          </div>
+        )}
 
         <form id="register" onSubmit={handleSubmit}>
           <div className="st-table">

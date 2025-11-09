@@ -1,4 +1,3 @@
-# backend/students/urls.py
 from django.urls import path
 from . import views
 from students import api as students_api
@@ -21,6 +20,9 @@ urlpatterns = [
     path("api/students/<uuid:student_id>/", students_api.students_detail),
     path("api/students/<uuid:student_id>/update/", students_api.students_update),
     path("api/students/<uuid:student_id>/history/", students_api.student_history),
+    
+    path("api/students/<uuid:student_id>/export-pdf/", students_api.export_student_pdf),
+    
     path("api/actions/<uuid:action_id>/", students_api.action_detail),
     path("api/students/bulk-delete/", students_api.students_bulk_delete),  # POST
 
