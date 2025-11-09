@@ -42,6 +42,11 @@ class Student(models.Model):
 
     institutional_guardian = models.CharField("Nombre encargado 1", max_length=120, default="Missing Parent")
 
+    # F-039: Soft delete
+    is_deleted = models.BooleanField(default=False, db_index=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    deleted_by = models.CharField(max_length=150, blank=True, default="")
+
     created_at = models.DateTimeField(default=timezone.now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -82,15 +87,12 @@ class Action(models.Model):
     transferred = models.BooleanField(default=False)
     matriculate_level = models.CharField("Nivel a| Matricular", max_length=20, choices=MATRICLE_CHOICES, db_index=True, default="primero")
 
-    "Reglas del negocio"
     def clean(self):
-            if self.type == "ingreso":
-                if (self.transferred and not self.origin_school) or (self.origin_school and not self.transferred):
-                    raise ValidationError("Para estudiantes transferidos debe indicar su procedencia.")
-                if not self.matriculate_level:
-                    raise ValidationError("Ingresar el nivel al que va a matricular")
-
-
+        if self.type == "ingreso":
+            if (self.transferred and not self.origin_school) or (self.origin_school and not self.transferred):
+                raise ValidationError("Para estudiantes transferidos debe indicar su procedencia.")
+            if not self.matriculate_level:
+                raise ValidationError("Ingresar el nivel al que va a matricular")
 
     class Meta:
         ordering = ["-created_at"]

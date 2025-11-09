@@ -24,7 +24,10 @@ urlpatterns = [
     path("api/students/<uuid:student_id>/export-pdf/", students_api.export_student_pdf),
     
     path("api/actions/<uuid:action_id>/", students_api.action_detail),
-    path("api/students/bulk-delete/", students_api.students_bulk_delete),  # POST
+    
+    path("api/students/bulk-soft-delete/", students_api.students_bulk_soft_delete),
+    path("api/students/bulk-recover/", students_api.students_bulk_recover),
+    path("api/students/deleted/", students_api.students_list_deleted),
 
     path("api/students/<uuid:student_id>/actions/", students_api.actions_list_by_student),
     path("api/students/<uuid:student_id>/actions/new/", students_api.actions_create),

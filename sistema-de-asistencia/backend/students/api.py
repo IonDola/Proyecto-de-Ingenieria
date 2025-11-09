@@ -7,6 +7,7 @@ import json
 from .models import Student, Action
 from logs.utils import log_event
 from .pdf_utils import generate_student_history_pdf
+from django.utils import timezone
 
 def _debug_user_info(request, user, origin, extra=None):
     """
@@ -137,7 +138,12 @@ def serialize_action_resumed(a):
 @require_http_methods(["GET"])
 def students_list(request):
     q = request.GET.get("q", "").strip()
+    include_deleted = request.GET.get("include_deleted", "").lower() in ("true", "1", "yes")
     qs = Student.objects.all()
+    
+    # excluir eliminados por defecto
+    if not include_deleted:
+        qs = qs.filter(is_deleted=False)
 
     if q:
         qs = qs.filter(Q(id_mep__icontains=q) | Q(first_name__icontains=q) | Q(surnames__icontains=q))
@@ -629,3 +635,97 @@ def export_student_pdf(request, student_id):
             metadata={"student_id": str(student.id), "error": str(e)},
         )
         return JsonResponse({"error": f"Error generando PDF: {str(e)}"}, status=500)
+    
+@csrf_exempt
+@require_http_methods(["POST"])
+def students_bulk_soft_delete(request):
+    """
+    F-039: Eliminación masiva con soft delete
+    Body: { "ids": ["uuid1","uuid2", ...] }
+    """
+    try:
+        data = json.loads(request.body or "{}")
+        ids = data.get("ids") or []
+        if not isinstance(ids, list) or not ids:
+            return JsonResponse({"error": "ids_required"}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "invalid_json"}, status=400)
+
+    user = _get_request_user(request)
+    username = user.username if user and getattr(user, "username", "") else "unknown"
+
+    affected = Student.objects.filter(id__in=ids, is_deleted=False).update(
+        is_deleted=True,
+        deleted_at=timezone.now(),
+        deleted_by=username
+    )
+
+    log_event(
+        user,
+        action="BULK_DELETE",
+        type="bulk_operation",
+        entity=f"Estudiantes marcados como eliminados",
+        status="success",
+        metadata={"count": affected, "ids": ids},
+    )
+
+    return JsonResponse({"ok": True, "marked_deleted": affected})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def students_bulk_recover(request):
+    """
+    F-039: Recuperación masiva
+    Body: { "ids": ["uuid1","uuid2", ...] }
+    """
+    try:
+        data = json.loads(request.body or "{}")
+        ids = data.get("ids") or []
+        if not isinstance(ids, list) or not ids:
+            return JsonResponse({"error": "ids_required"}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "invalid_json"}, status=400)
+
+    user = _get_request_user(request)
+
+    affected = Student.objects.filter(id__in=ids, is_deleted=True).update(
+        is_deleted=False,
+        deleted_at=None,
+        deleted_by=""
+    )
+
+    log_event(
+        user,
+        action="BULK_RECOVER",
+        type="bulk_operation",
+        entity=f"Estudiantes recuperados",
+        status="success",
+        metadata={"count": affected, "ids": ids},
+    )
+
+    return JsonResponse({"ok": True, "recovered": affected})
+
+
+@require_http_methods(["GET"])
+def students_list_deleted(request):
+    """
+    F-039: Listar estudiantes eliminados (soft delete)
+    Query params: ?q=...
+    """
+    q = request.GET.get("q", "").strip()
+    qs = Student.objects.filter(is_deleted=True)
+
+    if q:
+        qs = qs.filter(Q(id_mep__icontains=q) | Q(first_name__icontains=q) | Q(surnames__icontains=q))
+    
+    return JsonResponse({
+        "results": [
+            {
+                **serialize_student_resumed(s),
+                "deleted_at": s.deleted_at.isoformat() if s.deleted_at else None,
+                "deleted_by": s.deleted_by
+            }
+            for s in qs[:200]
+        ]
+    })

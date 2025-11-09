@@ -5,13 +5,15 @@ import "../../styles/main.css";
 import PageHead from "../../components/PageHead";
 import Listable from "../../components/Listable";
 import Tool from "../../components/PageTool";
-import Home from "../../components/HomeLink"
+import Home from "../../components/HomeLink";
+import RecoverModal from "../../components/RecoverModal";
 
 import StudentIcon from "../../assets/icons/student.svg";
 import StudentProfile from "../../assets/icons/student_profiles.svg";
 import ViewProfile from "../../assets/icons/descripcion-general.svg";
 import Add from "../../assets/icons/new_person.svg";
 import MassRemove from "../../assets/icons/massive_delete.svg";
+import RecoverIcon from "../../assets/icons/recover.png"; 
 
 export default function StudentsList() {
   const iconList = [
@@ -31,6 +33,7 @@ export default function StudentsList() {
   const q = sp.get("q") || "";
 
   const [selected, setSelected] = useState({});
+  const [showRecover, setShowRecover] = useState(false);
   const anySelected = useMemo(() => Object.values(selected).some(Boolean), [selected]);
 
   const load = () => {
@@ -38,7 +41,6 @@ export default function StudentsList() {
       .then((r) => r.json())
       .then((d) => {
         setRows(d.results || []);
-        // limpiar selección de los que ya no están en pantalla
         setSelected((prev) => {
           const next = {};
           (d.results || []).forEach((s) => { if (prev[s.id]) next[s.id] = true; });
@@ -60,12 +62,14 @@ export default function StudentsList() {
     setSelected((s) => ({ ...s, [id]: checked }));
   };
 
+  // F-039: Soft delete
   const bulkDelete = async () => {
     const ids = Object.entries(selected).filter(([, v]) => v).map(([k]) => k);
     if (ids.length === 0) return;
-    if (!window.confirm(`¿Eliminar ${ids.length} estudiante(s)? Se eliminarán también sus acciones.`)) return;
+    if (!window.confirm(`¿Eliminar ${ids.length} estudiante(s)? Podrás recuperarlos después.`)) return;
+    
     try {
-      const r = await fetch("/api/students/bulk-delete/", {
+      const r = await fetch("/api/students/bulk-soft-delete/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
@@ -96,13 +100,16 @@ export default function StudentsList() {
       <main>
         <div className="tools">
           <Home />
-          <Tool key={"Tool" + 2}>
+          <Tool key={"Tool2"}>
             <Link to="/students/profiles/new" target="_blank">
               <img src={Add} alt="Añadir estudiante" title="Añadir estudiante" className="w-icon" />
             </Link>
           </Tool>
-          <Tool key={"Tool" + 3} action={bulkDelete} disabled={!anySelected}>
-            <img src={MassRemove} alt="Remover múltiples registros" className="w-icon" />
+          <Tool key={"Tool3"} action={bulkDelete} disabled={!anySelected}>
+            <img src={MassRemove} alt="Eliminar seleccionados" title="Eliminar seleccionados" className="w-icon" />
+          </Tool>
+          <Tool key={"Tool4"} action={() => setShowRecover(true)}>
+            <img src={RecoverIcon} alt="Recuperar eliminados" title="Recuperar eliminados" className="w-icon" />
           </Tool>
         </div>
 
@@ -125,6 +132,16 @@ export default function StudentsList() {
           ))}
         </Listable>
       </main>
+
+      {showRecover && (
+        <RecoverModal
+          onClose={() => setShowRecover(false)}
+          onSuccess={() => {
+            setShowRecover(false);
+            load();
+          }}
+        />
+      )}
     </>
   );
 }
