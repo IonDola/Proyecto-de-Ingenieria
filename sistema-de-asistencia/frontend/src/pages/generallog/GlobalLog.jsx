@@ -63,7 +63,7 @@ async function flexibleRefresh() {
       let data = {};
       try {
         data = JSON.parse(text || "{}");
-      } catch {}
+      } catch { }
       const newAccess = data.access || data.access_token || null;
       if (newAccess) {
         localStorage.setItem("access", newAccess);
@@ -83,13 +83,13 @@ export default function GlobalLogs() {
 
   const columns = [
     { name: "Fecha/Hora", width: "minmax(160px, 0.9fr)" },
-    { name: "Usuario",    width: "minmax(140px, 0.9fr)" },
-    { name: "Acción",     width: "1.1fr" },
-    { name: "Tipo",       width: "minmax(120px, 0.8fr)" },
-    { name: "Entidad",    width: "minmax(180px, 1.3fr)" },
-    { name: "Estado",     width: "minmax(100px, 0.6fr)" },
-    { name: "",           width: "minmax(72px, 0.4fr)" },
-];
+    { name: "Usuario", width: "minmax(140px, 0.9fr)" },
+    { name: "Acción", width: "1.1fr" },
+    { name: "Tipo", width: "minmax(120px, 0.8fr)" },
+    { name: "Entidad", width: "minmax(180px, 1.3fr)" },
+    { name: "Estado", width: "minmax(100px, 0.6fr)" },
+    { name: "Exportar Log", width: "minmax(72px, 0.4fr)" },
+  ];
 
 
   const [rows, setRows] = useState([]);
@@ -263,45 +263,45 @@ export default function GlobalLogs() {
   const rowElements =
     rows.length > 0
       ? rows.map((r) => (
-          <div className="listable-row" key={r.id}>
-            <div>
-              {typeof r.timestamp === "string" && /\d{4}-\d{2}-\d{2}T/.test(r.timestamp)
-                ? new Date(r.timestamp).toLocaleString()
-                : r.timestamp}
-            </div>
-            <div>
-              {r.user?.full_name || r.user?.username || "—"}
-              <br />
-              <small style={{ opacity: 0.7 }}>
-                {r.user?.role ? `(${r.user.role})` : ""}
-              </small>
-            </div>
-            <div>
-              <Link to={`/logs/${r.id}`} className="link">
-                {r.action}
-              </Link>
-            </div>
-            <div>{r.type}</div>
-            <div>{r.entity}</div>
-            <div>{r.status}</div>
-            <div>
-              <button
-                className="page-tool"
-                title="Exportar"
-                onClick={() => onExport(r)}
-              >
-                <img src={IconDownload} alt="Exportar" className="w-icon" />
-              </button>
-            </div>
+        <div className="listable-row" key={r.id}>
+          <div>
+            {typeof r.timestamp === "string" && /\d{4}-\d{2}-\d{2}T/.test(r.timestamp)
+              ? new Date(r.timestamp).toLocaleString()
+              : r.timestamp}
           </div>
-        ))
+          <div>
+            {r.user?.full_name || r.user?.username || "—"}
+            <br />
+            <small style={{ opacity: 0.7 }}>
+              {r.user?.role ? `(${r.user.role})` : ""}
+            </small>
+          </div>
+          <div>
+            <Link to={`/logs/${r.id}`} className="link">
+              {r.action}
+            </Link>
+          </div>
+          <div>{r.type}</div>
+          <div>{r.entity}</div>
+          <div>{r.status}</div>
+          <div>
+            <button
+              className="page-tool"
+              title="Exportar"
+              onClick={() => onExport(r)}
+            >
+              <img src={IconDownload} alt="Exportar" className="w-icon" />
+            </button>
+          </div>
+        </div>
+      ))
       : [
-          <div className="listable-row" key="empty">
-            <div style={{ gridColumn: "1 / -1" }}>
-              {errorMsg ? errorMsg : "Sin eventos"}
-            </div>
-          </div>,
-        ];
+        <div className="listable-row" key="empty">
+          <div style={{ gridColumn: "1 / -1" }}>
+            {errorMsg ? errorMsg : "Sin eventos"}
+          </div>
+        </div>,
+      ];
 
   return (
     <>
@@ -309,11 +309,6 @@ export default function GlobalLogs() {
       <main>
         <div className="tools">
           <Home />
-          <Tool key={"Tool-stats"}>
-            <Link to="/logs/stats" title="Estadísticas">
-              <img src={Reporte} alt="" className="w-icon" />
-            </Link>
-          </Tool>
         </div>
 
         {loading ? (

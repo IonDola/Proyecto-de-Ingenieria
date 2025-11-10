@@ -167,8 +167,9 @@ div.tools {
 }
 
 #lateral-fixed {
-  position: sticky;
-  top: -200px;
+  position: absolute;
+  top: 110px;
+  left: 10px;
 }
 
 #home-tools {
@@ -197,34 +198,6 @@ div.tools {
 .big-tools button.page-tool p {
   position: relative;
   top: -50px;
-}
-
-#halved {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  row-gap: 40px;
-}
-
-#halved button.page-tool {
-  height: 180px;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  align-items: center;
-  text-align: center;
-}
-
-#halved img {
-  height: 150px;
-  width: 120px;
-  margin-left: 10px;
-}
-
-#halved p {
-  position: relative;
-  left: -20px;
-  top: 20px;
-  width: 100px;
-  font-size: 15pt;
 }
 
 #students-tools {

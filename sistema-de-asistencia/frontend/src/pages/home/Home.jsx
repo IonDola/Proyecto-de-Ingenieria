@@ -30,21 +30,13 @@ const Home = () => {
               </Link>
             </Tool>
           </div>
-          <div id="halved">
-            <div style={{ gridRow: "1" }}>
+          <div>
+            <Link to={"/generallog"} className="tool-link">
               <Tool>
-                <img src={DataBaseIcon} alt="" className="w-icon" />
-                <p>Seguridad y Respaldo</p>
+                <img src={LogsIcon} alt="" className="w-icon" />
+                <p>Bitácora</p>
               </Tool>
-            </div>
-            <div style={{ gridRow: "2" }}>
-              <Link to={"/generallog"} className="tool-link">
-                <Tool>
-                  <img src={LogsIcon} alt="" className="w-icon" />
-                  <p>Bitácora</p>
-                </Tool>
-              </Link>
-            </div>
+            </Link>
           </div>
 
         </div>
