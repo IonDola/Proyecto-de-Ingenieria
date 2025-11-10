@@ -16,11 +16,11 @@ function decodeJwt(token) {
 async function tryRefreshWith(refresh) {
   const candidates = [
     { url: "/api/users/token/refresh/", body: { refresh } },
-    { url: "/api/token/refresh/",      body: { refresh } },
-    { url: "/api/auth/jwt/refresh/",   body: { refresh } },
+    { url: "/api/token/refresh/", body: { refresh } },
+    { url: "/api/auth/jwt/refresh/", body: { refresh } },
     { url: "/api/users/token/refresh/", body: { refresh_token: refresh } },
-    { url: "/api/token/refresh/",       body: { refresh_token: refresh } },
-    { url: "/api/auth/jwt/refresh/",    body: { refresh_token: refresh } },
+    { url: "/api/token/refresh/", body: { refresh_token: refresh } },
+    { url: "/api/auth/jwt/refresh/", body: { refresh_token: refresh } },
   ];
   for (const c of candidates) {
     try {
@@ -35,7 +35,7 @@ async function tryRefreshWith(refresh) {
         continue;
       }
       let data = {};
-      try { data = JSON.parse(txt || "{}"); } catch {}
+      try { data = JSON.parse(txt || "{}"); } catch { }
       const access = data.access || data.access_token;
       if (access) return access;
     } catch (e) {
@@ -46,9 +46,9 @@ async function tryRefreshWith(refresh) {
 }
 
 async function normalizeAndStoreTokens(loginData) {
-  let access  = loginData.access  || loginData.access_token  || loginData.jwt_access  || null;
+  let access = loginData.access || loginData.access_token || loginData.jwt_access || null;
   let refresh = loginData.refresh || loginData.refresh_token || loginData.jwt_refresh || null;
-  const token = loginData.token   || loginData.jwt           || null;
+  const token = loginData.token || loginData.jwt || null;
 
   // si el backend devuelve token generico, decide por token_type
   if (!access && !refresh && token) {
@@ -66,7 +66,7 @@ async function normalizeAndStoreTokens(loginData) {
   }
 
   // guardar de forma estandarizada
-  if (access)  localStorage.setItem("access", access);
+  if (access) localStorage.setItem("access", access);
   if (refresh) localStorage.setItem("refresh", refresh);
 
   const decAcc = decodeJwt(localStorage.getItem("access") || "");
@@ -75,7 +75,7 @@ async function normalizeAndStoreTokens(loginData) {
     localStorage.removeItem("access");
   }
 
-  ["token","jwt","jwt_access","jwt_refresh","access_token","refresh_token"] // limpiar
+  ["token", "jwt", "jwt_access", "jwt_refresh", "access_token", "refresh_token"] // limpiar
     .forEach(k => localStorage.removeItem(k));
 }
 
@@ -102,20 +102,24 @@ export default function LoginForm() {
       const ct = (r.headers.get("content-type") || "").toLowerCase();
       const text = await r.text();
       let data = null;
-      if (ct.includes("application/json")) { try { data = JSON.parse(text); } catch {} }
+      if (ct.includes("application/json")) { try { data = JSON.parse(text); } catch { } }
 
       if (!r.ok) {
         alert(data?.error || `Error de autenticación (HTTP ${r.status})`);
         return;
       }
 
-      const nombre = (data?.nombre || username);
-      const rol    = (data?.rol || "admin");
+      const userName = (data?.user_name || username);
+      const rol = (data?.rol || "VISITOR");
+      const fullName = (data?.full_name || username);
+      const gender = (data?.gender || "Indefinido");
 
       await normalizeAndStoreTokens(data || {});
 
-      localStorage.setItem("userName", nombre);
+      localStorage.setItem("userName", userName);
       localStorage.setItem("role", rol);
+      localStorage.setItem("full_name", fullName);
+      localStorage.setItem("gender", gender)
 
       const role = (data?.rol || data?.role || "ADMIN").toUpperCase();
       localStorage.setItem("role", role);

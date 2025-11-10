@@ -47,11 +47,25 @@ const PageHead = ({ name, credential, icons }) => {
                 </div>
             );
         }
+        const gender = localStorage.getItem("gender");
+        let welcome;
+
+        switch (gender) {
+            case "Femenino":
+                welcome = "Bienvenida";
+                break;
+            case "Masculino":
+                welcome = "Bienvenido";
+                break;
+            default:
+                welcome = "Bienvenid@";
+                break;
+        }
 
         if (name) {
             return (
                 <>
-                    <div> Bienvenid@  </div>
+                    <div>{welcome}</div>
                     <div className="name"> {name} </div>
                 </>
             );

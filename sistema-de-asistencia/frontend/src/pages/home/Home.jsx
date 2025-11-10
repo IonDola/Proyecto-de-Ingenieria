@@ -5,13 +5,12 @@ import Tool from "../../components/PageTool"
 
 import StudentIcon from "../../assets/icons/student.svg"
 import UserIcon from "../../assets/icons/user.svg"
-import DataBaseIcon from "../../assets/icons/data-base.svg"
 import LogsIcon from "../../assets/icons/log.svg"
 
 const Home = () => {
   return (
     <>
-      <PageHead name={localStorage.getItem("userName")} />
+      <PageHead name={localStorage.getItem("full_name")} />
       <main style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div id="home-tools" className="big-tools">
           <div>

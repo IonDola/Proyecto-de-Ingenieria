@@ -3,6 +3,11 @@ from django.conf import settings
 from django.db import models
 
 class CustomUser(AbstractUser):
+    GENDER_CHOICES = [
+        ("Femenino", "Femenino"),
+        ("Masculino", "Masculino"),
+        ("Indefinido", "Indefinido"),
+    ]
     class Role(models.TextChoices):
         DEV = "DEV", "Desarrollador"
         ADMIN = "ADMIN", "Administrativo"
@@ -13,6 +18,8 @@ class CustomUser(AbstractUser):
         choices=Role.choices,
         default=Role.ADMIN
     )
+
+    gender = models.CharField("Género", max_length=15, choices=GENDER_CHOICES, default="Indefinido")
 
     # Campos para usuarios VISITOR 
     visitor_code = models.CharField(

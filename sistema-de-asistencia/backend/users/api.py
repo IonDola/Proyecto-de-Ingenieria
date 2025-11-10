@@ -70,7 +70,9 @@ def login_api(request):
     payload = {
         "access": tokens["access"],
         "refresh": tokens["refresh"],
-        "nombre": user.get_full_name() or user.username,
+        "user_name": user.username,
+        "full_name": user.first_name + " " + user.last_name,
+        "gender": user.gender,
         "rol": getattr(user, "role", "user"),
     }
 

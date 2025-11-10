@@ -137,6 +137,7 @@
 
 #close-sesion:hover {
   border: none;
+  cursor: pointer;
 }
 
 #close-sesion:hover img {

@@ -10,6 +10,7 @@ import Home from "./pages/home/Home";
 import ActionsList from "./pages/students/ActionsList";
 import ActionsListVisitor from "./pages/students/ActionsListVisitor";
 import PersonalLog from "./pages/personal/PersonalLog";
+import Profile from "./pages/personal/Profile";
 import RequireAuth from "./auth/RequireAuth";
 import ActionRegister from "./pages/students/ActionRegister";
 import VisitorsHome from "./pages/visitors/VisitorsHome";
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
           <Route path="/studentsVisitorView/actions" element={<RequireAuth><ActionsListVisitor /></RequireAuth>} />
           <Route path="/personal/log" element={<RequireAuth><PersonalLog /></RequireAuth>} />
+          <Route path="/personal" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/users" element={<RequireAuth><VisitorsHome /></RequireAuth>} />
           <Route path="/users/visitors" element={<RequireAuth><VisitorsList /></RequireAuth>} />
           <Route path="/generallog" element={<RequireAuth><GlobalLogs /></RequireAuth>} />
@@ -57,7 +59,7 @@ export default function App() {
           <Route path="/home/visitor" element={<RequireAuth><TempHome /></RequireAuth>} />
 
           {/* desconocidas -> login */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </Router>
     </div>
