@@ -115,7 +115,6 @@ export default function HistoryList() {
     { name: "Tipo", width: "100px" },
     { name: "Fecha", width: "200px" },
     { name: "Actor", width: "1fr" },
-    { name: "Acciones", width: "150px" },
   ];
 
   return (
@@ -139,21 +138,6 @@ export default function HistoryList() {
                 <div>{a.type}</div>
                 <div>{new Date(a.created_at).toLocaleString()}</div>
                 <div>{a.actor || "—"}</div>
-                <div>
-                  <Link className="icon-btn2" to={`/actions/${a.id}`} title="Ver Detalle">
-                    <img src={IconDetail} alt="Ver detalle" className="icon2" />
-                  </Link>
-
-                  {/* Eliminar */}
-                  <button
-                    className="icon-btn2"
-                    title="Eliminar"
-                    onClick={() => doDelete(a.id)}
-                    aria-label="Eliminar acción"
-                  >
-                    <img src={IconDelete} alt="" aria-hidden="true" className="icon2" />
-                  </button>
-                </div>
               </div>
             ))}
           </Listable>}

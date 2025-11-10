@@ -55,13 +55,14 @@
 .head-menu {
   justify-self: end;
   margin-right: 25px;
-  display: grid;
   width: 150px;
 }
 
-.head-menu .menu-title {
+.menu-title {
   display: flex;
   flex-direction: row;
+  height: 50px;
+  height: 70px;
 }
 
 .head-menu img {
@@ -78,11 +79,19 @@
 }
 
 .head-menu:hover {
+  display: grid;
+  grid-template-rows: 100px 1fr;
   width: 300px;
-  height: 220px;
-  background-color: var(--blue-color);
-  border-radius: 0 0 0 40px;
+  height: 260px;
+  background-color: var(--main-color);
   margin-right: 0;
+  border: solid transparent;
+  border-radius: 20px;
+  border-style: none none solid solid;
+  background:
+    linear-gradient(var(--main-color), var(--main-color)) padding-box,
+    linear-gradient(to bottom, var(--main-color) 90px, var(--dark-overlay) 80%) border-box;
+  padding: 20px;
 }
 
 .head-menu:hover .menu-text {
@@ -91,6 +100,8 @@
 
 .content {
   display: none;
+  margin-left: 20px;
+
 }
 
 .content a {
@@ -98,7 +109,6 @@
   font-weight: 400;
   font-size: 18pt;
   font-style: normal;
-  margin: 10px;
   width: 100%;
 }
 
@@ -107,37 +117,59 @@
   border: transparent;
   display: flex;
   flex-direction: row;
-  text-align: right;
+  text-align: left;
   font-size: 18pt;
-  height: 18pt;
-  width: 40pt;
-  justify-self: right;
-  margin-right: 120px;
+  height: 40px;
+  width: 100%;
+  justify-self: left;
 }
 
 .content a:visited {
   color: white;
 }
 
-.content button:hover {
-  cursor: pointer;
-}
-
-.content button img {
+#close-sesion img {
   border-radius: 0px;
+  width: 35px;
+  height: 35px;
+  margin-top: 0;
 }
 
-.content button p {
+#close-sesion:hover {
+  border: none;
+}
+
+#close-sesion:hover img {
+  filter: invert(19%) sepia(79%) saturate(4344%) hue-rotate(346deg) brightness(75%) contrast(112%);
+}
+
+#close-sesion:hover p {
+  border: none;
+  text-decoration: red underline;
+  color: red;
+}
+
+#close-sesion p {
   margin-top: 20px;
   color: white;
-  width: 40pt;
+  width: 100%;
+  margin-top: 2px;
 }
 
 .head-menu:hover .content {
   display: grid;
-  grid-template-rows: 2fr 2fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   align-items: start;
   justify-content: left;
+}
+
+.menu-link {
+  text-align: left;
+  justify-self: left;
+}
+
+.menu-link:hover {
+  text-decoration: underline;
 }
 
 .w-icon {

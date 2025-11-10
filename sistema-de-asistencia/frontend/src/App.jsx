@@ -48,11 +48,11 @@ export default function App() {
           <Route path="/students/:student_id/newRegister" element={<RequireAuth><ActionRegister /></RequireAuth>} />
           <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
           <Route path="/studentsVisitorView/actions" element={<RequireAuth><ActionsListVisitor /></RequireAuth>} />
-          <Route path="/personal" element={<RequireAuth><PersonalLog /></RequireAuth>} />
+          <Route path="/personal/log" element={<RequireAuth><PersonalLog /></RequireAuth>} />
           <Route path="/users" element={<RequireAuth><VisitorsHome /></RequireAuth>} />
           <Route path="/users/visitors" element={<RequireAuth><VisitorsList /></RequireAuth>} />
-          <Route path="/generallog" element={<RequireAuth><GlobalLogs/></RequireAuth>} />
-          <Route path="/generallog/detail" element={<RequireAuth><GlobalLogDetail/></RequireAuth>} />
+          <Route path="/generallog" element={<RequireAuth><GlobalLogs /></RequireAuth>} />
+          <Route path="/generallog/detail" element={<RequireAuth><GlobalLogDetail /></RequireAuth>} />
 
           <Route path="/home/visitor" element={<RequireAuth><TempHome /></RequireAuth>} />
 

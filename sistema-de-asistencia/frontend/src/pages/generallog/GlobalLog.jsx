@@ -233,6 +233,7 @@ export default function GlobalLogs() {
         type="date"
         className="search-box"
         placeholder="Desde"
+        title="Desde"
         value={dateFrom}
         onChange={(e) => {
           const newParams = { q, date_from: e.target.value };
@@ -247,6 +248,7 @@ export default function GlobalLogs() {
         type="date"
         className="search-box"
         placeholder="Hasta"
+        title="Hasta"
         value={dateTo}
         onChange={(e) => {
           const newParams = { q, date_to: e.target.value };

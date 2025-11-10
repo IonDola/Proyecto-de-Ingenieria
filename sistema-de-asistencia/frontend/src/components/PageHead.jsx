@@ -110,7 +110,7 @@ const PageHead = ({ name, credential, icons }) => {
         };
 
         return (
-            <Fragment>
+            <>
                 <div className="head-menu">
                     <div className="menu-title">
                         <img src={adminImage} alt="" />
@@ -119,21 +119,20 @@ const PageHead = ({ name, credential, icons }) => {
                         </div>
                     </div>
 
-                    {/* TODO: Arreglar la alineacion del contenido */}
                     <div className="content">
                         <div className="menu-link">
-                            <a href="#">Ir a Perfil</a>
-                            <br />
-                            <Link to="/personal">Bitácora Personal</Link>
+                            <Link to="/personal">Configuración de Perfil</Link>
                         </div>
-
-                        <button className="close-sesion w-" onClick={logOut}>
-                            <img src={closeSesion} className="icon w-icon" />
+                        <div className="menu-link">
+                            <Link to="/personal/log">Bitácora Personal</Link>
+                        </div>
+                        <button id="close-sesion" onClick={logOut}>
+                            <img src={closeSesion} className="w-icon" />
                             <p>Cerrar Sesión</p>
                         </button>
                     </div>
-                </div>
-            </Fragment>
+                </div >
+            </>
         );
     };
 

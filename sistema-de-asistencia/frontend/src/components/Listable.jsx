@@ -14,28 +14,14 @@ const Listable = ({ columns, children, searchBox }) => {
 
     const columnTemplate = columns.map(col => col.width).join(" ");
 
-    const FilterTools = ({ searchBox }) => {
-        if (!searchBox) return null;
-        // TODO complex
-
-        return (
-            <>
-                <div className="search-bar">
-                    <img src={searchIcon} alt="Buscar" title="Buscar" className="w-icon" />
-                    {searchBox}
-                </div>
-                <Tool>
-                    <img src={advancedIcon} alt="Filtros avanzados" title="Filtros avanzados" className="w-icon" />
-                </Tool>
-            </>
-        );
-    };
-
     return (
         <div className="listable">
             {searchBox &&
                 <div className="filters">
-                    <FilterTools searchBox={searchBox} />
+                    <div className="search-bar">
+                        <img src={searchIcon} alt="Buscar" title="Buscar" className="w-icon" />
+                        {searchBox}
+                    </div>
                 </div>}
 
             <div className="elements-table">
