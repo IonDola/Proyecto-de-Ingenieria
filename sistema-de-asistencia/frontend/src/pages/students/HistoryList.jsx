@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, act } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import PageHead from "../../components/PageHead";
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
 import ActionModal from "../../components/ActionModal";
+import Listable from "../../components/Listable";
 
 import IconStudent from "../../assets/icons/student.svg";
 import IconProfiles from "../../assets/icons/student_profiles.svg";
 import IconHistory from "../../assets/icons/descripcion-general.svg";
-import IconNew from "../../assets/icons/new_doc.svg";
 import IconDetail from "../../assets/icons/student_registers.svg";
 import IconEdit from "../../assets/icons/edit.svg";
 import IconDelete from "../../assets/icons/massive_delete.svg";
@@ -111,68 +111,38 @@ export default function HistoryList() {
   }
 
   const { student, actions } = data;
+  const columns = [
+    { name: "Tipo", width: "100px" },
+    { name: "Fecha", width: "200px" },
+    { name: "Actor", width: "1fr" },
+    { name: "Acciones", width: "150px" },
+  ];
 
   return (
-    <div className="page--students">
+    <>
       <PageHead icons={iconList} />
-
       <main>
-        {/* Toolbar superior, horizontal */}
         <div className="tools">
           <Home />
           <Tool>
-            <button
-              className="page-tool"
-              onClick={() => setEditAction({ student: student.id, type: "ENTER" })}
-              title="Nueva acción"
-            >
-              <img src={IconNew} alt="Nueva acción" className="w-icon" />
-            </button>
-          </Tool>
-          <Tool>
-            <button
-              className="page-tool"
-              onClick={() => navigate(`/students/profiles/${student.id}`)}
-              title="Volver al perfil"
-            >
-              <img src={IconBack} alt="Volver" className="w-icon" />
-            </button>
+            <Link to={`/students/profiles/${student.id}`} title="Volver a perfil" className="page-tool">
+              <img src={IconBack} alt="Volver a Perfil" className="w-icon" />
+            </Link>
           </Tool>
         </div>
-
-        <div className="card">
-          <div className="section-header">Historial de acciones</div>
-
-          <div className="table history">
-            <div className="thead" role="rowgroup">
-              <div className="th">Tipo</div>
-              <div className="th">Fecha</div>
-              <div className="th">Actor</div>
-              <div className="th act">Acciones</div>
-            </div>
-
-            {actions.length === 0 && <div className="row empty">Sin acciones registradas</div>}
-
+        {actions.length === 0 &&
+          <div className="row empty">Sin acciones registradas</div>}
+        {actions.length > 0 &&
+          <Listable columns={columns}>
             {actions.map((a) => (
-              <div className="row" key={a.id}>
-                <div className="td">{a.type}</div>
-                <div className="td">{new Date(a.created_at).toLocaleString()}</div>
-                <div className="td">{a.actor || "—"}</div>
-                <div className="td act">
-                  {/* Detalle */}
-                  <Link className="icon-btn2" to={`/actions/${a.id}`} title="Detalle">
+              <div className="listable-row" key={a.id}>
+                <div>{a.type}</div>
+                <div>{new Date(a.created_at).toLocaleString()}</div>
+                <div>{a.actor || "—"}</div>
+                <div>
+                  <Link className="icon-btn2" to={`/actions/${a.id}`} title="Ver Detalle">
                     <img src={IconDetail} alt="Ver detalle" className="icon2" />
                   </Link>
-
-                  {/* Editar */}
-                  <button
-                    className="icon-btn2"
-                    title="Editar"
-                    onClick={() => setEditAction(a)}
-                    aria-label="Editar acción"
-                  >
-                    <img src={IconEdit} alt="" aria-hidden="true" className="icon2" />
-                  </button>
 
                   {/* Eliminar */}
                   <button
@@ -186,22 +156,8 @@ export default function HistoryList() {
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="actions-inline">
-            <Link className="btn ghost" to={`/students/profiles/${student.id}`}>Volver</Link>
-          </div>
-        </div>
+          </Listable>}
       </main>
-
-      {editAction && (
-        <ActionModal
-          studentId={student.id}
-          initial={editAction}
-          onClose={() => setEditAction(null)}
-          onSuccess={() => { setEditAction(null); load(); }}
-        />
-      )}
-    </div>
-  );
+    </>
+  )
 }
