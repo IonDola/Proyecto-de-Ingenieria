@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 import secrets
 import string
 from datetime import datetime
+from django.contrib.auth.hashers import check_password, make_password
 from logs.utils import log_event
 
 User = get_user_model()
@@ -132,6 +133,61 @@ def logout_api(request):
     except TokenError:
         return Response({"error": "invalid_token"}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def my_profile_info(request):
+    if not _require_admin(request.user):
+        return Response({"detail": "Acceso denegado"}, status=status.HTTP_403_FORBIDDEN)
+
+    user = request.user
+    data = {
+        "username": user.username,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "gender": user.gender,
+        "role": user.role,
+    }
+    return Response(data, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def update_my_profile_info(request):
+    if not _require_admin(request.user):
+        return Response({"detail": "Acción denegada"}, status=status.HTTP_403_FORBIDDEN)
+
+    user = request.user
+    data = request.data
+
+    # --- Cambio de contraseña ---
+    current_password = data.get("current_password")
+    new_password = data.get("new_password")
+
+    if new_password:
+        if not current_password:
+            return Response(
+                {"detail": "Debe ingresar la contraseña actual para cambiarla."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if not check_password(current_password, user.password):
+            return Response(
+                {"detail": "La contraseña actual es incorrecta."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        user.password = make_password(new_password)
+
+    # --- Campos modificables ---
+    editable_fields = ["gender", "first_name", "last_name", "username", "email"]
+    for field in editable_fields:
+        if field in data:
+            setattr(user, field, data[field])
+
+    user.save()
+
+    return Response(
+        {"detail": "Perfil actualizado correctamente."},
+        status=status.HTTP_200_OK
+    )
 
 # visitantes
 def _require_admin(user):
