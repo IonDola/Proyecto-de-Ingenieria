@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import "../../styles/main.css";
@@ -7,8 +8,8 @@ import "../../styles/dialog-style.css";
 import PageHead from "../../components/PageHead";
 import Listable from "../../components/Listable";
 import Tool from "../../components/PageTool";
-import Home from "../../components/HomeLink";
 
+import HomeIcon from "../../assets/icons/home.svg"
 import UserIcon from "../../assets/icons/user.svg"
 import VisitorLogo from "../../assets/icons/visitor_logo.svg"
 import Add from "../../assets/icons/new_temp.svg";
@@ -193,7 +194,11 @@ export default function VisitorsList() {
       <PageHead icons={iconList} />
       <main>
         <div className="tools">
-          <Home />
+          <Tool key={"VisitorHomeTool"}>
+            <Link to={"/home/visitor"}>
+              <img src={HomeIcon} alt="Volver a menu Home" title="Volver a menu Home" className="w-icon" />
+            </Link>
+          </Tool>
           <Tool key={"ToolAdd"} action={openCreate}>
             <img src={Add} alt="Nuevo visitante" title="Nuevo visitante" className="w-icon" />
           </Tool>

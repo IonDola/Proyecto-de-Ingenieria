@@ -8,7 +8,7 @@ import UserIcon from "../../assets/icons/user.svg"
 import AdminLogo from "../../assets/icons/admin_logo.svg"
 import VisitorLogo from "../../assets/icons/visitor_logo.svg"
 
-const VisitorsHome = () => {
+const AdminHome = () => {
     const iconList = [
         {
             id: 1,
@@ -26,8 +26,10 @@ const VisitorsHome = () => {
                 <div id="students-tools" className="big-tools">
                     <div>
                         <Tool>
-                            <img src={AdminLogo} alt="" className="w-icon" />
-                            <p>Administrativos</p>
+                            <Link to={"/users/admins"}>
+                                <img src={AdminLogo} alt="" className="w-icon" />
+                                <p>Administrativos</p>
+                            </Link>
                         </Tool>
                     </div>
                     <div>
@@ -44,4 +46,4 @@ const VisitorsHome = () => {
     );
 };
 
-export default VisitorsHome;
+export default AdminHome;

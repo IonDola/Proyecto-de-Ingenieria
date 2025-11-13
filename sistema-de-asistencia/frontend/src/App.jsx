@@ -13,8 +13,9 @@ import PersonalLog from "./pages/personal/PersonalLog";
 import Profile from "./pages/personal/Profile";
 import RequireAuth from "./auth/RequireAuth";
 import ActionRegister from "./pages/students/ActionRegister";
-import VisitorsHome from "./pages/visitors/VisitorsHome";
-import VisitorsList from "./pages/visitors/VisitorsList";
+import AdminsHomeMenu from "./pages/users/UsersHome";
+import VisitorsList from "./pages/users/VisitorsList";
+import AdminsList from "./pages/users/AdminsList";
 import TempHome from "./pages/home/TempHome";
 import GlobalLogs from "./pages/generallog/GlobalLog";
 import GlobalLogDetail from "./pages/generallog/GlobalLogDetail";
@@ -38,8 +39,6 @@ export default function App() {
 
           {/* protegidas */}
           <Route path="/students" element={<RequireAuth><StudentsHome /></RequireAuth>} />
-          <Route path="/studentsVisitorView" element={<RequireAuth><StudentsHomeVisitor /></RequireAuth>} />
-          <Route path="/studentsVisitorView/profiles" element={<RequireAuth><StudentsListVisitor /></RequireAuth>} />
           <Route path="/students/profiles" element={<RequireAuth><StudentsList /></RequireAuth>} />
           <Route path="/students/profiles/new" element={<RequireAuth><StudentForm /></RequireAuth>} />
           <Route path="/students/profiles/:id" element={<RequireAuth><StudentForm /></RequireAuth>} />
@@ -48,15 +47,18 @@ export default function App() {
           <Route path="/actions/:register_id" element={<RequireAuth><ActionRegister /></RequireAuth>} />
           <Route path="/students/:student_id/newRegister" element={<RequireAuth><ActionRegister /></RequireAuth>} />
           <Route path="/students/actions" element={<RequireAuth><ActionsList /></RequireAuth>} />
-          <Route path="/studentsVisitorView/actions" element={<RequireAuth><ActionsListVisitor /></RequireAuth>} />
           <Route path="/personal/log" element={<RequireAuth><PersonalLog /></RequireAuth>} />
           <Route path="/personal" element={<RequireAuth><Profile /></RequireAuth>} />
-          <Route path="/users" element={<RequireAuth><VisitorsHome /></RequireAuth>} />
+          <Route path="/users" element={<RequireAuth><AdminsHomeMenu /></RequireAuth>} />
           <Route path="/users/visitors" element={<RequireAuth><VisitorsList /></RequireAuth>} />
+          <Route path="/users/admins" element={<RequireAuth><AdminsList /></RequireAuth>} />
           <Route path="/generallog" element={<RequireAuth><GlobalLogs /></RequireAuth>} />
           <Route path="/generallog/detail" element={<RequireAuth><GlobalLogDetail /></RequireAuth>} />
 
-          <Route path="/home/visitor" element={<RequireAuth><TempHome /></RequireAuth>} />
+          <Route path="/visitor/home" element={<RequireAuth><TempHome /></RequireAuth>} />
+          <Route path="/studentsVisitorView" element={<RequireAuth><StudentsHomeVisitor /></RequireAuth>} />
+          <Route path="/studentsVisitorView/profiles" element={<RequireAuth><StudentsListVisitor /></RequireAuth>} />
+          <Route path="/studentsVisitorView/actions" element={<RequireAuth><ActionsListVisitor /></RequireAuth>} />
 
           {/* desconocidas -> login */}
           <Route path="*" element={<Navigate to="/home" replace />} />

@@ -135,6 +135,22 @@ def logout_api(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
+def profile_list(request):
+    if not _require_admin(request.user):
+        return Response({"detail": "Acceso denegado"}, status=status.HTTP_403_FORBIDDEN)
+
+    qs = User.objects.filter(role="ADMIN").order_by("-date_joined")
+    results = []
+    for u in qs:
+        results.append({
+            "name": (u.get_full_name()),
+            "username": u.get_username(),
+            "status": _status_for(u),
+        })
+    return Response({"results": results}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def my_profile_info(request):
     if not _require_admin(request.user):
         return Response({"detail": "Acceso denegado"}, status=status.HTTP_403_FORBIDDEN)
