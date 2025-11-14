@@ -126,7 +126,7 @@ export default function LoginForm() {
 
       // redirección según rol
       if (role === "VISITOR") {
-        nav("/home/visitor", { replace: true });
+        nav("/visitor/home", { replace: true });
       } else {
         nav("/home", { replace: true });
       }

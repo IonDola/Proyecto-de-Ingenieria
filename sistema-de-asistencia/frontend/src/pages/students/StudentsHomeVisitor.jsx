@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import PageHead from "../../components/PageHead"
 import Tool from "../../components/PageTool"
-import Home from "../../components/VisitorHomeLink"
+import VisitorHome from "../../components/VisitorHomeLink"
 
 import StudentIcon from "../../assets/icons/student.svg"
 import StudentProfile from "../../assets/icons/student_profiles.svg"
@@ -21,7 +21,7 @@ const StudentsHomeVisitor = () => {
             <PageHead icons={iconList} />
             <main style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <div className="tools" id="lateral-fixed">
-                    <Home />
+                    <VisitorHome />
                 </div>
                 <div id="students-tools" className="big-tools">
                     <div>
