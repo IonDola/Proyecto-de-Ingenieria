@@ -18,10 +18,10 @@ export default function StudentsListVisitor() {
   ];
 
   const columns = [
-    { name: "", width: "100px" }, 
+    { name: "", width: "100px" },
     { name: "Carnet", width: "1fr" },
     { name: "Nombre", width: "1fr" },
-    { name: "", width: "100px" },   
+    { name: "", width: "100px" },
   ];
 
   const [rows, setRows] = useState([]);
@@ -32,7 +32,7 @@ export default function StudentsListVisitor() {
   const anySelected = useMemo(() => Object.values(selected).some(Boolean), [selected]);
 
   const load = () => {
-    fetch(`/api/students/?q=${encodeURIComponent(q)}`)
+    fetch(`/students/api/students/?q=${encodeURIComponent(q)}`)
       .then((r) => r.json())
       .then((d) => {
         setRows(d.results || []);

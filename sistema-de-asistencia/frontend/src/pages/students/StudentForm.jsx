@@ -40,7 +40,7 @@ const StudentForm = ({ }) => {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/students/${id}/`)
+    fetch(`/students/api/students/${id}/`)
       .then((r) => {
         if (!r.ok) return r.text().then(t => { throw new Error(t || `HTTP ${r.status}`); });
         return r.json();
@@ -89,7 +89,7 @@ const StudentForm = ({ }) => {
     e.preventDefault();
     setMsg("");
     const method = !isNew ? "PATCH" : "POST";
-    const url = !isNew ? `/api/students/${id}/update/` : `/api/students/new/`;
+    const url = !isNew ? `/students/api/students/${id}/update/` : `/students/api/students/new/`;
 
     // 1) cuerpo base
     const body = FormatStudentForDB(formData);
@@ -102,7 +102,7 @@ const StudentForm = ({ }) => {
       .then(async (r) => {
         const text = await r.text();
         if (!r.ok) {
-          console.error(" /api/students/new|update error body:", text);
+          console.error(" /students/api/students/new|update error body:", text);
           try {
             const json = JSON.parse(text);
             throw json;
@@ -132,25 +132,25 @@ const StudentForm = ({ }) => {
   // F-037: Exportar PDF
   const handleExportPDF = async () => {
     if (!id) return;
-    
+
     try {
       const access = localStorage.getItem("access") || "";
-      const response = await fetch(`/api/students/${id}/export-pdf/`, {
+      const response = await fetch(`/students/api/students/${id}/export-pdf/`, {
         method: "GET",
         headers: {
           ...(access ? { Authorization: `Bearer ${access}` } : {}),
         },
         credentials: "include",
       });
-      
+
       if (!response.ok) {
         const error = await response.text();
         throw new Error(error || `Error ${response.status}`);
       }
-      
+
       // Obtener el blob del PDF
       const blob = await response.blob();
-      
+
       // Crear URL temporal y descargar
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -160,7 +160,7 @@ const StudentForm = ({ }) => {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      
+
       setMsg("PDF descargado exitosamente");
       setTimeout(() => setMsg(""), 3000);
     } catch (err) {

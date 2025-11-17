@@ -10,13 +10,13 @@ beforeEach(() => {
 });
 afterEach(() => jest.resetAllMocks());
 
-test("envía alta de estudiante con los datos correctos (POST /api/students/)", async () => {
+test("envía alta de estudiante con los datos correctos (POST /students/api/students/)", async () => {
   render(<MemoryRouter><StudentForm /></MemoryRouter>);
 
-  fireEvent.change(screen.getByLabelText(/carnet/i),     { target: { value: "X999" }});
-  fireEvent.change(screen.getByLabelText(/nombre/i),     { target: { value: "Ana" }});
-  fireEvent.change(screen.getByLabelText(/apellidos?/i), { target: { value: "López" }});
-  fireEvent.change(screen.getByLabelText(/sección/i),    { target: { value: "1-3" }});
+  fireEvent.change(screen.getByLabelText(/carnet/i), { target: { value: "X999" } });
+  fireEvent.change(screen.getByLabelText(/nombre/i), { target: { value: "Ana" } });
+  fireEvent.change(screen.getByLabelText(/apellidos?/i), { target: { value: "López" } });
+  fireEvent.change(screen.getByLabelText(/sección/i), { target: { value: "1-3" } });
 
   const form = document.querySelector("form");
   const guardarBtn = within(form).getByRole("button", { name: /guardar/i });

@@ -25,7 +25,7 @@ export async function HelpSave(formData, isEdit = false, carnet, initial = null,
       studentData = checkStudent[0];
     } else {
       // Crear estudiante nuevo (ahora con Authorization para que la bitacora lo atribuya)
-      const studentRes = await fetch(`/api/students/new/`, {
+      const studentRes = await fetch(`/students/api/students/new/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +67,7 @@ export async function HelpSave(formData, isEdit = false, carnet, initial = null,
 
     const actionText = await actionRes.text().catch(() => "");
     let actionData = {};
-    try { actionData = JSON.parse(actionText || "{}"); } catch {}
+    try { actionData = JSON.parse(actionText || "{}"); } catch { }
 
     if (!actionRes.ok) {
       throw new Error(actionData?.error || actionText || `Error HTTP ${actionRes.status}`);
@@ -89,7 +89,7 @@ export async function HelpSave(formData, isEdit = false, carnet, initial = null,
  */
 export async function CheckStudentId(id_mep) {
   try {
-    const response = await fetch(`/api/students/?q=${encodeURIComponent(id_mep)}`);
+    const response = await fetch(`/students/api/students/?q=${encodeURIComponent(id_mep)}`);
     if (!response.ok) throw new Error("Error al buscar estudiante");
 
     const data = await response.json();
@@ -116,7 +116,7 @@ export async function MarkAsReviewed(actionId) {
     });
     const text = await response.text().catch(() => "");
     let data = {};
-    try { data = JSON.parse(text || "{}"); } catch {}
+    try { data = JSON.parse(text || "{}"); } catch { }
 
     if (!response.ok) throw new Error(data?.error || text || "Error al marcar como revisado");
 

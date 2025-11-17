@@ -23,7 +23,7 @@ export default function HistoryList() {
 
   const load = useCallback(() => {
     setError("");
-    fetch(`/api/students/${id}/history/`)
+    fetch(`/students/api/students/${id}/history/`)
       .then(async (r) => {
         const ct = (r.headers.get("content-type") || "").toLowerCase();
         const text = await r.text();

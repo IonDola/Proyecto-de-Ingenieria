@@ -1,9 +1,0 @@
-{% extends "students/base.html" %}
-{% block title %}Detalle de acción{% endblock %}
-{% block content %}
-<h1>Acción: {{ action.get_type_display }}</h1>
-<p><b>Fecha:</b> {{ action.created_at }}</p>
-<p><b>Actor:</b> {{ action.actor }}</p>
-<p><b>Notas:</b> {{ action.notes|default:"—" }}</p>
-<p><a href="{% url 'students:history_list' student.id %}">Volver al historial</a></p>
-{% endblock %}

@@ -55,7 +55,7 @@ const ActionRegister = () => {
 
     useEffect(() => {
         if (!sid) return;
-        fetch(`/api/students/${sid}/`)
+        fetch(`/students/api/students/${sid}/`)
             .then((r) => {
                 if (!r.ok) return r.text().then(t => { throw new Error(t || `HTTP ${r.status}`); });
                 return r.json();
@@ -151,7 +151,7 @@ const ActionRegister = () => {
         e?.preventDefault();
         setMsg("");
         const method = !isNew ? "PATCH" : "POST";
-        const url = !isNew ? `/api/actions/${action_id}/update/` : `/api/students/${sid}/actions/new/`
+        const url = !isNew ? `/api/actions/${action_id}/update/` : `/students/api/students/${sid}/actions/new/`
 
         const body = FormatActionForDB(marked || formData);
 
@@ -163,7 +163,7 @@ const ActionRegister = () => {
             .then(async (r) => {
                 const text = await r.text();
                 if (!r.ok) {
-                    console.error(" /api/students/newAction | /api/actions/update error body: ", text);
+                    console.error(" /students/api/students/newAction | /api/actions/update error body: ", text);
                     try {
                         const json = JSON.parse(text);
                         throw json;

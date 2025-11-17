@@ -13,7 +13,7 @@ import StudentProfile from "../../assets/icons/student_profiles.svg";
 import ViewProfile from "../../assets/icons/descripcion-general.svg";
 import Add from "../../assets/icons/new_person.svg";
 import MassRemove from "../../assets/icons/massive_delete.svg";
-import RecoverIcon from "../../assets/icons/recover.png"; 
+import RecoverIcon from "../../assets/icons/recover.png";
 
 export default function StudentsList() {
   const iconList = [
@@ -37,7 +37,7 @@ export default function StudentsList() {
   const anySelected = useMemo(() => Object.values(selected).some(Boolean), [selected]);
 
   const load = () => {
-    fetch(`/api/students/?q=${encodeURIComponent(q)}`)
+    fetch(`/students/api/students/?q=${encodeURIComponent(q)}`)
       .then((r) => r.json())
       .then((d) => {
         setRows(d.results || []);
@@ -67,9 +67,9 @@ export default function StudentsList() {
     const ids = Object.entries(selected).filter(([, v]) => v).map(([k]) => k);
     if (ids.length === 0) return;
     if (!window.confirm(`¿Eliminar ${ids.length} estudiante(s)? Podrás recuperarlos después.`)) return;
-    
+
     try {
-      const r = await fetch("/api/students/bulk-soft-delete/", {
+      const r = await fetch("/students/api/students/bulk-soft-delete/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),

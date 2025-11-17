@@ -13,7 +13,7 @@ export default function RecoverModal({ onClose, onSuccess }) {
   const load = async () => {
     try {
       setLoading(true);
-      const r = await fetch(`/api/students/deleted/?q=${encodeURIComponent(q)}`);
+      const r = await fetch(`/students/api/students/deleted/?q=${encodeURIComponent(q)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error || "Error al cargar");
       setDeletedStudents(data.results || []);
@@ -43,14 +43,14 @@ export default function RecoverModal({ onClose, onSuccess }) {
     if (!window.confirm(`¿Recuperar ${ids.length} estudiante(s)?`)) return;
 
     try {
-      const r = await fetch("/api/students/bulk-recover/", {
+      const r = await fetch("/students/api/students/bulk-recover/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data?.error || "Error al recuperar");
-      
+
       alert(`${data.recovered} estudiante(s) recuperado(s)`);
       setSelected({});
       await load();

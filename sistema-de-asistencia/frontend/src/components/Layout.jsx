@@ -11,7 +11,7 @@ export default function Layout({ children, rightHeader = null }) {
     return () => clearInterval(id);
   }, []);
 
-  const isStudentNew = window.location.pathname === "/students/new";
+  const isStudentNew = window.location.pathname === "api/students/new";
 
   return (
     <div
