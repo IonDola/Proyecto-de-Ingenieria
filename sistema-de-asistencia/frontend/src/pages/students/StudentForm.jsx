@@ -29,7 +29,24 @@ const StudentForm = ({ }) => {
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
   const [std, setS] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const navigate = useNavigate();
+
+  const REQUIRED_FIELDS = [
+    "Carnet",
+    "Nombre",
+    "Apellidos",
+    "Nacionalidad",
+    "Fecha de Nacimiento",
+    "Lugar de Nacimiento",
+    "Género",
+    "Edad",
+    "Sección",
+    "Nombre del Encargado 1",
+    "Cédula del Encargado 1",
+    "Telefono del Encargado 1",
+    "Parentesco del Encargado 1",
+  ];
 
   const [formData, setFormData] = useState({
     student: {},
@@ -84,10 +101,33 @@ const StudentForm = ({ }) => {
     });
   };
 
+  const validateForm = () => {
+    const errors = {};
+    REQUIRED_FIELDS.forEach((field) => {
+      const value =
+        formData.student[field] ??
+        formData.legal_guardians[field] ??
+        "";
+      if (!value || String(value).trim() === "") {
+        errors[field] = true;
+      }
+    });
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   // Guardar
   const handleSubmit = (e) => {
     e.preventDefault();
     setMsg("");
+
+    if (!validateForm()) {
+      setMsg("Por favor, complete todos los campos obligatorios.");
+      setTimeout(() => setMsg(""), 3000);
+      return;
+    }
+
     const method = !isNew ? "PATCH" : "POST";
     const url = !isNew ? `/students/api/students/${id}/update/` : `/students/api/students/new/`;
 
@@ -115,10 +155,12 @@ const StudentForm = ({ }) => {
       .then((data) => {
         if (isNew) {
           setMsg("Estudiante creado con éxito");
+          setTimeout(() => setMsg(""), 3000);
           navigate(`/students/profiles/${data.id}`);
           window.location.reload(true);
         } else {
           setMsg("Cambios guardados con éxito");
+          setTimeout(() => setMsg(""), 3000);
           setOnEdition(false);
           window.location.reload(true);
         }
@@ -126,6 +168,7 @@ const StudentForm = ({ }) => {
       .catch((err) => {
         console.error(" Guardar estudiante:", err);
         setMsg(typeof err?.error === "string" ? err.error : JSON.stringify(err));
+        setTimeout(() => setMsg(""), 10000);
       });
   }
 
@@ -166,6 +209,7 @@ const StudentForm = ({ }) => {
     } catch (err) {
       console.error("Error exportando PDF:", err);
       setMsg("Error al generar el PDF: " + err.message);
+      setTimeout(() => setMsg(""), 10000);
     }
   };
 
@@ -241,13 +285,17 @@ const StudentForm = ({ }) => {
 
         {msg && (
           <div style={{
-            background: "var(--main-color)",
-            color: "white",
+            background: "var(--brown-color)",
+            color: "black",
             padding: "12px",
             marginBottom: "12px",
             marginRight: "25px",
             borderRadius: "8px",
             fontWeight: "bold",
+            position: "absolute",
+            top: "200px",
+            right: "50px",
+            left: "50px",
           }}>
             {msg}
           </div>
@@ -273,7 +321,7 @@ const StudentForm = ({ }) => {
                         value={rawValue}
                         readOnly={!onEdition}
                         onChange={(e) => handleChange("student", key, e)}
-                        className={onEdition ? "editing" : ""}
+                        className={`${onEdition ? "editing" : ""} ${fieldErrors[key] ? "error-field" : ""}`}
                       />
                     ) : (
                       <select
@@ -303,13 +351,11 @@ const StudentForm = ({ }) => {
                   <div className="st-data" key={key}>
                     <a>{key}</a>
                     <input
-                      type={"text"}
+                      type="text"
                       value={value}
                       readOnly={!onEdition}
-                      onChange={(e) => {
-                        handleChange("legal_guardians", key, e);
-                      }}
-                      className={onEdition ? "editing" : ""}
+                      onChange={(e) => handleChange("legal_guardians", key, e)}
+                      className={`${onEdition ? "editing" : ""} ${fieldErrors[key] ? "error-field" : ""}`}
                     />
                   </div>
                 );

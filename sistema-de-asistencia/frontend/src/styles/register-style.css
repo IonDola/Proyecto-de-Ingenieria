@@ -79,6 +79,11 @@
     cursor: pointer;
 }
 
+.error-field {
+    border: 2px solid #d9534f !important;
+    background: #ffe6e6 !important;
+}
+
 .st-h {
     background-color: var(--brown-color);
     color: white;

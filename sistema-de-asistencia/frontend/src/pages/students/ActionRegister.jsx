@@ -28,13 +28,15 @@ const ActionRegister = () => {
             description: "Registro"
         },
     ];
+    const REQUIRED_FIELDS = ["type", "transferred", "matriculate_level"];
     const { student_id, register_id: action_id } = useParams();
     const [sid, setSid] = useState(student_id);
     const guestView = false;
-    const [err, setErr] = useState("");
     const [msg, setMsg] = useState("");
     const [std, setS] = useState(null);
     const [act, setAct] = useState(null);
+    const [schoolMissing, setSchoolMissing] = useState(false);
+    const [levelMissing, setLevelMissing] = useState(false);
     const navigate = useNavigate();
 
     const isNew = !Boolean(action_id);
@@ -61,7 +63,7 @@ const ActionRegister = () => {
                 return r.json();
             })
             .then(setS)
-            .catch((e) => setErr(`No se pudo cargar el estudiante: ${e.message}`));
+            .catch((e) => setMsg(`No se pudo cargar el estudiante: ${e.message}`));
     }, [sid]);
 
     useEffect(() => {
@@ -87,13 +89,13 @@ const ActionRegister = () => {
 
     useEffect(() => {
         if (!action_id) return;
-        fetch(`/api/actions/${action_id}/`)
+        fetch(`/students/api/actions/${action_id}/`)
             .then((r) => {
                 if (!r.ok) return r.text().then(t => { throw new Error(t || `HTTP ${r.status}`); });
                 return r.json();
             })
             .then(setAct)
-            .catch((e) => setErr(`No se pudo cargar el estudiante: ${e.message}`));
+            .catch((e) => setMsg(`No se pudo cargar el estudiante: ${e.message}`));
     }, [action_id]);
 
     useEffect(() => {
@@ -150,8 +152,22 @@ const ActionRegister = () => {
     const handleSubmit = (e, marked = null) => {
         e?.preventDefault();
         setMsg("");
+        if (formData.actionName === "ingreso" && formData.transferred === true && (formData.origin_school == null || formData.origin_school.trim() === "")) {
+            setMsg("Debe ingresar la escuela de origen si el estudiante fue transferido.");
+            setSchoolMissing(true);
+            setTimeout(() => setMsg(""), 3000);
+            return;
+        }
+        if (formData.type !== "abandono" && (formData.matriculate_level == null || formData.matriculate_level.trim() === "")) {
+            setMsg("Debe ingresar el nivel de matriculación.");
+            setLevelMissing(true);
+            setTimeout(() => setMsg(""), 3000);
+            return;
+        }
+
+
         const method = !isNew ? "PATCH" : "POST";
-        const url = !isNew ? `/api/actions/${action_id}/update/` : `/students/api/students/${sid}/actions/new/`
+        const url = !isNew ? `/students/api/actions/${action_id}/update/` : `/students/api/students/${sid}/actions/new/`
 
         const body = FormatActionForDB(marked || formData);
 
@@ -163,7 +179,7 @@ const ActionRegister = () => {
             .then(async (r) => {
                 const text = await r.text();
                 if (!r.ok) {
-                    console.error(" /students/api/students/newAction | /api/actions/update error body: ", text);
+                    console.error(" /students/api/students/newAction | /students/api/actions/update error body: ", text);
                     try {
                         const json = JSON.parse(text);
                         throw json;
@@ -176,17 +192,19 @@ const ActionRegister = () => {
             .then((data) => {
                 if (isNew) {
                     setMsg("Boleta creada con extio");
+                    setTimeout(() => setMsg(""), 3000);
                     navigate(`/actions/${data.id}`);
                     window.location.reload(true);
                 } else {
                     setMsg("Cambios guardados con exito");
+                    setTimeout(() => setMsg(""), 3000);
                     setOnEdition(false);
-                    //window.location.reload(true);
                 }
             })
             .catch((err) => {
                 console.error(" Guardar boleta: ", err);
                 setMsg(typeof err?.error === "string" ? err.error : JSON.stringify(err));
+                setTimeout(() => setMsg(""), 10000);
             });
     };
 
@@ -247,6 +265,23 @@ const ActionRegister = () => {
                         />
                     </Tool>}
                 </div>
+                {msg && (
+                    <div style={{
+                        background: "var(--brown-color)",
+                        color: "black",
+                        padding: "12px",
+                        marginBottom: "12px",
+                        marginRight: "25px",
+                        borderRadius: "8px",
+                        fontWeight: "bold",
+                        position: "absolute",
+                        top: "200px",
+                        right: "50px",
+                        left: "50px",
+                    }}>
+                        {msg}
+                    </div>
+                )}
 
                 <form id="register" onSubmit={handleSubmit}>
                     <div className="st-table">
@@ -347,7 +382,7 @@ const ActionRegister = () => {
                                     </div>
                                 )
                             )}
-                            {formData?.type !== "abandono" && formData.transferred &&
+                            {formData?.type == "ingreso" && formData.transferred &&
                                 <div className="st-data">
                                     <label htmlFor="origin_school">Escuela de Origen</label>
                                     <input
@@ -356,6 +391,7 @@ const ActionRegister = () => {
                                         value={formData.origin_school ?? ""}
                                         onChange={(e) => handleChange("origin_school", e)}
                                         readOnly={!onEdition}
+                                        className={schoolMissing ? 'error-field' : ''}
                                     />
                                 </div>}
                             {formData?.type !== "abandono" &&
@@ -372,6 +408,7 @@ const ActionRegister = () => {
                                             id="matriculate_level"
                                             onChange={(e) => handleChange("matriculate_level", e)}
                                             value={formData.matriculate_level ?? ""}
+                                            className={levelMissing ? 'error-field' : ''}
                                         >
                                             <option value="">Seleccione un Nivel</option>
                                             <option value="interactivo_ii">Interactivo II</option>
