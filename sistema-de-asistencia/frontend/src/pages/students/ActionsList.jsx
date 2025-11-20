@@ -41,7 +41,7 @@ export default function ActionsList() {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     if (t) params.set("type", t);
-    fetch(`/api/actions/?${params.toString()}`)
+    fetch(`./api/actions/?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => setRows(d.results || []))
       .catch(() => setRows([]));
@@ -76,7 +76,7 @@ export default function ActionsList() {
     if (ids.length === 0) return;
     if (!window.confirm(`¿Eliminar ${ids.length} acción(es)?`)) return;
     try {
-      const r = await fetch("/api/actions/bulk-delete/", {
+      const r = await fetch("students/api/actions/bulk-delete/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
