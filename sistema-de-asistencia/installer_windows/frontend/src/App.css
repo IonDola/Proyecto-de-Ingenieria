@@ -1,0 +1,144 @@
+:root {
+  --light-blue-color: #B1BDCD;
+  --blue-color: #486589;
+  --brown-color: #BA9161;
+  --white-transparent: #ffffffcc;
+  --white-kinda-transparent: #ffffff99;
+  --white-very-transparent: #ffffff22;
+  --dark-overlay: #00000aaa;
+}
+
+body {
+  --main-color: var(--blue-color)
+}
+
+.dev-color {
+  --main-color: var(--brown-color)
+}
+
+html,
+body,
+#root {
+  background: no-repeat center/100% url("./assets/images/Background.png") var(--light-blue-color);
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Open Sans';
+}
+
+button {
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  border: white 1px solid;
+}
+
+.rrd-link {
+  transition: 0.3s;
+}
+
+.rrd-link:hover {
+  transform: scale(1.05);
+}
+
+.login-container {
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  position: absolute;
+  top: 30%;
+  width: 100%;
+  text-align: center;
+  margin-right: 300px;
+}
+
+.login-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-title img {
+  margin-top: 40px;
+  width: 30%;
+  border-radius: 10px;
+}
+
+.login-title div {
+  border: 50%;
+  border-radius: 10px;
+  background-color: white;
+  font-family: 'League Spartan';
+  color: var(--blue-color);
+  text-align: center;
+  width: 450px;
+  height: 25%;
+}
+
+.login-title div h1 {
+  font-size: 20pt;
+  font-weight: bolder;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.login-form {
+  border: 50%;
+  border-radius: 10px;
+  background-color: var(--blue-color);
+  width: 450px;
+}
+
+.login-form button {
+  font-size: 15pt;
+  background-color: var(--brown-color);
+  color: white;
+  border-radius: 15px;
+  margin: 10px;
+  height: 50px;
+}
+
+.login-form input {
+  font-size: 15pt;
+  text-align: center;
+  margin: 25px;
+  height: 50px;
+  width: 350px;
+  border-radius: 10px;
+  background-color: var(--light-blue-color);
+  color: black;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--white-very-transparent);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--brown-color);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--light-blue-color);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  /* cambia el cursor al pasar sobre el ícono */
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  filter: brightness(1.2);
+  /* opcional: pequeño efecto visual */
+}

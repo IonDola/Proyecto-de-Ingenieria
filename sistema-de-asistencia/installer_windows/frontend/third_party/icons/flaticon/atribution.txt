@@ -1,0 +1,3 @@
+Todos los iconos utilizados en este programa han sido extraidos de la
+web flaticon.es, con excepción de profile_admins, profile_visitors y la
+iconografia de imagenes del escudo y la escuela.
