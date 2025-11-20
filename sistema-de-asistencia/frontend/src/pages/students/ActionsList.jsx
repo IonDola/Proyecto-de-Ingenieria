@@ -4,7 +4,6 @@ import "../../styles/main.css";
 import PageHead from "../../components/PageHead";
 import Listable from "../../components/Listable";
 import Tool from "../../components/PageTool";
-import ActionModal from "../../components/ActionModal";
 import Home from "../../components/HomeLink";
 
 import Add from "../../assets/icons/new_doc.svg";
@@ -144,13 +143,6 @@ export default function ActionsList() {
           ))}
         </Listable>
       </main>
-
-      {showCreate && (
-        <ActionModal
-          onClose={() => setShowCreate(false)}
-          onSuccess={() => { setShowCreate(false); load(); }}
-        />
-      )}
     </>
   );
 }

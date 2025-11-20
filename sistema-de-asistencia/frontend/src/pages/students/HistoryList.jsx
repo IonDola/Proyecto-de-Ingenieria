@@ -3,15 +3,11 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import PageHead from "../../components/PageHead";
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
-import ActionModal from "../../components/ActionModal";
 import Listable from "../../components/Listable";
 
 import IconStudent from "../../assets/icons/student.svg";
 import IconProfiles from "../../assets/icons/student_profiles.svg";
 import IconHistory from "../../assets/icons/descripcion-general.svg";
-import IconDetail from "../../assets/icons/student_registers.svg";
-import IconEdit from "../../assets/icons/edit.svg";
-import IconDelete from "../../assets/icons/massive_delete.svg";
 import IconBack from "../../assets/icons/devolverse.png";
 
 export default function HistoryList() {

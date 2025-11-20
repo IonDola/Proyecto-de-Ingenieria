@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../styles/register-style.css";
 
-import ActionModal from "../../components/ActionModal";
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
 import PageHead from "../../components/PageHead";
