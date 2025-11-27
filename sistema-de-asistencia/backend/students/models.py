@@ -32,17 +32,17 @@ class Student(models.Model):
     guardian_name_1 = models.CharField("Nombre encargado 1", max_length=120, default="Missing Parent")
     guardian_id_1 = models.CharField("Cédula encargado 1", max_length=50, default="Missing ID")
     _guardian_phone_1_encrypted = models.CharField("Teléfono encargado 1 cifrado", max_length=200, default="Missing PhoneNumber", db_column="guardian_phone_1")
-    guardian_relationship_1 = models.CharField("Parentesco al estudiante 1", max_length=30, default="Missing PhoneNumber")
+    guardian_relationship_1 = models.CharField("Parentesco al estudiante 1", max_length=30)
 
     guardian_name_2 = models.CharField("Nombre encargado 2", max_length=120, null=True, blank=True)
     guardian_id_2 = models.CharField("Cédula encargado 2", max_length=50, null=True, blank=True)
     _guardian_phone_2_encrypted = models.CharField("Teléfono encargado 2 cifrado", max_length=200, null=True, blank=True, db_column="guardian_phone_2")
-    guardian_relationship_2 = models.CharField("Parentesco al estudiante 2", max_length=30, default="Missing PhoneNumber")
+    guardian_relationship_2 = models.CharField("Parentesco al estudiante 2", max_length=30)
 
     guardian_name_3 = models.CharField("Nombre encargado 3", max_length=120, null=True, blank=True)
     guardian_id_3 = models.CharField("Cédula encargado 3", max_length=50, null=True, blank=True)
     _guardian_phone_3_encrypted = models.CharField("Teléfono encargado 3 cifrado", max_length=200, null=True, blank=True, db_column="guardian_phone_3")
-    guardian_relationship_3 = models.CharField("Parentesco al estudiante 3", max_length=30, default="Missing PhoneNumber")
+    guardian_relationship_3 = models.CharField("Parentesco al estudiante 3", max_length=30)
 
     institutional_guardian = models.CharField("Nombre encargado 1", max_length=120, default="Missing Parent")
 

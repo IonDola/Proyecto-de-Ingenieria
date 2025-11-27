@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 
 const API_LOGOUT = "/api/auth/logout/";
 
-const PageHead = ({ icons }) => {
+const PageHead = ({ name, icons }) => {
     const nav = useNavigate();
-    const name = localStorage.getItem("full_name");
+    const shownName = name || localStorage.getItem("full_name");
     const role = localStorage.getItem("role");
 
     const HeadClock = () => {
