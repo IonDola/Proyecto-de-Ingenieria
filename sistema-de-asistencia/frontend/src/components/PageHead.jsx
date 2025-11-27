@@ -5,16 +5,13 @@ import closeSesion from "../assets/icons/logout.svg";
 import subSectionIcon from "../assets/icons/subsection.png"
 import { Link } from "react-router-dom";
 
-export const CredentialLevel = {
-    DEV: "Dev",
-    ADMIN: "Admin",
-    GUEST: "Guest",
-};
-
 const API_LOGOUT = "/api/auth/logout/";
 
-const PageHead = ({ name, credential, icons }) => {
+const PageHead = ({ icons }) => {
     const nav = useNavigate();
+    const name = localStorage.getItem("full_name");
+    const role = localStorage.getItem("role");
+
     const HeadClock = () => {
         var [date, setDate] = useState(new Date());
 
@@ -114,7 +111,10 @@ const PageHead = ({ name, credential, icons }) => {
                 localStorage.removeItem("access");
                 localStorage.removeItem("refresh");
                 localStorage.removeItem("userName");
+                localStorage.removeItem("full_name");
                 localStorage.removeItem("role");
+                localStorage.removeItem("gender");
+                localStorage.removeItem("logout*event");
 
                 nav("/login", { replace: true });
             } catch (err) {

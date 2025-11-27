@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
 import PageHead from "../../components/PageHead"
 
+import HomeIcon from "../../assets/icons/home.svg"
 import saveIcon from "../../assets/icons/save_changes.svg";
 import cancelIcon from "../../assets/icons/cancel.svg";
 import UserIcon from "../../assets/icons/user.svg"
@@ -14,6 +14,7 @@ const Profile = () => {
     const [edited, setEdited] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const token = localStorage.getItem("access");
+    const isVisitor = localStorage.getItem("role") === "VISITOR";
 
 
     useEffect(() => {
@@ -50,10 +51,14 @@ const Profile = () => {
             .then(data => {
                 alert(data.detail || "Perfil actualizado correctamente.");
                 setProfile({ ...edited });
-                localStorage.setItem("full_name", `${edited.first_name} ${edited.last_name}`);
             })
             .catch(() => alert("Error al guardar cambios"))
-            .finally(() => setIsSaving(false));
+            .finally(() => {
+                setIsSaving(false)
+                localStorage.setItem("full_name", `${edited.first_name} ${edited.last_name}`);
+                localStorage.setItem("gender", `${edited.gender}`);
+
+            });
     };
 
     return (
@@ -61,7 +66,14 @@ const Profile = () => {
             <PageHead icons={[{ id: 1, image: UserIcon, description: "Mi Perfil" },]} name={localStorage.getItem("full_name")} />
             <main>
                 <div className="tools">
-                    <Home />
+                    {!isVisitor && <Home />}
+                    {isVisitor &&
+                        <Tool key={"HomeTool"}>
+                            <Link to={"/visitor/home"}>
+                                <img src={HomeIcon} alt="Volver a menu Home" title="Volver a menu Home" className="w-icon" />
+                            </Link>
+                        </Tool>
+                    }
                     <Tool action={handleSave} type={"submit"}>
                         <img src={saveIcon} alt="Guardar" title="Guardar" className="w-icon" />
                     </Tool>
@@ -81,6 +93,7 @@ const Profile = () => {
                                     type="text"
                                     value={edited.username}
                                     onChange={e => handleChange("username", e.target.value)}
+                                    readOnly={profile.role == "VISITOR"}
                                 />
                             </div>
 
@@ -125,7 +138,7 @@ const Profile = () => {
 
                             <div className="st-data">
                                 <label>Rol:</label>
-                                <input type="text" value={edited.role} readOnly />
+                                <input type="text" value={profile.role} readOnly />
                             </div>
                         </div>
                     </form>}

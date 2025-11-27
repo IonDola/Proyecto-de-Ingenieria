@@ -152,9 +152,6 @@ def profile_list(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def my_profile_info(request):
-    if not _require_admin(request.user):
-        return Response({"detail": "Acceso denegado"}, status=status.HTTP_403_FORBIDDEN)
-
     user = request.user
     data = {
         "username": user.username,
@@ -169,9 +166,6 @@ def my_profile_info(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def update_my_profile_info(request):
-    if not _require_admin(request.user):
-        return Response({"detail": "Acción denegada"}, status=status.HTTP_403_FORBIDDEN)
-
     user = request.user
     data = request.data
 
@@ -196,7 +190,8 @@ def update_my_profile_info(request):
     editable_fields = ["gender", "first_name", "last_name", "username", "email"]
     for field in editable_fields:
         if field in data:
-            setattr(user, field, data[field])
+            if field != "username" or user.role != "VISITOR":
+                setattr(user, field, data[field])
 
     user.save()
 
