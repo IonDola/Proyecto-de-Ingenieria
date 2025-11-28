@@ -5,11 +5,12 @@ import "../../styles/main.css";
 import "../../styles/personal-log.css";
 import PageHead from "../../components/PageHead";
 import Listable from "../../components/Listable";
-import Tool from "../../components/PageTool";
+import LogFormat from "../../components/LogFormat";
 import Home from "../../components/HomeLink";
 
 import IconRegisters from "../../assets/icons/student_registers.svg";
 import IconDownload from "../../assets/icons/downloadd.png";
+import FormatRegister from "../../components/LogFormat";
 
 function decodeJwt(token) {
   try {
@@ -46,11 +47,11 @@ async function flexibleRefresh() {
   }
   const candidates = [
     { url: "/api/users/token/refresh/", body: { refresh } },
-    { url: "/api/token/refresh/",      body: { refresh } },
-    { url: "/api/auth/jwt/refresh/",   body: { refresh } },
+    { url: "/api/token/refresh/", body: { refresh } },
+    { url: "/api/auth/jwt/refresh/", body: { refresh } },
     { url: "/api/users/token/refresh/", body: { refresh_token: refresh } },
-    { url: "/api/token/refresh/",       body: { refresh_token: refresh } },
-    { url: "/api/auth/jwt/refresh/",    body: { refresh_token: refresh } },
+    { url: "/api/token/refresh/", body: { refresh_token: refresh } },
+    { url: "/api/auth/jwt/refresh/", body: { refresh_token: refresh } },
   ];
   for (const c of candidates) {
     try {
@@ -65,7 +66,7 @@ async function flexibleRefresh() {
         continue;
       }
       let data = {};
-      try { data = JSON.parse(text || "{}"); } catch {}
+      try { data = JSON.parse(text || "{}"); } catch { }
       const newAccess = data.access || data.access_token || null;
       if (newAccess) {
         localStorage.setItem("access", newAccess);
@@ -86,11 +87,12 @@ export default function PersonalLog() {
     { name: "Fecha/Hora", width: "0.8fr" },
     { name: "Acción", width: "1fr" },
     { name: "Tipo", width: "0.7fr" },
-    { name: "Entidad", width: "1.2fr" },
-    { name: "Estado", width: "0.6fr" },
-    { name: "", width: "0.4fr" },
+    { name: "Entidad", width: "1.4fr" },
+    { name: "Estado", width: "0.4fr" },
+    { name: "", width: "0.3fr" },
   ];
 
+  const [filtered, setFiltered] = useState([]);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -176,7 +178,7 @@ export default function PersonalLog() {
     load(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
 
-  const filtered = useMemo(() => {
+  const rawData = useMemo(() => {
     if (!q) return rows;
     const n = q.toLowerCase();
     return rows.filter((r) =>
@@ -185,6 +187,10 @@ export default function PersonalLog() {
         .some((v) => String(v).toLowerCase().includes(n))
     );
   }, [rows, q]);
+
+  useEffect(() => {
+    setFiltered(rawData.map(item => FormatRegister({ register: item })));
+  }, [rawData]);
 
   const onSearch = (e) => {
     if (e.key !== "Enter") return;
@@ -216,34 +222,32 @@ export default function PersonalLog() {
   const rowElements =
     filtered.length > 0
       ? filtered.map((r) => (
-          <div className="listable-row" key={r.id}>
-            <div>
-              {typeof r.timestamp === "string" && /\d{4}-\d{2}-\d{2}T/.test(r.timestamp)
-                ? new Date(r.timestamp).toLocaleString()
-                : r.timestamp}
-            </div>
-            <div>
-              <Link to={`/personal/${r.id}`} className="link">
-                {r.action}
-              </Link>
-            </div>
-            <div>{r.type}</div>
-            <div>{r.entity}</div>
-            <div>{r.status}</div>
-            <div>
-              <button className="page-tool" title="Exportar" onClick={() => onExport(r)}>
-                <img src={IconDownload} alt="Exportar" className="w-icon" />
-              </button>
-            </div>
+        <div className="listable-row" key={r.id}>
+          <div>
+            {typeof r.timestamp === "string" && /\d{4}-\d{2}-\d{2}T/.test(r.timestamp)
+              ? new Date(r.timestamp).toLocaleString()
+              : r.timestamp}
           </div>
-        ))
+          <div>
+            {r.action}
+          </div>
+          <div>{r.type}</div>
+          <div>{r.entity}</div>
+          <div>{r.status}</div>
+          <div>
+            <button className="page-tool" title="Exportar" onClick={() => onExport(r)}>
+              <img src={IconDownload} alt="Exportar" className="w-icon" />
+            </button>
+          </div>
+        </div>
+      ))
       : [
-          <div className="listable-row" key="empty">
-            <div style={{ gridColumn: "1 / -1" }}>
-              {errorMsg ? errorMsg : "Sin acciones"}
-            </div>
-          </div>,
-        ];
+        <div className="listable-row" key="empty">
+          <div style={{ gridColumn: "1 / -1" }}>
+            {errorMsg ? errorMsg : "Sin acciones"}
+          </div>
+        </div>,
+      ];
 
   return (
     <>

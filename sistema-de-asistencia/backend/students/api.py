@@ -390,13 +390,13 @@ def actions_update(request, action_id):
 
     # Usuario para bitácora
     user = _get_request_user(request)
-    _debug_user_info(request, user, origin="actions_update", extra={"action_id": str(a.id), "student_id": str(a.student_id)})
+    _debug_user_info(request, user, origin="actions_update", extra={"action_id": str(a.id), "student_id": str(a.id)})
 
     log_event(
         user,
         action="ACTION_UPDATED",
         type=a.type or "unknown",
-        entity=f"Acción {a.id} de estudiante {a.student.id_mep}",
+        entity=f"Acción {a.id} de estudiante {a.student.first_name} {a.student.surnames}",
         status="success",
         metadata={"action_id": str(a.id), "student_id": str(a.student_id)},
     )

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import "../../styles/main.css";
 import PageHead from "../../components/PageHead";
@@ -6,7 +6,6 @@ import Listable from "../../components/Listable";
 import Tool from "../../components/PageTool";
 import Home from "../../components/HomeLink";
 
-import Add from "../../assets/icons/new_doc.svg";
 import MassRemove from "../../assets/icons/massive_delete.svg";
 import ViewProfile from "../../assets/icons/descripcion-general.svg";
 import StudentActions from "../../assets/icons/student_registers.svg";
@@ -34,7 +33,6 @@ export default function ActionsList() {
   const q = sp.get("q") || "";
   const t = sp.get("type") || ""; // filtro tipo
   const [selected, setSelected] = useState({});
-  const [showCreate, setShowCreate] = useState(false);
 
   const load = () => {
     const params = new URLSearchParams();
@@ -45,7 +43,7 @@ export default function ActionsList() {
       .then((d) => setRows(d.results || []))
       .catch(() => setRows([]));
   };
-
+  // eslint-disable-next-line
   useEffect(() => { load(); }, [q, t]);
 
   const onSearch = (e) => {
@@ -68,14 +66,12 @@ export default function ActionsList() {
     setSelected((s) => ({ ...s, [id]: checked }));
   };
 
-  const anySelected = useMemo(() => Object.values(selected).some(Boolean), [selected]);
-
   const bulkDelete = async () => {
     const ids = Object.entries(selected).filter(([, v]) => v).map(([k]) => k);
     if (ids.length === 0) return;
     if (!window.confirm(`¿Eliminar ${ids.length} acción(es)?`)) return;
     try {
-      const r = await fetch("students/api/actions/bulk-delete/", {
+      const r = await fetch("/students/api/actions/bulk-delete/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
@@ -101,10 +97,10 @@ export default function ActionsList() {
       />
       <select className="search-box" style={{ width: 160, height: 60 }} value={t} onChange={onFilterType}>
         <option value="">Todos</option>
-        <option value="Ingreso">Ingreso</option>
-        <option value="Desertor">Desertor</option>
+        <option value="ingreso">Ingreso</option>
+        <option value="desertor">Desertor</option>
         <option value="transferencia">Transferencia</option>
-        <option value="Egreso">Egreso</option>
+        <option value="egreso">Egreso</option>
       </select>
     </div>
   );
@@ -115,9 +111,6 @@ export default function ActionsList() {
       <main>
         <div className="tools">
           <Home />
-          <Tool action={() => setShowCreate(true)}>
-            <img src={Add} alt="Nueva acción" title="Nueva acción" className="w-icon" />
-          </Tool>
           <Tool action={bulkDelete}>
             <img src={MassRemove} alt="Eliminar seleccionadas" className="w-icon" />
           </Tool>
