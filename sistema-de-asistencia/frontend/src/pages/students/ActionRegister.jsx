@@ -43,7 +43,7 @@ const ActionRegister = () => {
     const [onEdition, setOnEdition] = useState(Boolean(isNew));
     const [formData, setFormData] = useState({
         actionName: " Cargando... ",
-        type: act?.type || "ingreso",
+        type: act?.type || "Ingreso",
         notes: act?.notes || "",
         on_revision: act?.on_revision ?? true,
         origin_school: act?.origin_school || "",
@@ -77,7 +77,7 @@ const ActionRegister = () => {
         setFormData(
             {
                 actionName: (isNew ? "Nueva" : "") + ` Boleta de Estado de Matrícula de ${studentData.student.Nombre ?? "..."} `,
-                type: act?.type || "ingreso",
+                type: act?.type || "Ingreso",
                 notes: act?.notes || "",
                 on_revision: act?.on_revision ?? true,
                 origin_school: act?.origin_school || "",
@@ -101,7 +101,7 @@ const ActionRegister = () => {
     useEffect(() => {
         setFormData((prev) => ({
             ...prev,
-            type: act?.type || "ingreso",
+            type: act?.type || "Ingreso",
             notes: act?.notes || "",
             on_revision: act?.on_revision ?? true,
             origin_school: act?.origin_school || "",
@@ -120,7 +120,7 @@ const ActionRegister = () => {
             // cancelar edición, editar datos
             setFormData((prev) => ({
                 ...prev,
-                type: act?.type || "ingreso",
+                type: act?.type || "Ingreso",
                 notes: act?.notes || "",
                 on_revision: act?.on_revision ?? true,
                 origin_school: act?.origin_school || "",
@@ -152,13 +152,13 @@ const ActionRegister = () => {
     const handleSubmit = (e, marked = null) => {
         e?.preventDefault();
         setMsg("");
-        if (formData.actionName === "ingreso" && formData.transferred === true && (formData.origin_school == null || formData.origin_school.trim() === "")) {
+        if (formData.actionName === "Ingreso" && formData.transferred === true && (formData.origin_school == null || formData.origin_school.trim() === "")) {
             setMsg("Debe ingresar la escuela de origen si el estudiante fue transferido.");
             setSchoolMissing(true);
             setTimeout(() => setMsg(""), 3000);
             return;
         }
-        if (formData.type !== "abandono" && (formData.matriculate_level == null || formData.matriculate_level.trim() === "")) {
+        if (formData.type !== "Desertor" && (formData.matriculate_level == null || formData.matriculate_level.trim() === "")) {
             setMsg("Debe ingresar el nivel de matriculación.");
             setLevelMissing(true);
             setTimeout(() => setMsg(""), 3000);
@@ -243,9 +243,9 @@ const ActionRegister = () => {
     }
 
     let actionState = [
-        { value: "ingreso", img: StudentEnter, label: "Ingreso", className: formData.type == "ingreso" ? "w-icon" : "" },
-        { value: "egreso", img: StudentExit, label: "Egreso", className: formData.type == "egreso" ? "w-icon" : "" },
-        { value: "abandono", img: StudentAbandon, label: "Abandono", className: formData.type == "abandono" ? "w-icon" : "" },
+        { value: "Ingreso", img: StudentEnter, label: "Ingreso", className: formData.type == "Ingreso" ? "w-icon" : "" },
+        { value: "Egreso", img: StudentExit, label: "Egreso", className: formData.type == "Egreso" ? "w-icon" : "" },
+        { value: "Desertor", img: StudentAbandon, label: "Desertor", className: formData.type == "Desertor" ? "w-icon" : "" },
     ]
 
     return (
@@ -343,7 +343,7 @@ const ActionRegister = () => {
                                 </div>
                             </div>
 
-                            {formData.type !== "abandono" && (
+                            {formData.type !== "Desertor" && (
                                 onEdition ? (
                                     <div className="st-data">
                                         <label>Transferido</label>
@@ -382,7 +382,7 @@ const ActionRegister = () => {
                                     </div>
                                 )
                             )}
-                            {formData?.type == "ingreso" && formData.transferred &&
+                            {formData?.type == "Ingreso" && formData.transferred &&
                                 <div className="st-data">
                                     <label htmlFor="origin_school">Escuela de Origen</label>
                                     <input
@@ -394,7 +394,7 @@ const ActionRegister = () => {
                                         className={schoolMissing ? 'error-field' : ''}
                                     />
                                 </div>}
-                            {formData?.type !== "abandono" &&
+                            {formData?.type !== "Desertor" &&
                                 <div className="st-data">
                                     <label>Nivel de Matriculación</label>
                                     {!onEdition ? (

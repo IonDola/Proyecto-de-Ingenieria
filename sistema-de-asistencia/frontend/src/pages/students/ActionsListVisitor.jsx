@@ -17,13 +17,13 @@ export default function ActionsListVisitor() {
   ];
 
   const columns = [
-    { name: "", width: "100px" },   
-    { name: "Estado", width: "220px" }, 
-    { name: "Tipo", width: "200px" },  
+    { name: "", width: "100px" },
+    { name: "Estado", width: "220px" },
+    { name: "Tipo", width: "200px" },
     { name: "Fecha", width: "220px" },
     { name: "Carnet", width: "1fr" },
     { name: "Nombre", width: "2fr" },
-    { name: "", width: "120px" },    
+    { name: "", width: "120px" },
   ];
 
   const [rows, setRows] = useState([]);
@@ -71,10 +71,10 @@ export default function ActionsListVisitor() {
       />
       <select className="search-box" style={{ height: 60 }} value={t} onChange={onFilterType}>
         <option value="">Todos</option>
-        <option value="ingreso">Ingreso</option>
-        <option value="abandono">Abandono</option>
+        <option value="Ingreso">Ingreso</option>
+        <option value="Desertor">Desertor</option>
         <option value="transferencia">Transferencia</option>
-        <option value="egreso">Egreso</option>
+        <option value="Egreso">Egreso</option>
       </select>
     </div>
   );

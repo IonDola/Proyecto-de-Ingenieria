@@ -62,7 +62,7 @@ class ActionsApiTests(TestCase):
         self.assertTrue(Action.objects.filter(student=self.st, type="transferencia").exists())
 
     def test_update_action(self):
-        a = Action.objects.create(student=self.st, type="ingreso", notes="")
+        a = Action.objects.create(student=self.st, type="Ingreso", notes="")
         url = f"/api/actions/{a.pk}/update/"
         r = self.client.patch(url, data=json.dumps({"notes":"ajuste"}), content_type="application/json")
         self.assertEqual(r.status_code, 200)
@@ -70,7 +70,7 @@ class ActionsApiTests(TestCase):
         self.assertEqual(a.notes, "ajuste")
 
     def test_delete_action(self):
-        a = Action.objects.create(student=self.st, type="egreso", notes="")
+        a = Action.objects.create(student=self.st, type="Egreso", notes="")
         url = f"/api/actions/{a.pk}/delete/"
         r = self.client.delete(url)
         self.assertEqual(r.status_code, 200)

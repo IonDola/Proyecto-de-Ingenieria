@@ -97,9 +97,9 @@ class Student(models.Model):
 
 class Action(models.Model):
     TYPE_CHOICES = [
-        ("ingreso", "Ingreso"),
-        ("egreso", "Egreso"),
-        ("abandono", "Abandono"),
+        ("Ingreso", "Ingreso"),
+        ("Egreso", "Egreso"),
+        ("Desertor", "Desertor"),
     ]
     MATRICLE_CHOICES = [
         ("interactivo_ii", "Interactivo_II"),
@@ -127,7 +127,7 @@ class Action(models.Model):
     matriculate_level = models.CharField("Nivel a| Matricular", max_length=20, choices=MATRICLE_CHOICES, db_index=True, default="primero")
 
     def clean(self):
-        if self.type == "ingreso":
+        if self.type == "Ingreso":
             if (self.transferred and not self.origin_school) or (self.origin_school and not self.transferred):
                 raise ValidationError("Para estudiantes transferidos debe indicar su procedencia.")
             if not self.matriculate_level:

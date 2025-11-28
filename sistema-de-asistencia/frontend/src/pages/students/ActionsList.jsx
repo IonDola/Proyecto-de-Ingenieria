@@ -101,10 +101,10 @@ export default function ActionsList() {
       />
       <select className="search-box" style={{ width: 160, height: 60 }} value={t} onChange={onFilterType}>
         <option value="">Todos</option>
-        <option value="ingreso">Ingreso</option>
-        <option value="abandono">Abandono</option>
+        <option value="Ingreso">Ingreso</option>
+        <option value="Desertor">Desertor</option>
         <option value="transferencia">Transferencia</option>
-        <option value="egreso">Egreso</option>
+        <option value="Egreso">Egreso</option>
       </select>
     </div>
   );

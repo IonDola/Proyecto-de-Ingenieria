@@ -460,7 +460,7 @@ def actions_list(request):
     Lista acciones de todos los estudiantes.
     Filtros:
       ?q=...  (id_mep, first_name, surnames, actor, notes)
-      ?type=ingreso|egreso|abandono|transferencia
+      ?type=Ingreso|Egreso|Desertor|Transferencia
       ?limit=200
     """
     q = (request.GET.get("q") or "").strip().lower()

@@ -12,7 +12,7 @@ import cancelIcon from "../assets/icons/cancel.svg";
 import { CheckStudentId, HelpSave, MarkAsReviewed } from "./RegisterSaveHelper";
 
 const ActionForm = ({ register, carnet = null, legalGuardians, actionId = null, isOnRevision,
-  guestView = false, actionTag = "ingreso", student, setStudent }) => {
+  guestView = false, actionTag = "Ingreso", student, setStudent }) => {
   const [formData, setFormData] = useState({
     student: student || {},
     register: register || {},

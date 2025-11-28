@@ -97,7 +97,7 @@ export function FormatActionForDB(formData, isNew = false) {
     backendAction.on_revision = true;
   }
 
-  if (formData.type === "abandono") {
+  if (formData.type === "Desertor") {
     backendAction.matriculate_level = "";
     backendAction.origin_school = "";
     backendAction.transferred = ""

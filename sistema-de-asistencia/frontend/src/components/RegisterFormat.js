@@ -118,16 +118,16 @@ export function PrepareActionForSave(data, actionTag) {
         : (typeof data?.on_revision !== "undefined" ? !!data.on_revision : true);
 
     let origin_school = null;
-    if (actionTag === "ingreso") {
+    if (actionTag === "Ingreso") {
         const raw = reg[originSchoolLabel] ?? data?.origin_school;
         origin_school = (raw === undefined || raw === null || String(raw).trim() === "") ? null : String(raw).trim();
     }
 
     return {
-        type: actionTag || "ingreso",
+        type: actionTag || "Ingreso",
         notes,
         transferred,
         on_revision,
-        ...(actionTag === "ingreso" ? { origin_school } : {}),
+        ...(actionTag === "Ingreso" ? { origin_school } : {}),
     };
 }
